@@ -1,0 +1,3 @@
+[submodule "servers/homepage"]
+	path = servers/homepage
+	url = https://benediktibk@bitbucket.org/benediktibk/homepage-git.git

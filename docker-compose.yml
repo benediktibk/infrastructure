@@ -8,3 +8,5 @@ services:
         environment:
             - SA_PASSWORD=$BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD
         image: "benediktschmidt.at/database-server"
+    homepage:
+        image: "benediktschmidt.at/me"

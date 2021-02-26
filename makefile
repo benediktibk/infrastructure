@@ -4,13 +4,12 @@ default: clean all
 
 clean:
 
-all: environment-check database-server mssql-client
+all: environment-check images
 
-database-server:
-	docker build --build-arg BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD=${BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD} -t benediktschmidt.at/database-server database-server	
-
-mssql-client:
-	docker build -t benediktschmidt.at/mssql-client mssql-client
+images:
+	docker build --build-arg BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD=${BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD} -t benediktschmidt.at/database-server servers/database-server	
+	docker build -t benediktschmidt.at/mssql-client servers/mssql-client
+	docker build -t benediktschmidt.at/me servers/homepage
 		
 run: environment-check
 	docker-compose up
@@ -23,4 +22,4 @@ ifndef BENEDIKTSCHMIDT_AT_CA_PRIVATE_KEYS
 	$(error BENEDIKTSCHMIDT_AT_CA_PRIVATE_KEYS is undefined)
 endif
 	
-.PHONY: environment-check mssql-client database-server
+.PHONY: environment-check images
