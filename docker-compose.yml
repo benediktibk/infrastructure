@@ -1,0 +1,6 @@
+version: "3.9"
+services:
+  mssql-client:
+    image: "benediktschmidt.at/mssql-client"
+  database-server:
+    image: "benediktschmidt.at/database-server"
