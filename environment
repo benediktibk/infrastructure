@@ -1,0 +1,2 @@
+export BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD="topsecretpassword"
+export BENEDIKTSCHMIDT_AT_CA_PRIVATE_KEYS="/path/to/location/of/private/keys"

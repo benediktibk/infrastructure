@@ -1,2 +1,2 @@
 FROM mcr.microsoft.com/mssql-tools
-ENV SA_PASSWORD=blub#ASDF834834
+CMD ["/opt/mssql-tools/bin/sqlcmd","-S","database-server","-U","sa","-P","blub","-Q","SELECT @@version"]

@@ -4,16 +4,18 @@ default: clean all
 
 clean:
 
-all: database-server mssql-client
+all: environment database-server mssql-client
 
 database-server:
-	docker build -t benediktschmidt.at/database-server database-server	
+	docker build --build-arg BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD=${BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD} -t benediktschmidt.at/database-server database-server	
 
 mssql-client:
-	docker build -t benediktschmidt.at/mssql-client mssql-client
+	docker build --build-arg BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD=${BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD} -t benediktschmidt.at/mssql-client mssql-client
+	
+environment:
+	source ~/environment.benediktschmidt.at
 	
 run:
-	docker run -d benediktschmidt.at/database-server
-	docker run -it benediktschmidt.at/mssql-client
+	docker-compose up
 	
-.PHONY: mssql-client database-server
+.PHONY: environment mssql-client database-server
