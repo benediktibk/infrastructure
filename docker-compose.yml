@@ -10,3 +10,8 @@ services:
         image: "benediktschmidt.at/database-server"
     homepage:
         image: "benediktschmidt.at/me"
+    valheim:
+        environment:
+            - VALHEIM_SERVER_NAME=$BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_NAME
+            - VALHEIM_SERVER_NAME=$BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_PASSWORD
+        image: "benediktschmidt.at/valheim"

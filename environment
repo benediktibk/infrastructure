@@ -1,2 +1,5 @@
 export BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD="topsecretpassword"
 export BENEDIKTSCHMIDT_AT_CA_PRIVATE_KEYS="/path/to/location/of/private/keys"
+export BENEDIKTSCHMIDT_AT_VALHEIM_INSTALLATION_PATH="~/.local/share/Steam/steamapps/common/Valheim\ dedicated\ server"
+export BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_NAME="server name"
+export BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_PASSWORD="anotherTOPsecretPASSWORD"
