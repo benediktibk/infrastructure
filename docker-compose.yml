@@ -1,6 +1,10 @@
 version: "3.9"
 services:
-  mssql-client:
-    image: "benediktschmidt.at/mssql-client"
-  database-server:
-    image: "benediktschmidt.at/database-server"
+    mssql-client:
+        environment:
+            - BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD
+        image: "benediktschmidt.at/mssql-client"
+    database-server:
+        environment:
+            - SA_PASSWORD=$BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD
+        image: "benediktschmidt.at/database-server"
