@@ -11,7 +11,7 @@ images: build/valheim-id.txt build/database-server-id.txt build/mssql-client-id.
 build/valheim-id.txt: servers/valheim/Dockerfile
 	mkdir -p build
 	mkdir -p servers/valheim/build
-	cp -R "~/.local/share/Steam/steamapps/common/Valheim\ dedicated\ server/*" servers/valheim/build/
+	cp -R ~/.local/share/Steam/steamapps/common/Valheim\ dedicated\ server/* servers/valheim/build/
 	docker build -t benediktschmidt.at/valheim servers/valheim
 	docker images --format "{{.ID}}" benediktschmidt.at/valheim > $@
 	

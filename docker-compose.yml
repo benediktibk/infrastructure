@@ -4,9 +4,14 @@ services:
         env_file:
             - /opt/tester/sql.env
         image: "benediktschmidt.at/database-server"
+        volumes:
+            - sqldata:/var/opt/mssql/data
     homepage:
         image: "benediktschmidt.at/me"
     valheim:
         env_file:
             - /opt/tester/valheim.env
         image: "benediktschmidt.at/valheim"
+volumes:
+    sqldata:
+        external: true
