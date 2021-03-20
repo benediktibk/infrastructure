@@ -6,14 +6,27 @@ services:
         image: "benediktschmidt.at/database-server"
         volumes:
             - sqldata:/var/opt/mssql/data
+        networks:
+            - internal
     homepage:
         image: "benediktschmidt.at/me"
+        networks:
+            - internal
+        ports:
+            - "80:80"
     valheim:
         env_file:
             - /opt/tester/valheim.env
         image: "benediktschmidt.at/valheim"
+        networks:
+            - internal
     corona:
         image: "benediktschmidt.at/corona"
+        networks:
+            - internal
 volumes:
     sqldata:
         external: true
+networks:
+    internal:
+    dmz:
