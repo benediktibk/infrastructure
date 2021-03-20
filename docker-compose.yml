@@ -1,9 +1,5 @@
-version: "3.9"
+version: "3.6"
 services:
-    mssql-client:
-        environment:
-            - BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD
-        image: "benediktschmidt.at/mssql-client"
     database-server:
         environment:
             - SA_PASSWORD=$BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD
@@ -13,5 +9,5 @@ services:
     valheim:
         environment:
             - VALHEIM_SERVER_NAME=$BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_NAME
-            - VALHEIM_SERVER_NAME=$BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_PASSWORD
+            - VALHEIM_SERVER_PASSWORD=$BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_PASSWORD
         image: "benediktschmidt.at/valheim"
