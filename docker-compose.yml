@@ -8,6 +8,8 @@ services:
             - sqldata:/var/opt/mssql/data
         networks:
             - internal
+        ports:
+            - "1433:1433"
     homepage:
         image: "benediktschmidt.at/me"
         networks:
