@@ -10,7 +10,7 @@ images: environment-check
 	mkdir -p servers/valheim/build
 	cp -R ${BENEDIKTSCHMIDT_AT_VALHEIM_INSTALLATION_PATH}/* servers/valheim/build/
 	docker build -t benediktschmidt.at/valheim servers/valheim
-	docker build --build-arg BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD=${BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD} -t benediktschmidt.at/database-server servers/database-server	
+	docker build --build-arg SA_PASSWORD=${BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD} -t benediktschmidt.at/database-server servers/database-server	
 	docker build -t benediktschmidt.at/mssql-client servers/mssql-client
 	docker build -t benediktschmidt.at/me servers/homepage
 	mkdir -p servers/tester/build
