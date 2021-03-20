@@ -6,7 +6,7 @@ clean:
 	rm -Rf servers/valheim/build
 	rm -Rf servers/tester/build
 
-images: build/valheim-id.txt build/database-server-id.txt build/mssql-client-id.txt build/homepage-id.txt build/tester-id.txt
+images: build/valheim-id.txt build/database-server-id.txt build/mssql-client-id.txt build/homepage-id.txt build/tester-id.txt build/corona-id.txt
 	
 build/valheim-id.txt: servers/valheim/Dockerfile
 	mkdir -p build
@@ -37,6 +37,12 @@ build/tester-id.txt: servers/tester/Dockerfile docker-compose.yml *.env
 	cp *.env servers/tester/build/
 	docker build -t benediktschmidt.at/tester servers/tester
 	docker images --format "{{.ID}}" benediktschmidt.at/tester > $@
+	
+build/corona-id.txt: servers/corona/Dockerfile
+	mkdir -p build
+	cd servers/corona/Corona && dotnet build --configuration Release
+	docker build -t benediktschmidt.at/corona servers/corona
+	docker images --format "{{.ID}}" benediktschmidt.at/corona > $@
 		
 run-tester: images
 	docker run --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock benediktschmidt.at/tester

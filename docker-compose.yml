@@ -12,6 +12,8 @@ services:
         env_file:
             - /opt/tester/valheim.env
         image: "benediktschmidt.at/valheim"
+    corona:
+        image: "benediktschmidt.at/corona"
 volumes:
     sqldata:
         external: true
