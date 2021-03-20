@@ -6,12 +6,12 @@ clean:
 	rm -Rf servers/valheim/build
 	rm -Rf servers/tester/build
 
-images: environment-check build/valheim-id.txt build/database-server-id.txt build/mssql-client-id.txt build/homepage-id.txt
+images: build/valheim-id.txt build/database-server-id.txt build/mssql-client-id.txt build/homepage-id.txt build/tester-id.txt
 	
 build/valheim-id.txt: servers/valheim/Dockerfile
 	mkdir -p build
 	mkdir -p servers/valheim/build
-	cp -R ${BENEDIKTSCHMIDT_AT_VALHEIM_INSTALLATION_PATH}/* servers/valheim/build/
+	cp -R "~/.local/share/Steam/steamapps/common/Valheim\ dedicated\ server/*" servers/valheim/build/
 	docker build -t benediktschmidt.at/valheim servers/valheim
 	docker images --format "{{.ID}}" benediktschmidt.at/valheim > $@
 	
@@ -30,30 +30,13 @@ build/homepage-id.txt: servers/homepage/Dockerfile
 	docker build -t benediktschmidt.at/me servers/homepage
 	docker images --format "{{.ID}}" benediktschmidt.at/homepage > $@
 	
-build/tester-id.txt: servers/tester/Dockerfile
+build/tester-id.txt: servers/tester/Dockerfile docker-compose.yml *.env
 	mkdir -p build
 	mkdir -p servers/tester/build
 	cp docker-compose.yml servers/tester/build/
-	cp environment servers/tester/build/
+	cp *.env servers/tester/build/
 	docker build -t benediktschmidt.at/tester servers/tester
 	docker images --format "{{.ID}}" benediktschmidt.at/tester > $@
 		
 run-tester: images
 	docker run --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock benediktschmidt.at/tester
-	
-environment-check:
-ifndef BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD
-	$(error BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD is undefined)
-endif
-ifndef BENEDIKTSCHMIDT_AT_CA_PRIVATE_KEYS
-	$(error BENEDIKTSCHMIDT_AT_CA_PRIVATE_KEYS is undefined)
-endif
-ifndef BENEDIKTSCHMIDT_AT_VALHEIM_INSTALLATION_PATH
-	$(error BENEDIKTSCHMIDT_AT_VALHEIM_INSTALLATION_PATH is undefined)
-endif
-ifndef BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_NAME
-	$(error BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_NAME is undefined)
-endif
-ifndef BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_PASSWORD
-	$(error BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_PASSWORD is undefined)
-endif

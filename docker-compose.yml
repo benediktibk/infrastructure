@@ -1,13 +1,12 @@
 version: "3.6"
 services:
     database-server:
-        environment:
-            - SA_PASSWORD=$BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD
+        env_file:
+            - /opt/tester/sql.env
         image: "benediktschmidt.at/database-server"
     homepage:
         image: "benediktschmidt.at/me"
     valheim:
-        environment:
-            - VALHEIM_SERVER_NAME=$BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_NAME
-            - VALHEIM_SERVER_PASSWORD=$BENEDIKTSCHMIDT_AT_VALHEIM_SERVER_PASSWORD
+        env_file:
+            - /opt/tester/valheim.env
         image: "benediktschmidt.at/valheim"

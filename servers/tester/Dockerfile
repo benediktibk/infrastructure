@@ -6,6 +6,5 @@ RUN apt install -y docker-compose
 RUN apt install -y nano
 RUN mkdir -p /opt/tester
 COPY build/docker-compose.yml /opt/tester/
-COPY build/environment /opt/tester/
-RUN /bin/bash -c "source /opt/tester/environment"
+COPY build/*.env /opt/tester/
 CMD docker-compose -f /opt/tester/docker-compose.yml up
