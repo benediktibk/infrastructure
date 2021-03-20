@@ -6,10 +6,7 @@ clean:
 	rm -Rf servers/valheim/build
 	rm -Rf servers/tester/build
 
-images: environment-check
-	mkdir -p servers/valheim/build
-	cp -R ${BENEDIKTSCHMIDT_AT_VALHEIM_INSTALLATION_PATH}/* servers/valheim/build/
-	docker build -t benediktschmidt.at/valheim servers/valheim
+images: environment-check build/valheim-id.txt
 	docker build --build-arg SA_PASSWORD=${BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD} -t benediktschmidt.at/database-server servers/database-server	
 	docker build -t benediktschmidt.at/mssql-client servers/mssql-client
 	docker build -t benediktschmidt.at/me servers/homepage
@@ -17,6 +14,13 @@ images: environment-check
 	cp docker-compose.yml servers/tester/build/
 	cp environment servers/tester/build/
 	docker build -t benediktschmidt.at/tester servers/tester
+	
+build/valheim-id.txt: servers/valheim/Dockerfile
+	mkdir -p build
+	mkdir -p servers/valheim/build
+	cp -R ${BENEDIKTSCHMIDT_AT_VALHEIM_INSTALLATION_PATH}/* servers/valheim/build/
+	docker build -t benediktschmidt.at/valheim servers/valheim
+	docker images --format "{{.ID}}" benediktschmidt.at/valheim > build/valheim-id.txt
 		
 run-tester: images environment-check
 	docker run --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock benediktschmidt.at/tester
