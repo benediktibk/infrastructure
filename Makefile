@@ -4,8 +4,9 @@ all: environment-check images
 
 clean:
 	rm -Rf servers/valheim/build
+	rm -Rf servers/tester/build
 
-images:
+images: environment-check
 	mkdir -p servers/valheim/build
 	cp -R ${BENEDIKTSCHMIDT_AT_VALHEIM_INSTALLATION_PATH}/* servers/valheim/build/
 	docker build -t benediktschmidt.at/valheim servers/valheim
@@ -18,7 +19,7 @@ images:
 	docker build -t benediktschmidt.at/tester servers/tester
 		
 run-tester: images environment-check
-	docker run -v /var/run/docker.sock:/var/run/docker.sock benediktschmidt.at/tester
+	docker run --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock benediktschmidt.at/tester
 	
 environment-check:
 ifndef BENEDIKTSCHMIDT_AT_SQL_SA_PASSWORD
