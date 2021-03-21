@@ -23,6 +23,8 @@ services:
         networks:
             - internal
     corona:
+        env_file:
+            - /opt/tester/corona.env
         image: "benediktschmidt.at/corona"
         networks:
             - internal

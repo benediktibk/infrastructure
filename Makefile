@@ -26,7 +26,7 @@ init-data: servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/Updater.dll b
 	
 ############ container	
 
-images: build/valheim-id.txt build/database-server-id.txt build/mssql-client-id.txt build/homepage-id.txt build/tester-id.txt build/corona-id.txt
+images: build/valheim-id.txt build/database-server-id.txt build/homepage-id.txt build/tester-id.txt build/corona-id.txt
 	
 build/valheim-id.txt: servers/valheim/Dockerfile
 	mkdir -p build
@@ -39,11 +39,6 @@ build/database-server-id.txt: servers/database-server/Dockerfile
 	mkdir -p build
 	docker build -t benediktschmidt.at/database-server servers/database-server
 	docker images --format "{{.ID}}" benediktschmidt.at/database-server > $@
-	
-build/mssql-client-id.txt: servers/mssql-client/Dockerfile
-	mkdir -p build
-	docker build -t benediktschmidt.at/mssql-client servers/mssql-client
-	docker images --format "{{.ID}}" benediktschmidt.at/mssql-client > $@
 	
 build/homepage-id.txt: servers/homepage/Dockerfile
 	mkdir -p build
@@ -58,7 +53,7 @@ build/tester-id.txt: servers/tester/Dockerfile docker-compose.yml build/sql.env 
 	docker build -t benediktschmidt.at/tester servers/tester
 	docker images --format "{{.ID}}" benediktschmidt.at/tester > $@
 	
-build/corona-id.txt: servers/corona/Dockerfile servers/corona/Corona/CoronaSpreadViewer/bin/Release/netcoreapp5.0/CoronaSpreadViewer.dll servers/corona/build/appsettings.json
+build/corona-id.txt: servers/corona/Dockerfile servers/corona/Corona/CoronaSpreadViewer/bin/Release/netcoreapp5.0/CoronaSpreadViewer.dll
 	mkdir -p build
 	docker build -t benediktschmidt.at/corona servers/corona
 	docker images --format "{{.ID}}" benediktschmidt.at/corona > $@
@@ -75,12 +70,11 @@ build/valheim.env: valheim.env.in build/secrets/passwords/valheim
 	cp $< $@
 	$(eval SERVER_PASSWORD := $(shell cat build/secrets/passwords/valheim))
 	sed -i "s/##SERVER_PASSWORD##/$(SERVER_PASSWORD)/g" $@
-	
-servers/corona/build/appsettings.json: servers/corona/appsettings.json.in build/secrets/passwords/db_corona
-	mkdir -p servers/corona/build
+
+build/corona.env: corona.env.in build/secrets/passwords/db_corona
 	cp $< $@
-	$(eval DBPASSWORD := $(shell cat build/secrets/passwords/db_corona))
-	sed -i "s/##DBPASSWORD##/$(DBPASSWORD)/g" $@
+	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
+	sed -i "s/##DBCORONAPASSWORD##/${DBCORONAPASSWORD}/g" $@
 
 
 ############ apps

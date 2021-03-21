@@ -1,7 +1,11 @@
 #!/bin/bash
 
 SAPASSWORD=$(cat build/secrets/passwords/db_sa)
-DBCORONAPASSWORD=$(cat build/secrets/passwords/db_corona)
+export DBPASSWORD=$(cat build/secrets/passwords/db_corona)
+export DBUSER="Corona"
+export DBHOST="localhost"
+export DBNAME="Corona"
+export LOCALTEMPPATH="/tmp/corona/data"
 
 echo "startup database"
 CONTAINERID=$(docker run -d --mount "type=volume,source=sqldata,target=/var/opt/mssql/data" --env-file build/sql.env -p 1433:1433 benediktschmidt.at/database-server)
@@ -11,9 +15,9 @@ echo "waiting for database to finish startup"
 sleep 10s
 
 echo "create database Corona und login"
-sqlcmd -S localhost -U sa -P $SAPASSWORD -Q "CREATE DATABASE Corona;"
-sqlcmd -S localhost -U sa -P $SAPASSWORD -Q "CREATE LOGIN Corona WITH PASSWORD = \"$DBCORONAPASSWORD\", CHECK_EXPIRATION = OFF, CHECK_POLICY = OFF;"
-sqlcmd -S localhost -U sa -P $SAPASSWORD -Q "ALTER AUTHORIZATION ON DATABASE::Corona TO Corona;"
+sqlcmd -S localhost -U sa -P $SAPASSWORD -Q "CREATE DATABASE $DBNAME;"
+sqlcmd -S localhost -U sa -P $SAPASSWORD -Q "CREATE LOGIN $DBUSER WITH PASSWORD = \"$DBPASSWORD\", CHECK_EXPIRATION = OFF, CHECK_POLICY = OFF;"
+sqlcmd -S localhost -U sa -P $SAPASSWORD -Q "ALTER AUTHORIZATION ON DATABASE::$DBNAME TO $DBUSER;"
 
 echo "execute database initialization of corona updater"
 mkdir -p /tmp/corona/
