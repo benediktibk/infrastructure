@@ -21,7 +21,7 @@ clean-data:
 	
 init-data: servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/Updater.dll build/database-server-id.txt build/sql.env
 	docker volume create sqldata
-	ID='docker run -d --mount "type=volume,source=sqldata,target=/var/opt/mssql/data" --env-file build/sql.env benediktschmidt.at/database-server' && dotnet $< && docker stop $ID
+	./initialize-database.sh
 	
 	
 ############ container	
@@ -68,16 +68,19 @@ build/corona-id.txt: servers/corona/Dockerfile servers/corona/Corona/CoronaSprea
 	
 build/sql.env: sql.env.in build/secrets/passwords/db_sa
 	cp $< $@
-	SA_PASSWORD='cat $(build/secrets/passwords/db_sa)' && sed -i "s/##SA_PASSWORD##/$SA_PASSWORD/g" $@
+	$(eval SA_PASSWORD := $(shell cat build/secrets/passwords/db_sa))
+	sed -i "s/##SA_PASSWORD##/${SA_PASSWORD}/g" $@
 
 build/valheim.env: valheim.env.in build/secrets/passwords/valheim
 	cp $< $@
-	SERVER_PASSWORD='cat $(build/secrets/passwords/valheim)' && sed -i "s/##SERVER_PASSWORD##/$SERVER_PASSWORD/g" $@
+	$(eval SERVER_PASSWORD := $(shell cat build/secrets/passwords/valheim))
+	sed -i "s/##SERVER_PASSWORD##/$(SERVER_PASSWORD)/g" $@
 	
 servers/corona/build/appsettings.json: servers/corona/appsettings.json.in build/secrets/passwords/db_corona
 	mkdir -p servers/corona/build
 	cp $< $@
-	DBPASSWORD='cat $(build/secrets/passwords/db_corona)' && sed -i "s/##DBPASSWORD##/$DBPASSWORD/g" $@
+	$(eval DBPASSWORD := $(shell cat build/secrets/passwords/db_corona))
+	sed -i "s/##DBPASSWORD##/$(DBPASSWORD)/g" $@
 
 
 ############ apps
