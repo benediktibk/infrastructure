@@ -45,7 +45,7 @@ build/homepage-id.txt: servers/homepage/Dockerfile
 	docker build -t benediktschmidt.at/me servers/homepage
 	docker images --format "{{.ID}}" benediktschmidt.at/homepage > $@
 	
-build/tester-id.txt: servers/tester/Dockerfile docker-compose.yml build/sql.env build/valheim.env
+build/tester-id.txt: servers/tester/Dockerfile docker-compose.yml build/sql.env build/valheim.env build/corona.env
 	mkdir -p build
 	mkdir -p servers/tester/build
 	cp docker-compose.yml servers/tester/build/

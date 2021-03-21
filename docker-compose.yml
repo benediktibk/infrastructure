@@ -28,6 +28,8 @@ services:
         image: "benediktschmidt.at/corona"
         networks:
             - internal
+        ports:
+            - "8080:5000"
 volumes:
     sqldata:
         external: true
