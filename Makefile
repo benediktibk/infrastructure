@@ -5,6 +5,7 @@ all: images
 clean:
 	rm -Rf servers/valheim/build
 	rm -Rf servers/tester/build
+	rm -Rf build
 
 images: build/valheim-id.txt build/database-server-id.txt build/mssql-client-id.txt build/homepage-id.txt build/tester-id.txt build/corona-id.txt
 	
@@ -46,3 +47,9 @@ build/corona-id.txt: servers/corona/Dockerfile
 		
 run-tester: images
 	docker run --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock benediktschmidt.at/tester
+	
+build/secrets/README.md: secrets.tar.gz.enc
+	openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
+	
+secrets:
+	tar cz build/secrets | openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -e > secrets.tar.gz.enc
