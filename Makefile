@@ -44,7 +44,7 @@ build/tester-id.txt: servers/tester/Dockerfile docker-compose.yml build/sql.env 
 	docker build -t benediktschmidt.at/tester servers/tester
 	docker images --format "{{.ID}}" benediktschmidt.at/tester > $@
 	
-build/corona-id.txt: servers/corona/Dockerfile servers/corona/Corona/CoronaSpreadViewer/bin/Release/netcoreapp5.0/CoronaSpreadViewer.dll
+build/corona-id.txt: servers/corona/Dockerfile servers/corona/Corona/CoronaSpreadViewer/bin/Release/netcoreapp5.0/CoronaSpreadViewer.dll servers/corona/build/appsettings.json
 	mkdir -p build
 	docker build -t benediktschmidt.at/corona servers/corona
 	docker images --format "{{.ID}}" benediktschmidt.at/corona > $@
