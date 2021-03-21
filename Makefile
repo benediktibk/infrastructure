@@ -31,11 +31,11 @@ build/homepage-id.txt: servers/homepage/Dockerfile
 	docker build -t benediktschmidt.at/me servers/homepage
 	docker images --format "{{.ID}}" benediktschmidt.at/homepage > $@
 	
-build/tester-id.txt: servers/tester/Dockerfile docker-compose.yml *.env
+build/tester-id.txt: servers/tester/Dockerfile docker-compose.yml build/sql.env build/valheim.env
 	mkdir -p build
 	mkdir -p servers/tester/build
 	cp docker-compose.yml servers/tester/build/
-	cp *.env servers/tester/build/
+	cp build/*.env servers/tester/build/
 	docker build -t benediktschmidt.at/tester servers/tester
 	docker images --format "{{.ID}}" benediktschmidt.at/tester > $@
 	
@@ -44,6 +44,14 @@ build/corona-id.txt: servers/corona/Dockerfile
 	cd servers/corona/Corona && dotnet build --configuration Release
 	docker build -t benediktschmidt.at/corona servers/corona
 	docker images --format "{{.ID}}" benediktschmidt.at/corona > $@
+	
+build/sql.env: sql.env.in 
+	cp $< $@
+	SA_PASSWORD='cat $(build/secrets/passwords/db_sa)' && sed -i "s/##SA_PASSWORD##/$SA_PASSWORD/g" $@
+
+build/valheim.env: valheim.env.in 
+	cp $< $@
+	SERVER_PASSWORD='cat $(build/secrets/passwords/valheim)' && sed -i "s/##SERVER_PASSWORD##/$SERVER_PASSWORD/g" $@
 		
 run-tester: images
 	docker run --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock benediktschmidt.at/tester
