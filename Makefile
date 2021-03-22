@@ -12,8 +12,8 @@ clean:
 	rm -Rf servers/corona/build
 	rm -Rf build
 	cd servers/corona/Corona && dotnet clean
-	find servers/corona/Corona/ -type d -name "bin" -exec rm -rf {} \;
-	find servers/corona/Corona/ -type d -name "obj" -exec rm -rf {} \;
+	find servers/corona/Corona/ -type d -name "bin" -exec rm -rf {} +
+	find servers/corona/Corona/ -type d -name "obj" -exec rm -rf {} +
 	
 run-tester: images
 	docker run --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock benediktschmidt.at/tester
