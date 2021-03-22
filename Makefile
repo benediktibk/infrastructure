@@ -12,6 +12,8 @@ clean:
 	rm -Rf servers/corona/build
 	rm -Rf build
 	cd servers/corona/Corona && dotnet clean
+	find servers/corona/Corona/ -type d -name "bin" -exec rm -rf {} \;
+	find servers/corona/Corona/ -type d -name "obj" -exec rm -rf {} \;
 	
 run-tester: images
 	docker run --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock benediktschmidt.at/tester
@@ -19,7 +21,7 @@ run-tester: images
 clean-data:
 	docker volume rm sqldata
 	
-init-data: servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/Updater.dll build/database-server-id.txt build/sql.env
+init-data: servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/publish/Updater.dll build/database-server-id.txt build/sql.env
 	docker volume create sqldata
 	./initialize-database.sh
 	
@@ -53,7 +55,7 @@ build/tester-id.txt: servers/tester/Dockerfile docker-compose.yml build/sql.env 
 	docker build -t benediktschmidt.at/tester servers/tester
 	docker images --format "{{.ID}}" benediktschmidt.at/tester > $@
 	
-build/corona-id.txt: servers/corona/Dockerfile servers/corona/Corona/CoronaSpreadViewer/bin/Release/netcoreapp5.0/CoronaSpreadViewer.dll
+build/corona-id.txt: servers/corona/Dockerfile servers/corona/Corona/CoronaSpreadViewer/bin/Release/netcoreapp5.0/publish/CoronaSpreadViewer.dll
 	mkdir -p build
 	docker build -t benediktschmidt.at/corona servers/corona
 	docker images --format "{{.ID}}" benediktschmidt.at/corona > $@
@@ -79,14 +81,12 @@ build/corona.env: corona.env.in build/secrets/passwords/db_corona
 
 ############ apps
 
-servers/corona/Corona/CoronaSpreadViewer/bin/Release/netcoreapp5.0/CoronaSpreadViewer.dll: $(shell find servers/corona/Corona/ -type f -not -path "*/bin/*" -not -path "*/obj/*" -name "*") servers/corona/build/appsettings.json
-	cd servers/corona/Corona/CoronaSpreadViewer && dotnet build --configuration Release
-	cp servers/corona/build/appsettings.json servers/corona/Corona/CoronaSpreadViewer/bin/Release/netcoreapp5.0/
+servers/corona/Corona/CoronaSpreadViewer/bin/Release/netcoreapp5.0/publish/CoronaSpreadViewer.dll: $(shell find servers/corona/Corona/ -type f -not -path "*/bin/*" -not -path "*/obj/*" -name "*")
+	cd servers/corona/Corona/CoronaSpreadViewer && dotnet publish --configuration Release
 	touch $@
 	
-servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/Updater.dll: $(shell find servers/corona/Corona -type f -not -path "*/bin/*" -not -path "*/obj/*" -name "*") servers/corona/build/appsettings.json
-	cd servers/corona/Corona/Updater && dotnet build --configuration Release
-	cp servers/corona/build/appsettings.json servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/
+servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/publish/Updater.dll: $(shell find servers/corona/Corona -type f -not -path "*/bin/*" -not -path "*/obj/*" -name "*")
+	cd servers/corona/Corona/Updater && dotnet publish --configuration Release
 	touch $@
 
 	

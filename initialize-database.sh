@@ -21,7 +21,7 @@ sqlcmd -S localhost -U sa -P $SAPASSWORD -Q "ALTER AUTHORIZATION ON DATABASE::$D
 
 echo "execute database initialization of corona updater"
 mkdir -p /tmp/corona/
-dotnet servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/Updater.dll
+dotnet servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/publish/Updater.dll
 
 echo "stop database container"
 docker stop $CONTAINERID
