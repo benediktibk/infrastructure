@@ -32,9 +32,5 @@ executeSqlCommand "CREATE DATABASE $DBNAME;"
 executeSqlCommand "CREATE LOGIN $DBUSER WITH PASSWORD = \"$DBPASSWORD\", CHECK_EXPIRATION = OFF, CHECK_POLICY = OFF;"
 executeSqlCommand "ALTER AUTHORIZATION ON DATABASE::$DBNAME TO $DBUSER;"
 
-echo "execute database initialization of corona updater"
-mkdir -p /tmp/corona/
-env $(cat build/corona.env | xargs) dotnet build/servers/corona/updater/bin/Updater.dll
-
 echo "stop database container"
 docker stop $CONTAINERID

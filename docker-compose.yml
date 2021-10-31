@@ -22,18 +22,30 @@ services:
         image: "benediktschmidt.at/valheim"
         networks:
             - internal
-    corona:
+    corona-viewer:
         environment:
             - DBHOST=database-server
         env_file:
             - build/corona.env
-        image: "benediktschmidt.at/corona"
+        image: "benediktschmidt.at/corona-viewer"
         networks:
             - internal
         ports:
             - "8080:80"
+    corona-updater:
+        environment:
+            - DBHOST=database-server
+        env_file:
+            - build/corona.env
+        image: "benediktschmidt.at/corona-updater"
+        volumes:
+            - coronadata:/tmp/corona
+        networks:
+            - internal
 volumes:
     sqldata:
+        external: true
+    coronadata:
         external: true
 networks:
     internal:

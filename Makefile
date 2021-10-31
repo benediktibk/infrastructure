@@ -18,9 +18,11 @@ run-locally: images $(ENVIRONMENTFILES)
 clean-data: $(ENVIRONMENTFILES)
 	docker rm -f $(shell docker ps -a -q)
 	docker volume rm sqldata
+	docker volume rm coronadata
 	
-init-data: build/servers/corona/updater/bin/Updater.dll build/database-server-id.txt build/sql.env
+init-data: build/database-server-id.txt build/sql.env
 	docker volume create sqldata
+	docker volume create coronadata
 	./initialize-database.sh
 
 build/guard:
@@ -45,7 +47,7 @@ tests:
 	 
 ############ container	
 
-images: build/valheim-id.txt build/database-server-id.txt build/homepage-id.txt build/corona-id.txt
+images: build/valheim-id.txt build/database-server-id.txt build/homepage-id.txt build/corona-viewer-id.txt build/corona-updater-id.txt
 	
 build/valheim-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-valheim
 	cp dockerfiles/Dockerfile-valheim build/servers/valheim/Dockerfile
@@ -65,10 +67,17 @@ build/homepage-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-homepage
 	docker build -t benediktschmidt.at/me build/servers/homepage
 	docker images --format "{{.ID}}" benediktschmidt.at/homepage > $@
 	
-build/corona-id.txt: $(COMMONDEPS) build/servers/corona/viewer/bin/CoronaSpreadViewer.dll dockerfiles/Dockerfile-corona
-	cp dockerfiles/Dockerfile-corona build/servers/corona/viewer/Dockerfile
-	docker build -t benediktschmidt.at/corona build/servers/corona/viewer
-	docker images --format "{{.ID}}" benediktschmidt.at/corona > $@
+build/corona-viewer-id.txt: $(COMMONDEPS) build/servers/corona/viewer/bin/CoronaSpreadViewer.dll dockerfiles/Dockerfile-corona-viewer
+	cp dockerfiles/Dockerfile-corona-viewer build/servers/corona/viewer/Dockerfile
+	docker build -t benediktschmidt.at/corona-viewer build/servers/corona/viewer
+	docker images --format "{{.ID}}" benediktschmidt.at/corona-viewer > $@
+
+build/corona-updater-id.txt: $(COMMONDEPS) build/servers/corona/updater/bin/Updater.dll dockerfiles/Dockerfile-corona-updater
+	cp dockerfiles/Dockerfile-corona-updater build/servers/corona/updater/Dockerfile
+	cp corona-updater.sh build/servers/corona/updater/
+	docker build -t benediktschmidt.at/corona-updater build/servers/corona/updater
+	docker images --format "{{.ID}}" benediktschmidt.at/corona-updater > $@
+	
 	
 
 ############ environment definitions
