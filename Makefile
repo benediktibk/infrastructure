@@ -8,13 +8,7 @@ SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 all: images
 
 clean:
-	rm -Rf servers/valheim/build
-	rm -Rf servers/tester/build
-	rm -Rf servers/corona/build
-	rm -Rf build
-	cd servers/corona/Corona && dotnet clean
-	find servers/corona/Corona/ -type d -name "bin" -exec rm -rf {} +
-	find servers/corona/Corona/ -type d -name "obj" -exec rm -rf {} +
+	git clean -xdff
 	
 run-tester: images
 	docker run --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock benediktschmidt.at/tester
