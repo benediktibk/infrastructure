@@ -84,17 +84,17 @@ build/corona-updater-id.txt: $(COMMONDEPS) build/servers/corona/updater/bin/Upda
 
 ############ environment definitions
 	
-build/sql.env: sql.env.in build/secrets/passwords/db_sa $(COMMONDEPS)
+build/sql.env: environments/sql.env.in build/secrets/passwords/db_sa $(COMMONDEPS)
 	cp $< $@
 	$(eval SA_PASSWORD := $(shell cat build/secrets/passwords/db_sa))
 	sed -i "s/##SA_PASSWORD##/${SA_PASSWORD}/g" $@
 
-build/valheim.env: valheim.env.in build/secrets/passwords/valheim $(COMMONDEPS)
+build/valheim.env: environments/valheim.env.in build/secrets/passwords/valheim $(COMMONDEPS)
 	cp $< $@
 	$(eval SERVER_PASSWORD := $(shell cat build/secrets/passwords/valheim))
 	sed -i "s/##SERVER_PASSWORD##/$(SERVER_PASSWORD)/g" $@
 
-build/corona.env: corona.env.in build/secrets/passwords/db_corona $(COMMONDEPS)
+build/corona.env: environments/corona.env.in build/secrets/passwords/db_corona $(COMMONDEPS)
 	cp $< $@
 	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
 	sed -i "s/##DBCORONAPASSWORD##/${DBCORONAPASSWORD}/g" $@
