@@ -1,8 +1,9 @@
 #!/usr/bin/make -f
 
-SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
+SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
+SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 
-############ genral
+############ general
 
 all: images
 
@@ -25,7 +26,8 @@ init-data: servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/publish/Updat
 	docker volume create sqldata
 	./initialize-database.sh
 	
-	
+.PHONY: all clean init-data clean-data run-tester images secrets-encrypt build/secrets.tar.gz
+	 
 ############ container	
 
 images: build/valheim-id.txt build/database-server-id.txt build/homepage-id.txt build/tester-id.txt build/corona-id.txt
@@ -91,15 +93,22 @@ servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/publish/Updater.dll: $(s
 
 	
 ############ secrets
-	
-build/secrets/passwords/db_sa: secrets.tar.gz.enc
+
+secrets-encrypt: build/secrets.tar.gz
 	$(SECRETSENCRYPT)
+
+build/secrets.tar.gz:
+	rm -f $@
+	tar -czvf $@ build/secrets
+
+build/secrets/passwords/db_sa: secrets.tar.gz.enc
+	$(SECRETSDECRYPT)
 	touch --no-create build/secrets/passwords/*
 	
 build/secrets/passwords/db_corona: secrets.tar.gz.enc
-	$(SECRETSENCRYPT)
+	$(SECRETSDECRYPT)
 	touch --no-create build/secrets/passwords/*
 	
 build/secrets/passwords/valheim: secrets.tar.gz.enc
-	$(SECRETSENCRYPT)
+	$(SECRETSDECRYPT)
 	touch --no-create build/secrets/passwords/*
