@@ -1,0 +1,10 @@
+FROM nginx
+COPY bin/me/*.png /usr/share/nginx/html/
+COPY bin/me/*.xml /usr/share/nginx/html/
+COPY bin/me/*.svg /usr/share/nginx/html/
+COPY bin/me/*.ico /usr/share/nginx/html/
+COPY bin/me/*.html /usr/share/nginx/html/
+COPY bin/me/*.json /usr/share/nginx/html/
+COPY bin/me/css /usr/share/nginx/html/css
+COPY bin/me/data /usr/share/nginx/html/data
+COPY bin/me/pic /usr/share/nginx/html/pic

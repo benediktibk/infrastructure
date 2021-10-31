@@ -34,7 +34,7 @@ executeSqlCommand "ALTER AUTHORIZATION ON DATABASE::$DBNAME TO $DBUSER;"
 
 echo "execute database initialization of corona updater"
 mkdir -p /tmp/corona/
-dotnet servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/publish/Updater.dll
+dotnet build/servers/corona/updater/Updater.dll
 
 echo "stop database container"
 docker stop $CONTAINERID
