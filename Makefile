@@ -7,7 +7,7 @@ ENVIRONMENTFILES := build/sql.env build/valheim.env build/corona.env
 
 ############ general
 
-all: images
+all: images tests
 
 clean:
 	git clean -xdff
@@ -37,8 +37,11 @@ build/guard:
 	mkdir -p build/servers/valheim
 	mkdir -p build/servers/valheim/bin
 	touch $@
+
+tests:
+	cd servers/corona/Corona && dotnet test
 	
-.PHONY: all clean init-data clean-data run-locally images secrets-encrypt build/secrets.tar.gz
+.PHONY: all clean init-data clean-data run-locally images secrets-encrypt build/secrets.tar.gz tests
 	 
 ############ container	
 
