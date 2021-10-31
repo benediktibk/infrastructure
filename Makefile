@@ -19,10 +19,12 @@ clean-data: $(ENVIRONMENTFILES)
 	docker rm -f $(shell docker ps -a -q)
 	docker volume rm sqldata
 	docker volume rm coronadata
+	docker volume rm valheimdata
 	
 init-data: build/database-server-id.txt build/sql.env
 	docker volume create sqldata
 	docker volume create coronadata
+	docker volume create valheimdata
 	./initialize-database.sh
 
 build/guard:

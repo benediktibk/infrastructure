@@ -2,6 +2,6 @@
 
 while :
 do
-    dotnet Updater.dll
     sleep 1h
+    dotnet Updater.dll
 done

@@ -20,6 +20,8 @@ services:
         env_file:
             - build/valheim.env
         image: "benediktschmidt.at/valheim"
+        volumes:
+            - valheimdata:/srv/valheim
         networks:
             - internal
     corona-viewer:
@@ -46,6 +48,8 @@ volumes:
     sqldata:
         external: true
     coronadata:
+        external: true
+    valheimdata:
         external: true
 networks:
     internal:

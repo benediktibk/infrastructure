@@ -1,5 +1,5 @@
-FROM alpine
-RUN apk add libc6-compat libgcc gcompat
+FROM debian:stable
 COPY bin/ /opt/valheim/
 COPY start_server.sh /opt/valheim/start_server.sh
-CMD ["/opt/valheim/start_server.sh"] 
+WORKDIR /opt/valheim/
+CMD ["/bin/bash", "start_server.sh"] 
