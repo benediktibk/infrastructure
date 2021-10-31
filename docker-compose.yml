@@ -2,7 +2,7 @@ version: "3.6"
 services:
     database-server:
         env_file:
-            - /opt/tester/sql.env
+            - build/sql.env
         image: "benediktschmidt.at/database-server"
         volumes:
             - sqldata:/var/opt/mssql/data
@@ -18,13 +18,13 @@ services:
             - "80:80"
     valheim:
         env_file:
-            - /opt/tester/valheim.env
+            - build/valheim.env
         image: "benediktschmidt.at/valheim"
         networks:
             - internal
     corona:
         env_file:
-            - /opt/tester/corona.env
+            - build/corona.env
         image: "benediktschmidt.at/corona"
         networks:
             - internal

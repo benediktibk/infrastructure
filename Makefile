@@ -10,8 +10,8 @@ all: images
 clean:
 	git clean -xdff
 	
-run-tester: images
-	docker run --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock benediktschmidt.at/tester
+run-locally: images
+	docker-compose -f docker-compose.yml up
 	
 clean-data:
 	docker volume rm sqldata
@@ -20,7 +20,7 @@ init-data: servers/corona/Corona/Updater/bin/Release/netcoreapp5.0/publish/Updat
 	docker volume create sqldata
 	./initialize-database.sh
 	
-.PHONY: all clean init-data clean-data run-tester images secrets-encrypt build/secrets.tar.gz
+build/guard:
 	 
 ############ container	
 
