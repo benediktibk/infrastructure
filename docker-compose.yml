@@ -23,6 +23,8 @@ services:
         networks:
             - internal
     corona:
+        environment:
+            - DBHOST=database-server
         env_file:
             - build/corona.env
         image: "benediktschmidt.at/corona"
