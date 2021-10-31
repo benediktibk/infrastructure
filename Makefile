@@ -3,6 +3,7 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile
+ENVIRONMENTFILES := build/sql.env build/valheim.env build/corona.env
 
 ############ general
 
@@ -11,10 +12,10 @@ all: images
 clean:
 	git clean -xdff
 	
-run-locally: images
+run-locally: images $(ENVIRONMENTFILES)
 	docker-compose -f docker-compose.yml up
 	
-clean-data:
+clean-data: $(ENVIRONMENTFILES)
 	docker rm -f $(shell docker ps -a -q)
 	docker volume rm sqldata
 	
@@ -69,17 +70,17 @@ build/corona-id.txt: $(COMMONDEPS) build/servers/corona/viewer/bin/CoronaSpreadV
 
 ############ environment definitions
 	
-build/sql.env: $(COMMONDEPS) sql.env.in build/secrets/passwords/db_sa
+build/sql.env: sql.env.in build/secrets/passwords/db_sa $(COMMONDEPS)
 	cp $< $@
 	$(eval SA_PASSWORD := $(shell cat build/secrets/passwords/db_sa))
 	sed -i "s/##SA_PASSWORD##/${SA_PASSWORD}/g" $@
 
-build/valheim.env: $(COMMONDEPS) valheim.env.in build/secrets/passwords/valheim
+build/valheim.env: valheim.env.in build/secrets/passwords/valheim $(COMMONDEPS)
 	cp $< $@
 	$(eval SERVER_PASSWORD := $(shell cat build/secrets/passwords/valheim))
 	sed -i "s/##SERVER_PASSWORD##/$(SERVER_PASSWORD)/g" $@
 
-build/corona.env: $(COMMONDEPS) corona.env.in build/secrets/passwords/db_corona
+build/corona.env: corona.env.in build/secrets/passwords/db_corona $(COMMONDEPS)
 	cp $< $@
 	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
 	sed -i "s/##DBCORONAPASSWORD##/${DBCORONAPASSWORD}/g" $@
