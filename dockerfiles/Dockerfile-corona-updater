@@ -2,8 +2,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0
 COPY ./bin/. App/
 COPY corona-updater.sh App/
 RUN mkdir -p /tmp/corona
-RUN apt update
-RUN apt -y install git
+RUN apt-get update && apt-get -y install git
 WORKDIR /App
 ENTRYPOINT ["/bin/bash"]
 CMD ["/App/corona-updater.sh"]
