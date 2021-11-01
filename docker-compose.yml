@@ -55,12 +55,20 @@ services:
                     - downloads.reverse-proxy
         ports:
             - "80:80"
+    downloads:
+        image: "benediktschmidt.at/downloads"
+        volumes:
+            - downloadsdata:/srv/downloads
+        networks:
+            - internal
 volumes:
     sqldata:
         external: true
     coronadata:
         external: true
     valheimdata:
+        external: true
+    downloadsdata:
         external: true
 networks:
     internal:

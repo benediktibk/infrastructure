@@ -4,15 +4,17 @@ SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile
 ENVIRONMENTFILES := build/sql.env build/valheim.env build/corona.env
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater reverse-proxy downloads
+IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 
 ############ general
 
-all: images tests
+all: $(IMAGEIDS) tests
 
 clean:
 	git clean -xdff
 	
-run-locally: images $(ENVIRONMENTFILES)
+run-locally: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	docker-compose -f docker-compose.yml up
 	
 clean-data: $(ENVIRONMENTFILES)
@@ -20,11 +22,13 @@ clean-data: $(ENVIRONMENTFILES)
 	docker volume rm sqldata
 	docker volume rm coronadata
 	docker volume rm valheimdata
+	docker volume rm downloadsdata
 	
 init-data: build/database-server-id.txt build/sql.env
 	docker volume create sqldata
 	docker volume create coronadata
 	docker volume create valheimdata
+	docker volume create downloadsdata
 	./initialize-database.sh
 
 build/guard: Makefile
@@ -41,16 +45,15 @@ build/guard: Makefile
 	mkdir -p build/servers/valheim
 	mkdir -p build/servers/valheim/bin
 	mkdir -p build/servers/reverse-proxy
+	mkdir -p build/servers/downloads
 	touch $@
 
 tests:
 	cd servers/corona/Corona && dotnet test
 	
-.PHONY: all clean init-data clean-data run-locally images secrets-encrypt build/secrets.tar.gz tests
+.PHONY: all clean init-data clean-data run-locally secrets-encrypt build/secrets.tar.gz tests
 	 
-############ container	
-
-images: build/valheim-id.txt build/database-server-id.txt build/homepage-id.txt build/corona-viewer-id.txt build/corona-updater-id.txt build/reverse-proxy-id.txt
+############ container
 	
 build/valheim-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-valheim
 	cp dockerfiles/Dockerfile-valheim build/servers/valheim/Dockerfile
@@ -87,6 +90,12 @@ build/reverse-proxy-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-reverse-proxy s
 	cp servers/reverse-proxy/nginx-start.sh build/servers/reverse-proxy/nginx-start.sh
 	docker build -t benediktschmidt.at/reverse-proxy build/servers/reverse-proxy
 	docker images --format "{{.ID}}" benediktschmidt.at/reverse-proxy > $@	
+	
+build/downloads-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-downloads servers/downloads/default.conf
+	cp dockerfiles/Dockerfile-downloads build/servers/downloads/Dockerfile
+	cp servers/downloads/default.conf build/servers/downloads/default.conf
+	docker build -t benediktschmidt.at/downloads build/servers/downloads
+	docker images --format "{{.ID}}" benediktschmidt.at/downloads > $@
 	
 
 ############ environment definitions
