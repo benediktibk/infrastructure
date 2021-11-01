@@ -14,8 +14,6 @@ services:
         image: "benediktschmidt.at/me"
         networks:
             - internal
-        ports:
-            - "80:80"
     valheim:
         env_file:
             - build/valheim.env
@@ -32,8 +30,6 @@ services:
         image: "benediktschmidt.at/corona-viewer"
         networks:
             - internal
-        ports:
-            - "8080:80"
     corona-updater:
         env_file:
             - build/corona.env
@@ -44,7 +40,7 @@ services:
             - internal
     reverse-proxy:
         environment:
-            - WEBFQDN=127.0.0.1
+            - WEBFQDN=reverse-proxy
             - TARGETCORONA=corona-viewer:80
             - TARGETME=homepage:80
             - TARGETDOWNLOADS=downloads:80
@@ -52,9 +48,13 @@ services:
             - environments/reverse-proxy.env
         image: "benediktschmidt.at/reverse-proxy"
         networks:
-            - internal
+            internal:
+                aliases:
+                    - me.reverse-proxy
+                    - corona.reverse-proxy
+                    - downloads.reverse-proxy
         ports:
-            - "81:80"
+            - "80:80"
 volumes:
     sqldata:
         external: true
