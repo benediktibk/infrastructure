@@ -78,7 +78,7 @@ build/corona-viewer-id.txt: $(COMMONDEPS) build/servers/corona/viewer/bin/Corona
 	docker build -t benediktschmidt.at/corona-viewer build/servers/corona/viewer
 	docker images --format "{{.ID}}" benediktschmidt.at/corona-viewer > $@
 
-build/corona-updater-id.txt: $(COMMONDEPS) build/servers/corona/updater/bin/Updater.dll dockerfiles/Dockerfile-corona-updater
+build/corona-updater-id.txt: $(COMMONDEPS) build/servers/corona/updater/bin/Updater.dll dockerfiles/Dockerfile-corona-updater corona-updater.sh
 	cp dockerfiles/Dockerfile-corona-updater build/servers/corona/updater/Dockerfile
 	cp corona-updater.sh build/servers/corona/updater/corona-updater.sh
 	docker build -t benediktschmidt.at/corona-updater build/servers/corona/updater
