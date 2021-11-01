@@ -13,7 +13,7 @@ services:
     homepage:
         image: "benediktschmidt.at/me"
         networks:
-            - internal
+            - dmz
     valheim:
         env_file:
             - build/valheim.env
@@ -21,7 +21,7 @@ services:
         volumes:
             - valheimdata:/srv/valheim
         networks:
-            - internal
+            - dmz
     corona-viewer:
         environment:
             - DBHOST=database-server
@@ -29,6 +29,7 @@ services:
             - build/corona.env
         image: "benediktschmidt.at/corona-viewer"
         networks:
+            - dmz
             - internal
     corona-updater:
         env_file:
@@ -48,7 +49,7 @@ services:
             - environments/reverse-proxy.env
         image: "benediktschmidt.at/reverse-proxy"
         networks:
-            internal:
+            dmz:
                 aliases:
                     - me.reverse-proxy
                     - corona.reverse-proxy
@@ -60,7 +61,7 @@ services:
         volumes:
             - downloadsdata:/srv/downloads
         networks:
-            - internal
+            - dmz
 volumes:
     sqldata:
         external: true
