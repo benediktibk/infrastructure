@@ -6,4 +6,4 @@ RUN apt update
 RUN apt -y install git
 WORKDIR /App
 ENTRYPOINT ["/bin/bash"]
-CMD ["./corona-updater.sh"]
+CMD ["/App/corona-updater.sh"]

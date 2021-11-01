@@ -55,7 +55,7 @@ tests:
 	 
 ############ container
 	
-build/valheim-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-valheim
+build/valheim-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-valheim servers/valheim/start_server.sh
 	cp dockerfiles/Dockerfile-valheim build/servers/valheim/Dockerfile
 	cp servers/valheim/start_server.sh build/servers/valheim/start_server.sh
 	cp -R ~/.steam/debian-installation/steamapps/common/Valheim\ dedicated\ server/* build/servers/valheim/bin/
