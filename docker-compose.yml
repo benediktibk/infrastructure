@@ -35,8 +35,6 @@ services:
         ports:
             - "8080:80"
     corona-updater:
-        environment:
-            - DBHOST=database-server
         env_file:
             - build/corona.env
         image: "benediktschmidt.at/corona-updater"
@@ -44,6 +42,19 @@ services:
             - coronadata:/tmp/corona
         networks:
             - internal
+    reverse-proxy:
+        environment:
+            - WEBFQDN=127.0.0.1
+            - TARGETCORONA=corona-viewer:80
+            - TARGETME=homepage:80
+            - TARGETDOWNLOADS=downloads:80
+        env_file:
+            - environments/reverse-proxy.env
+        image: "benediktschmidt.at/reverse-proxy"
+        networks:
+            - internal
+        ports:
+            - "81:80"
 volumes:
     sqldata:
         external: true
