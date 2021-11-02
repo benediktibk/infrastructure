@@ -7,6 +7,7 @@ ENVIRONMENTS := sql valheim corona reverse-proxy
 ENVIRONMENTFILES := $(addprefix /etc/infrastructure/,$(addsuffix .env,$(ENVIRONMENTS)))
 IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
+VOLUMES := sqldata coronadata valheimdata downloadsdata
 
 CONTEXTSWITCHRESULT := $(shell docker context use default)
 
@@ -17,28 +18,35 @@ all: $(IMAGEIDS) tests
 clean:
 	git clean -xdff
 	
-run-locally: $(IMAGEIDS) $(ENVIRONMENTFILES)
-	docker-compose -f compose-files/server.yml up
+run-local: $(IMAGEIDS) $(ENVIRONMENTFILES)
+	docker-compose --project-name infrastructure -f compose-files/server.yml up
 
-deploy: $(ENVIRONMENTFILES)
+run-remote: $(ENVIRONMENTFILES)
 	ansible-playbook playbooks/dockerhost-update.yaml
 	docker context use server-1
-	docker-compose -f compose-files/server.yml up
+	docker-compose --project-name infrastructure -f compose-files/server.yml up
 	docker context use default
 	
-clean-data: $(ENVIRONMENTFILES)
-	docker rm -f $(shell docker ps -a -q)
-	docker volume rm sqldata
-	docker volume rm coronadata
-	docker volume rm valheimdata
-	docker volume rm downloadsdata
+data-clean-local: $(ENVIRONMENTFILES)
+	if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi;
+	docker volume rm $(VOLUMES)
 	
-init-data: $(IMAGEIDS) $(ENVIRONMENTFILES)
-	docker volume create sqldata
-	docker volume create coronadata
-	docker volume create valheimdata
-	docker volume create downloadsdata
-	docker-compose -f compose-files/server-init.yml up --abort-on-container-exit
+data-clean-remote: $(ENVIRONMENTFILES)
+	docker context use server-1
+	if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi;
+	docker volume rm $(VOLUMES)
+	docker context use default
+	
+data-init-local: $(IMAGEIDS) $(ENVIRONMENTFILES)
+	for volume in $(VOLUMES); do docker volume create "$(volume)"; done;
+	docker-compose --project-name infrastructure-init -f compose-files/server-init.yml up --abort-on-container-exit
+
+data-init-remote: $(IMAGEIDS) $(ENVIRONMENTFILES)
+	ansible-playbook playbooks/dockerhost-update.yaml
+	docker context use server-1
+	for volume in $(VOLUMES); do docker volume create "$(volume)"; done;
+	docker-compose --project-name infrastructure-init -f compose-files/server-init.yml up --abort-on-container-exit
+	docker context use default
 
 build/guard: Makefile
 	mkdir -p build
@@ -72,7 +80,7 @@ push: $(IMAGEIDS)
 	docker push benediktibk/reverse-proxy
 	docker push benediktibk/downloads
 	
-.PHONY: all clean init-data clean-data run-locally secrets-encrypt build/secrets.tar.gz tests push deploy
+.PHONY: all clean data-init-local data-init-remote data-clean-local data-clean-remote run-local run-remote secrets-encrypt build/secrets.tar.gz tests push deploy
 	 
 ############ container
 	

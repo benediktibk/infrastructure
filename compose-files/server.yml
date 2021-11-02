@@ -41,7 +41,7 @@ services:
             - internal
     reverse-proxy:
         environment:
-            - WEBFQDN=reverse-proxy
+            - WEBFQDN=server-1
             - TARGETCORONA=corona-viewer:80
             - TARGETME=homepage:80
             - TARGETDOWNLOADS=downloads:80
