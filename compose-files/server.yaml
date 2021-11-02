@@ -41,7 +41,7 @@ services:
             - internal
     reverse-proxy:
         environment:
-            - WEBFQDN=server-1.local
+            - WEBFQDN=dev.benediktschmidt.at
             - TARGETCORONA=corona-viewer:80
             - TARGETME=homepage:80
             - TARGETDOWNLOADS=downloads:80
