@@ -3,7 +3,8 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile
-ENVIRONMENTFILES := build/sql.env build/valheim.env build/corona.env
+ENVIRONMENTS := sql valheim corona reverse-proxy
+ENVIRONMENTFILES := $(addprefix /etc/infrastructure/,$(addsuffix .env,$(ENVIRONMENTS)))
 IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 
@@ -24,7 +25,7 @@ clean-data: $(ENVIRONMENTFILES)
 	docker volume rm valheimdata
 	docker volume rm downloadsdata
 	
-init-data: build/database-server-id.txt build/sql.env build/corona-init-id.txt build/corona.env
+init-data: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	docker volume create sqldata
 	docker volume create coronadata
 	docker volume create valheimdata
@@ -118,20 +119,23 @@ build/downloads-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-downloads servers/d
 
 ############ environment definitions
 	
-build/sql.env: environments/sql.env.in build/secrets/passwords/db_sa $(COMMONDEPS)
+/etc/infrastructure/sql.env: environments/sql.env.in build/secrets/passwords/db_sa $(COMMONDEPS)
 	cp $< $@
 	$(eval SA_PASSWORD := $(shell cat build/secrets/passwords/db_sa))
 	sed -i "s/##SA_PASSWORD##/${SA_PASSWORD}/g" $@
 
-build/valheim.env: environments/valheim.env.in build/secrets/passwords/valheim $(COMMONDEPS)
+/etc/infrastructure/valheim.env: environments/valheim.env.in build/secrets/passwords/valheim $(COMMONDEPS)
 	cp $< $@
 	$(eval SERVER_PASSWORD := $(shell cat build/secrets/passwords/valheim))
 	sed -i "s/##SERVER_PASSWORD##/$(SERVER_PASSWORD)/g" $@
 
-build/corona.env: environments/corona.env.in build/secrets/passwords/db_corona $(COMMONDEPS)
+/etc/infrastructure/corona.env: environments/corona.env.in build/secrets/passwords/db_corona $(COMMONDEPS)
 	cp $< $@
 	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
 	sed -i "s/##DBCORONAPASSWORD##/${DBCORONAPASSWORD}/g" $@
+
+/etc/infrastructure/reverse-proxy.env: environments/reverse-proxy.env
+	cp $< $@
 
 
 ############ apps
