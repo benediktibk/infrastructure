@@ -14,4 +14,6 @@ ROOTCAKEYFILE=build/secrets/ca/root_ca.key
 
 openssl genrsa -out $KEYFILE 4096
 openssl req -new -sha512 -key $KEYFILE -subj "/C=AT/O=benediktschmidt.at/CN=$2" -out $CSRFILE
-openssl x509 -req -in $CSRFILE -CA $ROOTCACERTFILE -CAkey $ROOTCAKEYFILE -CAcreateserial -out $CERTFILE -days 1825 -sha512
+openssl x509 -req -in $CSRFILE -CA $ROOTCACERTFILE -CAkey $ROOTCAKEYFILE -CAcreateserial -out ${CERTFILE}_temp -days 1825 -sha512
+cat $ROOTCACERTFILE ${CERTFILE}_temp > $CERTFILE
+rm ${CERTFILE}_temp
