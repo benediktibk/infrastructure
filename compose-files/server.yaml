@@ -41,7 +41,7 @@ services:
             - internal
     reverse-proxy:
         environment:
-            - WEBFQDN=server-1
+            - WEBFQDN=server-1.local
             - TARGETCORONA=corona-viewer:80
             - TARGETME=homepage:80
             - TARGETDOWNLOADS=downloads:80
@@ -56,6 +56,7 @@ services:
                     - downloads.reverse-proxy
         ports:
             - "80:80"
+            - "443:443"
     downloads:
         image: "benediktibk/downloads"
         volumes:

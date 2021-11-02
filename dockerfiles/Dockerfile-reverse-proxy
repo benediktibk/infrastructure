@@ -1,4 +1,9 @@
 FROM nginx
 COPY default.conf.template /etc/nginx/conf.d/
 COPY nginx-start.sh /
+RUN mkdir -p /etc/nginx/certs
+COPY root_ca.crt //usr/local/share/ca-certificates/
+RUN update-ca-certificates
+COPY *.crt /etc/nginx/certs/
+COPY *.key /etc/nginx/certs/
 CMD ["/nginx-start.sh"]

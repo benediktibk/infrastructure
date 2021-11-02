@@ -130,6 +130,15 @@ build/reverse-proxy-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-reverse-proxy s
 	cp dockerfiles/Dockerfile-reverse-proxy build/servers/reverse-proxy/Dockerfile
 	cp servers/reverse-proxy/default.conf.template build/servers/reverse-proxy/
 	cp servers/reverse-proxy/nginx-start.sh build/servers/reverse-proxy/nginx-start.sh
+	cp build/secrets/ca/web_server-1.local.crt build/servers/reverse-proxy/base.crt
+	cp build/secrets/ca/web_server-1.local.key build/servers/reverse-proxy/base.key
+	cp build/secrets/ca/web_me.server-1.local.crt build/servers/reverse-proxy/me.crt
+	cp build/secrets/ca/web_me.server-1.local.key build/servers/reverse-proxy/me.key
+	cp build/secrets/ca/web_corona.server-1.local.crt build/servers/reverse-proxy/corona.crt
+	cp build/secrets/ca/web_corona.server-1.local.key build/servers/reverse-proxy/corona.key
+	cp build/secrets/ca/web_downloads.server-1.local.crt build/servers/reverse-proxy/downloads.crt
+	cp build/secrets/ca/web_downloads.server-1.local.key build/servers/reverse-proxy/downloads.key
+	cp build/secrets/ca/root_ca.crt build/servers/reverse-proxy/root_ca.crt
 	docker build -t benediktibk/reverse-proxy build/servers/reverse-proxy
 	docker images --format "{{.ID}}" benediktibk/reverse-proxy > $@	
 	
@@ -178,9 +187,10 @@ build/servers/corona/init/bin/Updater.dll: $(COMMONDEPS) $(shell find servers/co
 	
 ############ secrets
 
-build/secrets/guard:
+build/secrets/guard: secrets.tar.gz.enc
 	mkdir -p build
 	mkdir -p build/secrets
+	$(SECRETSDECRYPT)
 	touch $@
 
 secrets-encrypt: Makefile build/secrets.tar.gz
@@ -190,14 +200,8 @@ build/secrets.tar.gz: Makefile
 	rm -f $@
 	tar -czvf $@ build/secrets
 
-build/secrets/passwords/db_sa: build/secrets/guard secrets.tar.gz.enc
-	$(SECRETSDECRYPT)
-	touch --no-create build/secrets/passwords/*
+build/secrets/passwords/db_sa: build/secrets/guard
 	
-build/secrets/passwords/db_corona: build/secrets/guard secrets.tar.gz.enc
-	$(SECRETSDECRYPT)
-	touch --no-create build/secrets/passwords/*
+build/secrets/passwords/db_corona: build/secrets/guard
 	
-build/secrets/passwords/valheim: build/secrets/guard secrets.tar.gz.enc
-	$(SECRETSDECRYPT)
-	touch --no-create build/secrets/passwords/*
+build/secrets/passwords/valheim: build/secrets/guard

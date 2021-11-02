@@ -1,15 +1,30 @@
 server {
-    listen       80;
-    server_name  ${WEBFQDN};
+    listen                  80;
+    server_name             ${WEBFQDN} *.${WEBFQDN};
 
     location / {
-        rewrite ^/(.*)$ http://me.${WEBFQDN}/$1 redirect;
+        rewrite ^/(.*)$ https://${WEBFQDN}/$1 redirect;
     }
 }
 
 server {
-    listen       80;
-    server_name  me.${WEBFQDN};
+    listen                  443;
+    server_name             ${WEBFQDN};
+    ssl                     on;
+    ssl_certificate         /etc/nginx/certs/base.crt;
+    ssl_certificate_key     /etc/nginx/certs/base.key;
+
+    location / {
+        rewrite ^/(.*)$ https://me.${WEBFQDN}/$1 redirect;
+    }
+}
+
+server {
+    listen                  443;
+    server_name             me.${WEBFQDN};
+    ssl                     on;
+    ssl_certificate         /etc/nginx/certs/me.crt;
+    ssl_certificate_key     /etc/nginx/certs/me.key;
 
     location / {
         proxy_pass http://${TARGETME};
@@ -28,8 +43,11 @@ server {
 }
 
 server {
-    listen       80;
-    server_name  corona.${WEBFQDN};
+    listen                  443;
+    server_name             corona.${WEBFQDN};
+    ssl                     on;
+    ssl_certificate         /etc/nginx/certs/corona.crt;
+    ssl_certificate_key     /etc/nginx/certs/corona.key;
 
     location / {
         proxy_pass http://${TARGETCORONA};
@@ -48,8 +66,11 @@ server {
 }
 
 server {
-    listen       80;
-    server_name  downloads.${WEBFQDN};
+    listen                  443;
+    server_name             downloads.${WEBFQDN};
+    ssl                     on;
+    ssl_certificate         /etc/nginx/certs/downloads.crt;
+    ssl_certificate_key     /etc/nginx/certs/downloads.key;
 
     location / {
         proxy_pass http://${TARGETDOWNLOADS};
