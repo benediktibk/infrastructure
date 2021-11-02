@@ -16,5 +16,14 @@
       shell: "echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bullseye stable' | tee /etc/apt/sources.list.d/docker.list > /dev/null"
     - name: update package sources
       shell: "apt-get update"
-    - name: install docker
+    - name: install docker packages
       shell: "apt-get -y install docker-ce docker-ce-cli containerd.io"
+    - name: install other utilites
+      shell: "apt-get -y install htop"
+- name: prepare infrastructure service
+  hosts: docker_hosts
+  tasks:
+    - name: create config directory
+      shell: "mkdir -p /etc/infrastructure"
+    - name: create service user
+      shell: "if ! id infrastructure &>/dev/null; then adduser --system --no-create-home --shell /dev/null --group --disabled-login infrastructure; fi;"

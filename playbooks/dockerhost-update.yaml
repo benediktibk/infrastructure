@@ -1,0 +1,40 @@
+---
+- name: update
+  hosts: docker_hosts
+  tasks:
+    - name: update package sources
+      shell: "apt-get update"
+    - name: update packages
+      shell: "apt-get -y upgrade"
+    - name: copy sql environment
+      become: true
+      copy:
+        src: /etc/infrastructure/sql.env
+        dest: /etc/infrastructure/sql.env
+        owner: infrastructure
+        group: infrastructure
+        mode: 0600
+    - name: copy corona environment
+      become: true
+      copy:
+        src: /etc/infrastructure/corona.env
+        dest: /etc/infrastructure/corona.env
+        owner: infrastructure
+        group: infrastructure
+        mode: 0600
+    - name: copy reverse-proxy environment
+      become: true
+      copy:
+        src: /etc/infrastructure/reverse-proxy.env
+        dest: /etc/infrastructure/reverse-proxy.env
+        owner: infrastructure
+        group: infrastructure
+        mode: 0600
+    - name: copy valheim environment
+      become: true
+      copy:
+        src: /etc/infrastructure/valheim.env
+        dest: /etc/infrastructure/valheim.env
+        owner: infrastructure
+        group: infrastructure
+        mode: 0600

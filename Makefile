@@ -8,6 +8,8 @@ ENVIRONMENTFILES := $(addprefix /etc/infrastructure/,$(addsuffix .env,$(ENVIRONM
 IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 
+CONTEXTSWITCHRESULT := $(shell docker context use default)
+
 ############ general
 
 all: $(IMAGEIDS) tests
@@ -17,6 +19,12 @@ clean:
 	
 run-locally: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	docker-compose -f compose-files/server.yml up
+
+deploy: $(ENVIRONMENTFILES)
+	ansible-playbook playbooks/dockerhost-update.yaml
+	docker context use server-1
+	docker-compose -f compose-files/server.yml up
+	docker context use default
 	
 clean-data: $(ENVIRONMENTFILES)
 	docker rm -f $(shell docker ps -a -q)
@@ -64,7 +72,7 @@ push: $(IMAGEIDS)
 	docker push benediktibk/reverse-proxy
 	docker push benediktibk/downloads
 	
-.PHONY: all clean init-data clean-data run-locally secrets-encrypt build/secrets.tar.gz tests push
+.PHONY: all clean init-data clean-data run-locally secrets-encrypt build/secrets.tar.gz tests push deploy
 	 
 ############ container
 	
