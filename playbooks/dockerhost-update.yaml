@@ -56,33 +56,5 @@
         owner: root
         group: root
         mode: 0755
-    - name: copy root CA certificate
-      become: true
-      copy:
-        src: ../build/secrets/ca/root_ca.crt
-        dest: /usr/local/share/ca-certificates/
-        owner: root
-        group: root
-        mode: 0755
-    - name: update root CA certificates
-      shell: "update-ca-certificates"
-    - name: copy web certificates
-      copy:
-        src: "{{ item }}"
-        dest: "/etc/infrastructure/certs/reverse-proxy/"
-        owner: root
-        group: root
-        mode: 0644
-      with_fileglob: "../build/secrets/ca/web_*.crt"
-    - name: copy web certificates keys
-      copy:
-        src: "{{ item }}"
-        dest: "/etc/infrastructure/certs/reverse-proxy/"
-        owner: root
-        group: root
-        mode: 0644
-      with_fileglob: "../build/secrets/ca/web_*.key"
-    - name: enable infrastructure service
-      shell: "systemctl enable infrastructure"
     - name: start infrastructure service
       shell: "systemctl start infrastructure"
