@@ -48,6 +48,8 @@ services:
         env_file:
             - /etc/infrastructure/reverse-proxy.env
         image: "benediktibk/reverse-proxy"
+        volumes:
+            - /etc/infrastructure/certs/reverse-proxy/:/etc/nginx/certs/
         networks:
             dmz:
                 aliases:

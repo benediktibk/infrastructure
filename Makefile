@@ -130,14 +130,6 @@ build/reverse-proxy-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-reverse-proxy s
 	cp dockerfiles/Dockerfile-reverse-proxy build/servers/reverse-proxy/Dockerfile
 	cp servers/reverse-proxy/default.conf.template build/servers/reverse-proxy/
 	cp servers/reverse-proxy/nginx-start.sh build/servers/reverse-proxy/nginx-start.sh
-	cp build/secrets/ca/web_server-1.local.crt build/servers/reverse-proxy/base.crt
-	cp build/secrets/ca/web_server-1.local.key build/servers/reverse-proxy/base.key
-	cp build/secrets/ca/web_me.server-1.local.crt build/servers/reverse-proxy/me.crt
-	cp build/secrets/ca/web_me.server-1.local.key build/servers/reverse-proxy/me.key
-	cp build/secrets/ca/web_corona.server-1.local.crt build/servers/reverse-proxy/corona.crt
-	cp build/secrets/ca/web_corona.server-1.local.key build/servers/reverse-proxy/corona.key
-	cp build/secrets/ca/web_downloads.server-1.local.crt build/servers/reverse-proxy/downloads.crt
-	cp build/secrets/ca/web_downloads.server-1.local.key build/servers/reverse-proxy/downloads.key
 	cp build/secrets/ca/root_ca.crt build/servers/reverse-proxy/root_ca.crt
 	docker build -t benediktibk/reverse-proxy build/servers/reverse-proxy
 	docker images --format "{{.ID}}" benediktibk/reverse-proxy > $@	
