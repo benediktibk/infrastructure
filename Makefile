@@ -4,7 +4,7 @@ SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile
 ENVIRONMENTFILES := build/sql.env build/valheim.env build/corona.env
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater reverse-proxy downloads
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 
 ############ general
@@ -15,7 +15,7 @@ clean:
 	git clean -xdff
 	
 run-locally: $(IMAGEIDS) $(ENVIRONMENTFILES)
-	docker-compose -f docker-compose.yml up
+	docker-compose -f compose-files/server.yml up
 	
 clean-data: $(ENVIRONMENTFILES)
 	docker rm -f $(shell docker ps -a -q)
@@ -24,12 +24,12 @@ clean-data: $(ENVIRONMENTFILES)
 	docker volume rm valheimdata
 	docker volume rm downloadsdata
 	
-init-data: build/database-server-id.txt build/sql.env
+init-data: build/database-server-id.txt build/sql.env build/corona-init-id.txt build/corona.env
 	docker volume create sqldata
 	docker volume create coronadata
 	docker volume create valheimdata
 	docker volume create downloadsdata
-	./initialize-database.sh
+	docker-compose -f compose-files/server-init.yml up --abort-on-container-exit
 
 build/guard: Makefile
 	mkdir -p build
@@ -42,6 +42,8 @@ build/guard: Makefile
 	mkdir -p build/servers/corona/viewer/bin
 	mkdir -p build/servers/corona/updater
 	mkdir -p build/servers/corona/updater/bin
+	mkdir -p build/servers/corona/init
+	mkdir -p build/servers/corona/init/bin
 	mkdir -p build/servers/valheim
 	mkdir -p build/servers/valheim/bin
 	mkdir -p build/servers/reverse-proxy
@@ -50,8 +52,18 @@ build/guard: Makefile
 
 tests:
 	cd servers/corona/Corona && dotnet test
+
+push: $(IMAGEIDS)
+	docker push benediktibk/valheim
+	docker push benediktibk/database-server
+	docker push benediktibk/homepage
+	docker push benediktibk/corona-viewer
+	docker push benediktibk/corona-updater
+	docker push benediktibk/corona-init
+	docker push benediktibk/reverse-proxy
+	docker push benediktibk/downloads
 	
-.PHONY: all clean init-data clean-data run-locally secrets-encrypt build/secrets.tar.gz tests
+.PHONY: all clean init-data clean-data run-locally secrets-encrypt build/secrets.tar.gz tests push
 	 
 ############ container
 	
@@ -59,43 +71,49 @@ build/valheim-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-valheim servers/valhe
 	cp dockerfiles/Dockerfile-valheim build/servers/valheim/Dockerfile
 	cp servers/valheim/start_server.sh build/servers/valheim/start_server.sh
 	cp -R ~/.steam/debian-installation/steamapps/common/Valheim\ dedicated\ server/* build/servers/valheim/bin/
-	docker build -t benediktschmidt.at/valheim build/servers/valheim
-	docker images --format "{{.ID}}" benediktschmidt.at/valheim > $@
+	docker build -t benediktibk/valheim build/servers/valheim
+	docker images --format "{{.ID}}" benediktibk/valheim > $@
 	
 build/database-server-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-database
 	cp dockerfiles/Dockerfile-database build/servers/database/Dockerfile
-	docker build -t benediktschmidt.at/database-server build/servers/database
-	docker images --format "{{.ID}}" benediktschmidt.at/database-server > $@
+	docker build -t benediktibk/database-server build/servers/database
+	docker images --format "{{.ID}}" benediktibk/database-server > $@
 	
 build/homepage-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-homepage
 	cp dockerfiles/Dockerfile-homepage build/servers/homepage/Dockerfile
 	cp -R servers/homepage/me build/servers/homepage/bin
-	docker build -t benediktschmidt.at/me build/servers/homepage
-	docker images --format "{{.ID}}" benediktschmidt.at/homepage > $@
+	docker build -t benediktibk/homepage build/servers/homepage
+	docker images --format "{{.ID}}" benediktibk/homepage > $@
 	
 build/corona-viewer-id.txt: $(COMMONDEPS) build/servers/corona/viewer/bin/CoronaSpreadViewer.dll dockerfiles/Dockerfile-corona-viewer
 	cp dockerfiles/Dockerfile-corona-viewer build/servers/corona/viewer/Dockerfile
-	docker build -t benediktschmidt.at/corona-viewer build/servers/corona/viewer
-	docker images --format "{{.ID}}" benediktschmidt.at/corona-viewer > $@
+	docker build -t benediktibk/corona-viewer build/servers/corona/viewer
+	docker images --format "{{.ID}}" benediktibk/corona-viewer > $@
 
-build/corona-updater-id.txt: $(COMMONDEPS) build/servers/corona/updater/bin/Updater.dll dockerfiles/Dockerfile-corona-updater corona-updater.sh
+build/corona-updater-id.txt: $(COMMONDEPS) build/servers/corona/updater/bin/Updater.dll dockerfiles/Dockerfile-corona-updater scripts/corona-updater.sh
 	cp dockerfiles/Dockerfile-corona-updater build/servers/corona/updater/Dockerfile
-	cp corona-updater.sh build/servers/corona/updater/corona-updater.sh
-	docker build -t benediktschmidt.at/corona-updater build/servers/corona/updater
-	docker images --format "{{.ID}}" benediktschmidt.at/corona-updater > $@
+	cp scripts/corona-updater.sh build/servers/corona/updater/corona-updater.sh
+	docker build -t benediktibk/corona-updater build/servers/corona/updater
+	docker images --format "{{.ID}}" benediktibk/corona-updater > $@
+
+build/corona-init-id.txt: $(COMMONDEPS) build/servers/corona/init/bin/Updater.dll dockerfiles/Dockerfile-corona-init scripts/corona-init.sh
+	cp dockerfiles/Dockerfile-corona-init build/servers/corona/init/Dockerfile
+	cp scripts/corona-init.sh build/servers/corona/init/corona-init.sh
+	docker build -t benediktibk/corona-init build/servers/corona/init
+	docker images --format "{{.ID}}" benediktibk/corona-init > $@
 	
 build/reverse-proxy-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-reverse-proxy servers/reverse-proxy/default.conf.template servers/reverse-proxy/nginx-start.sh
 	cp dockerfiles/Dockerfile-reverse-proxy build/servers/reverse-proxy/Dockerfile
 	cp servers/reverse-proxy/default.conf.template build/servers/reverse-proxy/
 	cp servers/reverse-proxy/nginx-start.sh build/servers/reverse-proxy/nginx-start.sh
-	docker build -t benediktschmidt.at/reverse-proxy build/servers/reverse-proxy
-	docker images --format "{{.ID}}" benediktschmidt.at/reverse-proxy > $@	
+	docker build -t benediktibk/reverse-proxy build/servers/reverse-proxy
+	docker images --format "{{.ID}}" benediktibk/reverse-proxy > $@	
 	
 build/downloads-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-downloads servers/downloads/default.conf
 	cp dockerfiles/Dockerfile-downloads build/servers/downloads/Dockerfile
 	cp servers/downloads/default.conf build/servers/downloads/default.conf
-	docker build -t benediktschmidt.at/downloads build/servers/downloads
-	docker images --format "{{.ID}}" benediktschmidt.at/downloads > $@
+	docker build -t benediktibk/downloads build/servers/downloads
+	docker images --format "{{.ID}}" benediktibk/downloads > $@
 	
 
 ############ environment definitions
@@ -124,6 +142,10 @@ build/servers/corona/viewer/bin/CoronaSpreadViewer.dll: $(COMMONDEPS) $(shell fi
 	
 build/servers/corona/updater/bin/Updater.dll: $(COMMONDEPS) $(shell find servers/corona/Corona -type f -not -path "*/bin/*" -not -path "*/obj/*" -name "*")
 	dotnet publish servers/corona/Corona/Updater --output build/servers/corona/updater/bin --configuration Release --runtime linux-x64
+	touch $@
+
+build/servers/corona/init/bin/Updater.dll: $(COMMONDEPS) $(shell find servers/corona/Corona -type f -not -path "*/bin/*" -not -path "*/obj/*" -name "*")
+	dotnet publish servers/corona/Corona/Updater --output build/servers/corona/init/bin --configuration Release --runtime linux-x64
 	touch $@
 
 	

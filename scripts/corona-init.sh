@@ -1,15 +1,41 @@
 #!/bin/bash
 
-SAPASSWORD=$(cat build/secrets/passwords/db_sa)
-export DBPASSWORD=$(cat build/secrets/passwords/db_corona)
-export DBUSER="Corona"
-export DBHOST="localhost"
-export DBNAME="Corona"
-export LOCALTEMPPATH="/tmp/corona/data"
 SQLCMD=/opt/mssql-tools/bin/sqlcmd
 
+if [ -z "$SA_PASSWORD" ]
+then
+    echo "SA_PASSWORD is not set"
+    exit 1
+fi
+
+if [ -z "$DBNAME" ]
+then
+    echo "DBNAME is not set"
+    exit 1
+fi
+
+if [ -z "$DBUSER" ]
+then
+    echo "DBUSER is not set"
+    exit 1
+fi
+
+if [ -z "$DBPASSWORD" ]
+then
+    echo "DBPASSWORD is not set"
+    exit 1
+fi
+
+if [ -z "$DBHOST" ]
+then
+    echo "DBHOST is not set"
+    exit 1
+fi
+
+echo "using host $DBHOST, database $DBNAME and user $DBUSER"
+
 executeSqlCommand() {
-    $SQLCMD -S localhost -U sa -P $SAPASSWORD -Q "$1"
+    $SQLCMD -S $DBHOST -U sa -P $SA_PASSWORD -Q "$1"
 
     if [ $? -eq 0 ] 
     then 
@@ -20,10 +46,6 @@ executeSqlCommand() {
     fi
 }
 
-echo "startup database"
-CONTAINERID=$(docker run -d --mount "type=volume,source=sqldata,target=/var/opt/mssql/data" --env-file build/sql.env -p 1433:1433 benediktschmidt.at/database-server)
-echo "database has container id $CONTAINERID"
-
 echo "waiting for database to finish startup"
 sleep 10s
 
@@ -32,5 +54,5 @@ executeSqlCommand "CREATE DATABASE $DBNAME;"
 executeSqlCommand "CREATE LOGIN $DBUSER WITH PASSWORD = \"$DBPASSWORD\", CHECK_EXPIRATION = OFF, CHECK_POLICY = OFF;"
 executeSqlCommand "ALTER AUTHORIZATION ON DATABASE::$DBNAME TO $DBUSER;"
 
-echo "stop database container"
-docker stop $CONTAINERID
+echo "fill database"
+exec dotnet Updater.dll

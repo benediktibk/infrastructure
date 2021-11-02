@@ -3,7 +3,7 @@ services:
     database-server:
         env_file:
             - build/sql.env
-        image: "benediktschmidt.at/database-server"
+        image: "benediktibk/database-server"
         volumes:
             - sqldata:/var/opt/mssql/data
         networks:
@@ -11,13 +11,13 @@ services:
         ports:
             - "1433:1433"
     homepage:
-        image: "benediktschmidt.at/me"
+        image: "benediktibk/homepage"
         networks:
             - dmz
     valheim:
         env_file:
             - build/valheim.env
-        image: "benediktschmidt.at/valheim"
+        image: "benediktibk/valheim"
         volumes:
             - valheimdata:/srv/valheim
         networks:
@@ -27,14 +27,14 @@ services:
             - DBHOST=database-server
         env_file:
             - build/corona.env
-        image: "benediktschmidt.at/corona-viewer"
+        image: "benediktibk/corona-viewer"
         networks:
             - dmz
             - internal
     corona-updater:
         env_file:
             - build/corona.env
-        image: "benediktschmidt.at/corona-updater"
+        image: "benediktibk/corona-updater"
         volumes:
             - coronadata:/tmp/corona
         networks:
@@ -47,7 +47,7 @@ services:
             - TARGETDOWNLOADS=downloads:80
         env_file:
             - environments/reverse-proxy.env
-        image: "benediktschmidt.at/reverse-proxy"
+        image: "benediktibk/reverse-proxy"
         networks:
             dmz:
                 aliases:
@@ -57,7 +57,7 @@ services:
         ports:
             - "80:80"
     downloads:
-        image: "benediktschmidt.at/downloads"
+        image: "benediktibk/downloads"
         volumes:
             - downloadsdata:/srv/downloads
         networks:

@@ -1,0 +1,20 @@
+---
+- name: install docker
+  hosts: docker_hosts
+  tasks:
+    - name: remove leftover GPG key
+      shell: "rm -f /usr/share/keyrings/docker-archive-keyring.gpg"
+    - name: remove leftover repo sources
+      shell: "rm -f /etc/apt/sources.list.d/docker.list"
+    - name: update package sources
+      shell: "apt-get update"
+    - name: install packages for custom sources
+      shell: "apt-get -y install ca-certificates curl gnupg lsb-release"
+    - name: add dockers GPG key
+      shell: "curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg"
+    - name: add docker stable repository
+      shell: "echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bullseye stable' | tee /etc/apt/sources.list.d/docker.list > /dev/null"
+    - name: update package sources
+      shell: "apt-get update"
+    - name: install docker
+      shell: "apt-get -y install docker-ce docker-ce-cli containerd.io"

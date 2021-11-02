@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
+ENV ACCEPT_EULA=Y
+COPY ./bin/. App/
+COPY corona-init.sh App/
+RUN mkdir -p /tmp/corona
+RUN apt-get update
+RUN apt-get -y install git curl gnupg
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl https://packages.microsoft.com/config/ubuntu/21.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
+RUN apt-get update
+RUN apt-get -y install mssql-tools unixodbc-dev
+WORKDIR /App
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["/App/corona-init.sh"]
