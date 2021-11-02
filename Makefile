@@ -19,13 +19,10 @@ clean:
 	git clean -xdff
 	
 run-local: $(IMAGEIDS) $(ENVIRONMENTFILES)
-	docker-compose --project-name infrastructure -f compose-files/server.yml up
+	docker-compose --project-name infrastructure -f compose-files/server.yaml up
 
-run-remote: $(ENVIRONMENTFILES)
+deploy: $(ENVIRONMENTFILES)
 	ansible-playbook playbooks/dockerhost-update.yaml
-	docker context use server-1
-	docker-compose --project-name infrastructure -f compose-files/server.yml up
-	docker context use default
 	
 data-clean-local: $(ENVIRONMENTFILES)
 	if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi;
@@ -39,13 +36,13 @@ data-clean-remote: $(ENVIRONMENTFILES)
 	
 data-init-local: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	for volume in $(VOLUMES); do docker volume create "$(volume)"; done;
-	docker-compose --project-name infrastructure-init -f compose-files/server-init.yml up --abort-on-container-exit
+	docker-compose --project-name infrastructure-init -f compose-files/server-init.yaml up --abort-on-container-exit
 
 data-init-remote: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	ansible-playbook playbooks/dockerhost-update.yaml
 	docker context use server-1
 	for volume in $(VOLUMES); do docker volume create "$(volume)"; done;
-	docker-compose --project-name infrastructure-init -f compose-files/server-init.yml up --abort-on-container-exit
+	docker-compose --project-name infrastructure-init -f compose-files/server-init.yaml up --abort-on-container-exit
 	docker context use default
 
 build/guard: Makefile
@@ -80,7 +77,7 @@ push: $(IMAGEIDS)
 	docker push benediktibk/reverse-proxy
 	docker push benediktibk/downloads
 	
-.PHONY: all clean data-init-local data-init-remote data-clean-local data-clean-remote run-local run-remote secrets-encrypt build/secrets.tar.gz tests push deploy
+.PHONY: all clean data-init-local data-init-remote data-clean-local data-clean-remote run-local deploy secrets-encrypt build/secrets.tar.gz tests push deploy
 	 
 ############ container
 	

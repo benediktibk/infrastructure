@@ -38,3 +38,23 @@
         owner: infrastructure
         group: infrastructure
         mode: 0600
+    - name: copy service definition
+      become: true
+      copy:
+        src: ../service-definitions/infrastructure.service
+        dest: /etc/systemd/system/infrastructure.service
+        owner: root
+        group: root
+        mode: 0755
+    - name: copy docker compose file
+      become: true
+      copy:
+        src: ../compose-files/server.yaml
+        dest: /etc/infrastructure/server.yaml
+        owner: root
+        group: root
+        mode: 0755
+    - name: enable infrastructure service
+      shell: "systemctl enable infrastructure"
+    - name: start infrastructure service
+      shell: "systemctl start infrastructure"
