@@ -47,7 +47,7 @@ executeSqlCommand() {
 }
 
 echo "waiting for database to finish startup"
-sleep 10s
+sleep 30s
 
 echo "create database Corona und login"
 executeSqlCommand "CREATE DATABASE $DBNAME;"

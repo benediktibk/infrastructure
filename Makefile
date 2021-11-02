@@ -11,6 +11,11 @@ VOLUMES := sqldata coronadata valheimdata downloadsdata
 
 CONTEXTSWITCHRESULT := $(shell docker context use default)
 
+CREATEVOLUMES := for volume in $(VOLUMES); do echo "creating volume $$volume"; docker volume create "$$volume"; done;
+DELETEVOLUMES := if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi; docker volume rm $(VOLUMES)
+DOCKERCOMPOSESERVERINIT := docker-compose --project-name infrastructure-init -f compose-files/server-init.yaml up --abort-on-container-exit
+DOCKERCOMPOSESERVER := docker-compose --project-name infrastructure -f compose-files/server.yaml up
+
 ############ general
 
 all: $(IMAGEIDS) tests
@@ -19,30 +24,35 @@ clean:
 	git clean -xdff
 	
 run-local: $(IMAGEIDS) $(ENVIRONMENTFILES)
-	docker-compose --project-name infrastructure -f compose-files/server.yaml up
+	$(DOCKERCOMPOSESERVER)
 
-deploy: $(ENVIRONMENTFILES)
+deploy-init: $(ENVIRONMENTFILES) push
+	ansible-playbook playbooks/dockerhost-setup.yaml
+	docker context use server-1
+	$(CREATEVOLUMES)
+	$(DOCKERCOMPOSESERVERINIT)
+	docker context use default
+	ansible-playbook playbooks/dockerhost-update.yaml
+
+deploy-update: $(ENVIRONMENTFILES) push
 	ansible-playbook playbooks/dockerhost-update.yaml
 	
 data-clean-local: $(ENVIRONMENTFILES)
-	if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi;
-	docker volume rm $(VOLUMES)
+	$(DELETEVOLUMES)	
 	
-data-clean-remote: $(ENVIRONMENTFILES)
+data-clean-remote: $(ENVIRONMENTFILES) push
 	docker context use server-1
-	if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi;
-	docker volume rm $(VOLUMES)
+	$(DELETEVOLUMES)
 	docker context use default
 	
 data-init-local: $(IMAGEIDS) $(ENVIRONMENTFILES)
-	for volume in $(VOLUMES); do docker volume create "$(volume)"; done;
-	docker-compose --project-name infrastructure-init -f compose-files/server-init.yaml up --abort-on-container-exit
+	$(CREATEVOLUMES)
+	$(DOCKERCOMPOSESERVERINIT)
 
 data-init-remote: $(IMAGEIDS) $(ENVIRONMENTFILES)
-	ansible-playbook playbooks/dockerhost-update.yaml
 	docker context use server-1
-	for volume in $(VOLUMES); do docker volume create "$(volume)"; done;
-	docker-compose --project-name infrastructure-init -f compose-files/server-init.yaml up --abort-on-container-exit
+	$(CREATEVOLUMES)
+	$(DOCKERCOMPOSESERVERINIT)
 	docker context use default
 
 build/guard: Makefile
@@ -77,7 +87,7 @@ push: $(IMAGEIDS)
 	docker push benediktibk/reverse-proxy
 	docker push benediktibk/downloads
 	
-.PHONY: all clean data-init-local data-init-remote data-clean-local data-clean-remote run-local deploy secrets-encrypt build/secrets.tar.gz tests push deploy
+.PHONY: all clean data-init-local data-init-remote data-clean-local data-clean-remote run-local deploy-init deploy-update secrets-encrypt build/secrets.tar.gz tests push
 	 
 ############ container
 	

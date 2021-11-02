@@ -27,3 +27,53 @@
       shell: "mkdir -p /etc/infrastructure"
     - name: create service user
       shell: "if ! id infrastructure &>/dev/null; then adduser --system --no-create-home --shell /dev/null --group --disabled-login infrastructure; fi;"
+    - name: copy sql environment
+      become: true
+      copy:
+        src: /etc/infrastructure/sql.env
+        dest: /etc/infrastructure/sql.env
+        owner: infrastructure
+        group: infrastructure
+        mode: 0600
+    - name: copy corona environment
+      become: true
+      copy:
+        src: /etc/infrastructure/corona.env
+        dest: /etc/infrastructure/corona.env
+        owner: infrastructure
+        group: infrastructure
+        mode: 0600
+    - name: copy reverse-proxy environment
+      become: true
+      copy:
+        src: /etc/infrastructure/reverse-proxy.env
+        dest: /etc/infrastructure/reverse-proxy.env
+        owner: infrastructure
+        group: infrastructure
+        mode: 0600
+    - name: copy valheim environment
+      become: true
+      copy:
+        src: /etc/infrastructure/valheim.env
+        dest: /etc/infrastructure/valheim.env
+        owner: infrastructure
+        group: infrastructure
+        mode: 0600
+    - name: copy service definition
+      become: true
+      copy:
+        src: ../service-definitions/infrastructure.service
+        dest: /etc/systemd/system/infrastructure.service
+        owner: root
+        group: root
+        mode: 0755
+    - name: copy docker compose file
+      become: true
+      copy:
+        src: ../compose-files/server.yaml
+        dest: /etc/infrastructure/server.yaml
+        owner: root
+        group: root
+        mode: 0755
+    - name: enable infrastructure service
+      shell: "systemctl enable infrastructure"
