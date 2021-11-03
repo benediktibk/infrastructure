@@ -1,0 +1,13 @@
+[Unit]
+Description=infrastructure VPN service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Restart=always
+TimeoutStartSec=1200
+
+ExecStart=/usr/sbin/openvpn --config /etc/infrastructure/vpn/server.conf
+
+[Install]
+WantedBy=multi-user.target

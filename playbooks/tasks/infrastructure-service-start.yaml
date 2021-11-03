@@ -1,4 +1,8 @@
+- name: reload daemons
+  shell: "systemctl daemon-reload"
 - name: enable infrastructure service
   shell: "systemctl enable infrastructure"
+- name: enable openvpn
+  shell: "systemctl enable infrastructure-vpn"
 - name: start infrastructure service
   shell: "systemctl start infrastructure"

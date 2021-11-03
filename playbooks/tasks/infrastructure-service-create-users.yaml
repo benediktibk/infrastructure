@@ -1,0 +1,4 @@
+- name: create infrastructure service user
+  shell: "if ! id infrastructure &>/dev/null; then adduser --system --no-create-home --shell /dev/null --group --disabled-login infrastructure; fi;"
+- name: create vpn service user
+  shell: "if ! id openvpn &>/dev/null; then adduser --system --no-create-home --shell /dev/null --group --disabled-login openvpn; fi;"

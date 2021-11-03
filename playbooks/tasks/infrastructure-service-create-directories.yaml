@@ -1,0 +1,26 @@
+- name: create config directory
+  shell: "mkdir -p /etc/infrastructure"
+- name: create cert directory
+  shell: "mkdir -p /etc/infrastructure/certs"
+- name: create cert directory
+  shell: "mkdir -p /etc/infrastructure/certs/reverse-proxy"
+- name: create cert directory
+  shell: "mkdir -p /etc/infrastructure/certs/vpn"
+- name: create vpn directory
+  shell: "mkdir -p /etc/infrastructure/vpn"
+- name: create vpn directory
+  shell: "mkdir -p /etc/infrastructure/vpn/clients"
+- name: "openvpn log file"
+  shell: "touch /var/log/openvpn/main.log"
+- name: ownership config top level
+  shell: "chown root:root -R /etc/infrastructure"
+- name: ownership config vpn
+  shell: "chown openvpn:openvpn /etc/infrastructure/vpn"
+- name: ownership config vpn certs
+  shell: "chown openvpn:openvpn /etc/infrastructure/certs/vpn"
+- name: ownership openvpn log file
+  shell: "chown openvpn:openvpn /var/log/openvpn/main.log"
+- name: access rights config top level
+  shell: "chmod -R 766 /etc/infrastructure"
+- name: access rights config certs
+  shell: "chmod -R 700 /etc/infrastructure/certs"

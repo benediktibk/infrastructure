@@ -1,0 +1,6 @@
+- name: remove old env
+  shell: "rm -f /etc/infrastructure/host.env"
+- name: create new env
+  shell: "touch /etc/infrastructure/host.env"
+- name: store host IP
+  shell: "echo HOSTIP={{ hostvars[inventory_hostname]['ansible_env'].SSH_CONNECTION.split(' ')[2] }} >> /etc/infrastructure/host.env"

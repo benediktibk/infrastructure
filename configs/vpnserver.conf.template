@@ -1,0 +1,35 @@
+# listen settings
+local ${HOSTIP}
+port 1194
+proto tcp
+dev tun
+
+# general settings
+user openvpn
+group openvpn
+keepalive 10 120
+persist-key
+persist-tun
+verb 3
+
+# paths to other files
+client-config-dir /etc/infrastructure/vpn/clients
+ifconfig-pool-persist /etc/infrastructure/vpn/pool-persist.txt
+status /var/log/openvpn/main.log
+
+# SSL
+ca /etc/infrastructure/certs/vpn/ca.crt
+cert /etc/infrastructure/certs/vpn/server.crt
+key /etc/infrastructure/certs/vpn/server.key
+dh /etc/infrastructure/certs/vpn/dh.pem
+cipher AES-256-CBC
+data-ciphers AES-256-CBC
+
+# network settings
+topology subnet
+server 192.168.40.0 255.255.255.0
+client-to-client
+route 192.168.142.0 255.255.255.0
+route 192.168.43.0 255.255.255.0
+push "route 192.168.142.0 255.255.255.0"
+push "route 192.168.43.0 255.255.255.0"
