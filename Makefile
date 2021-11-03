@@ -7,6 +7,7 @@ ENVIRONMENTS := sql valheim corona reverse-proxy
 ENVIRONMENTFILES := $(addprefix /etc/infrastructure/,$(addsuffix .env,$(ENVIRONMENTS)))
 IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
+IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sqldata coronadata valheimdata downloadsdata
 
 CONTEXTSWITCHRESULT := $(shell docker context use default)
@@ -26,7 +27,7 @@ clean:
 run-local: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	$(DOCKERCOMPOSESERVER)
 
-deploy-init: $(ENVIRONMENTFILES) push
+deploy-init: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
 	ansible-playbook playbooks/dockerhost-setup.yaml
 	docker context use server-1
 	$(CREATEVOLUMES)
@@ -34,13 +35,13 @@ deploy-init: $(ENVIRONMENTFILES) push
 	docker context use default
 	ansible-playbook playbooks/dockerhost-update.yaml
 
-deploy-update: $(ENVIRONMENTFILES) push
+deploy-update: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
 	ansible-playbook playbooks/dockerhost-update.yaml
 	
 data-clean-local: $(ENVIRONMENTFILES)
 	$(DELETEVOLUMES)	
 	
-data-clean-remote: $(ENVIRONMENTFILES) push
+data-clean-remote: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
 	docker context use server-1
 	$(DELETEVOLUMES)
 	docker context use default
@@ -76,18 +77,8 @@ build/guard: Makefile
 
 tests:
 	cd servers/corona/Corona && dotnet test
-
-push: $(IMAGEIDS)
-	docker push benediktibk/valheim
-	docker push benediktibk/database-server
-	docker push benediktibk/homepage
-	docker push benediktibk/corona-viewer
-	docker push benediktibk/corona-updater
-	docker push benediktibk/corona-init
-	docker push benediktibk/reverse-proxy
-	docker push benediktibk/downloads
 	
-.PHONY: all clean data-init-local data-init-remote data-clean-local data-clean-remote run-local deploy-init deploy-update secrets-encrypt build/secrets.tar.gz tests push
+.PHONY: all clean data-init-local data-init-remote data-clean-local data-clean-remote run-local deploy-init deploy-update secrets-encrypt build/secrets.tar.gz tests
 	 
 ############ container
 	
@@ -140,6 +131,10 @@ build/downloads-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-downloads servers/d
 	docker build -t benediktibk/downloads build/servers/downloads
 	docker images --format "{{.ID}}" benediktibk/downloads > $@
 	
+build/%-pushed-id.txt: build/%-id.txt
+	rm -f $@
+	docker push benediktibk/$*
+	touch $@
 
 ############ environment definitions
 	
