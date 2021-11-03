@@ -11,6 +11,7 @@ keepalive 10 120
 persist-key
 persist-tun
 verb 3
+tls-server
 
 # paths to other files
 client-config-dir /etc/infrastructure/vpn/clients

@@ -98,6 +98,14 @@
     mode: 0644
 - name: replace vpnserver template entries
   shell: "env $(cat /etc/infrastructure/host.env | xargs) envsubst '${HOSTIP}' < /etc/infrastructure/vpn/server.conf.template > /etc/infrastructure/vpn/server.conf"
+- name: copy vpn client config admin
+  become: true
+  copy:
+    src: ../configs/vpnserver-client-admin
+    dest: /etc/infrastructure/vpn/clients/admin.location.benediktschmidt.at
+    owner: openvpn
+    group: openvpn
+    mode: 0755
 - name: copy vpn client config Mitterweg
   become: true
   copy:
@@ -105,7 +113,7 @@
     dest: /etc/infrastructure/vpn/clients/mitterweg.location.benediktschmidt.at
     owner: openvpn
     group: openvpn
-    mode: 0644
+    mode: 0755
 - name: copy vpn client config Pradlerstrasse
   become: true
   copy:
@@ -113,7 +121,7 @@
     dest: /etc/infrastructure/vpn/clients/pradlerstrasse.location.benediktschmidt.at
     owner: openvpn
     group: openvpn
-    mode: 0644
+    mode: 0755
 - name: copy vpn certificate
   become: true
   copy:

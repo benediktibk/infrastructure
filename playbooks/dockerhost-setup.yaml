@@ -6,5 +6,6 @@
     - include_tasks: tasks/openvpn-install.yaml
     - include_tasks: tasks/infrastructure-service-create-users.yaml
     - include_tasks: tasks/infrastructure-service-create-directories.yaml
+    - include_tasks: tasks/infrastructure-service-directories-permissions.yaml
     - include_tasks: tasks/system-environment-create.yaml
     - include_tasks: tasks/infrastructure-service-files.yaml
