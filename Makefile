@@ -27,14 +27,6 @@ clean:
 run-local: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	$(DOCKERCOMPOSESERVER)
 
-deploy-init: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
-	ansible-playbook playbooks/dockerhost-setup.yaml
-	docker context use server-1
-	$(CREATEVOLUMES)
-	$(DOCKERCOMPOSESERVERINIT)
-	docker context use default
-	ansible-playbook playbooks/dockerhost-update.yaml
-
 deploy-update: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
 	ansible-playbook playbooks/dockerhost-update.yaml
 	
