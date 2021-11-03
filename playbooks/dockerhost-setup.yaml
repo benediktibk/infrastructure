@@ -3,6 +3,7 @@
   tasks:
     - include_tasks: tasks/system-update.yaml
     - include_tasks: tasks/docker-install.yaml
+    - include_tasks: tasks/openvpn-install.yaml
     - include_tasks: tasks/infrastructure-service-create-utils.yaml
     - include_tasks: tasks/infrastructure-service-files.yaml
 
