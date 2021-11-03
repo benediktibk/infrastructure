@@ -1,0 +1,74 @@
+- name: copy sql environment
+  become: true
+  copy:
+    src: /etc/infrastructure/sql.env
+    dest: /etc/infrastructure/sql.env
+    owner: infrastructure
+    group: infrastructure
+    mode: 0600
+- name: copy corona environment
+  become: true
+  copy:
+    src: /etc/infrastructure/corona.env
+    dest: /etc/infrastructure/corona.env
+    owner: infrastructure
+    group: infrastructure
+    mode: 0600
+- name: copy reverse-proxy environment
+  become: true
+  copy:
+    src: /etc/infrastructure/reverse-proxy.env
+    dest: /etc/infrastructure/reverse-proxy.env
+    owner: infrastructure
+    group: infrastructure
+    mode: 0600
+- name: copy valheim environment
+  become: true
+  copy:
+    src: /etc/infrastructure/valheim.env
+    dest: /etc/infrastructure/valheim.env
+    owner: infrastructure
+    group: infrastructure
+    mode: 0600
+- name: copy service definition
+  become: true
+  copy:
+    src: ../service-definitions/infrastructure.service
+    dest: /etc/systemd/system/infrastructure.service
+    owner: root
+    group: root
+    mode: 0755
+- name: copy docker compose file
+  become: true
+  copy:
+    src: ../compose-files/server.yaml
+    dest: /etc/infrastructure/server.yaml
+    owner: root
+    group: root
+    mode: 0755
+- name: copy root CA certificate
+  become: true
+  copy:
+    src: ../build/secrets/ca/root_ca.crt
+    dest: /usr/local/share/ca-certificates/
+    owner: root
+    group: root
+    mode: 0755
+- name: update root CA certificates
+  shell: "update-ca-certificates"
+- name: copy web certificates
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/infrastructure/certs/reverse-proxy/"
+    owner: root
+    group: root
+    mode: 0644
+  with_fileglob: "../build/secrets/ca/web_*.crt"
+- name: copy web certificates keys
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/infrastructure/certs/reverse-proxy/"
+    owner: root
+    group: root
+    mode: 0644
+  with_fileglob: "../build/secrets/ca/web_*.key"

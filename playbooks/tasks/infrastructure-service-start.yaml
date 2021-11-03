@@ -1,0 +1,4 @@
+- name: enable infrastructure service
+  shell: "systemctl enable infrastructure"
+- name: start infrastructure service
+  shell: "systemctl start infrastructure"

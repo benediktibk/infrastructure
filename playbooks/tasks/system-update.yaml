@@ -1,0 +1,4 @@
+- name: update package sources
+  shell: "apt-get update"
+- name: update packages
+  shell: "apt-get -y upgrade"
