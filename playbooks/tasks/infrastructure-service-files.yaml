@@ -154,3 +154,11 @@
     owner: openvpn
     group: openvpn
     mode: 0600
+- name: copy nftables config
+  become: true
+  copy:
+    src: ../configs/nftables.conf
+    dest: /etc/nftables.conf
+    owner: root
+    group: root
+    mode: 0644

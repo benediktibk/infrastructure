@@ -1,5 +1,5 @@
 - name: docker host update
-  hosts: docker_hosts
+  hosts: docker_hosts_vpn
   tasks:
     - include_tasks: tasks/system-update.yaml
     - include_tasks: tasks/infrastructure-service-stop.yaml

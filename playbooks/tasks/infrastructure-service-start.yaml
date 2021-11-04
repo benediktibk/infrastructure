@@ -2,7 +2,13 @@
   shell: "systemctl daemon-reload"
 - name: enable infrastructure service
   shell: "systemctl enable infrastructure"
-- name: enable openvpn
+- name: enable infrastructure-vpn
   shell: "systemctl enable infrastructure-vpn"
+- name: enable firewall
+  shell: "systemctl enable nftables"
+- name: start infrastructure service
+  shell: "systemctl start infrastructure-vpn"
 - name: start infrastructure service
   shell: "systemctl start infrastructure"
+#- name: restart firewall
+#  shell: "systemctl restart nftables"
