@@ -8,9 +8,8 @@ server {
 }
 
 server {
-    listen                  443;
+    listen                  443 ssl;
     server_name             ${WEBFQDN};
-    ssl                     on;
     ssl_certificate         /etc/nginx/certs/web_benediktschmidt.at.crt;
     ssl_certificate_key     /etc/nginx/certs/web_benediktschmidt.at.key;
 
@@ -20,9 +19,8 @@ server {
 }
 
 server {
-    listen                  443;
+    listen                  443 ssl;
     server_name             me.${WEBFQDN};
-    ssl                     on;
     ssl_certificate         /etc/nginx/certs/web_me.benediktschmidt.at.crt;
     ssl_certificate_key     /etc/nginx/certs/web_me.benediktschmidt.at.key;
 
@@ -43,9 +41,8 @@ server {
 }
 
 server {
-    listen                  443;
+    listen                  443 ssl;
     server_name             corona.${WEBFQDN};
-    ssl                     on;
     ssl_certificate         /etc/nginx/certs/web_corona.benediktschmidt.at.crt;
     ssl_certificate_key     /etc/nginx/certs/web_corona.benediktschmidt.at.key;
 
@@ -66,9 +63,8 @@ server {
 }
 
 server {
-    listen                  443;
+    listen                  443 ssl;
     server_name             downloads.${WEBFQDN};
-    ssl                     on;
     ssl_certificate         /etc/nginx/certs/web_downloads.benediktschmidt.at.crt;
     ssl_certificate_key     /etc/nginx/certs/web_downloads.benediktschmidt.at.key;
 

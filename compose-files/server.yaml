@@ -2,7 +2,7 @@ version: "3.6"
 services:
     database-server:
         env_file:
-            - /etc/infrastructure/sql.env
+            - /etc/infrastructure/environments/sql.env
         image: "benediktibk/database-server"
         volumes:
             - sqldata:/var/opt/mssql/data
@@ -16,7 +16,7 @@ services:
             - dmz
     valheim:
         env_file:
-            - /etc/infrastructure/valheim.env
+            - /etc/infrastructure/environments/valheim.env
         image: "benediktibk/valheim"
         volumes:
             - valheimdata:/srv/valheim
@@ -26,14 +26,14 @@ services:
         environment:
             - DBHOST=database-server
         env_file:
-            - /etc/infrastructure/corona.env
+            - /etc/infrastructure/environments/corona.env
         image: "benediktibk/corona-viewer"
         networks:
             - dmz
             - internal
     corona-updater:
         env_file:
-            - /etc/infrastructure/corona.env
+            - /etc/infrastructure/environments/corona.env
         image: "benediktibk/corona-updater"
         volumes:
             - coronadata:/tmp/corona
@@ -46,10 +46,10 @@ services:
             - TARGETME=homepage:80
             - TARGETDOWNLOADS=downloads:80
         env_file:
-            - /etc/infrastructure/reverse-proxy.env
+            - /etc/infrastructure/environments/reverse-proxy.env
         image: "benediktibk/reverse-proxy"
         volumes:
-            - /etc/infrastructure/certs/reverse-proxy/:/etc/nginx/certs/
+            - certificatesdata:/etc/nginx/certs/
         networks:
             dmz:
                 aliases:
@@ -73,6 +73,8 @@ volumes:
     valheimdata:
         external: true
     downloadsdata:
+        external: true
+    certificatesdata:
         external: true
 networks:
     internal:

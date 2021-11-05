@@ -2,7 +2,7 @@ version: "3.6"
 services:
     database-server:
         env_file:
-            - /etc/infrastructure/sql.env
+            - /etc/infrastructure/environments/sql.env
         image: "benediktibk/database-server"
         volumes:
             - sqldata:/var/opt/mssql/data
@@ -12,8 +12,8 @@ services:
         environment:
             - DBHOST=database-server
         env_file:
-            - /etc/infrastructure/corona.env
-            - /etc/infrastructure/sql.env
+            - /etc/infrastructure/environments/corona.env
+            - /etc/infrastructure/environments/sql.env
         image: "benediktibk/corona-init"
         volumes:
             - coronadata:/tmp/corona

@@ -3,12 +3,12 @@
 - name: create cert directory
   shell: "mkdir -p /etc/infrastructure/certs"
 - name: create cert directory
-  shell: "mkdir -p /etc/infrastructure/certs/reverse-proxy"
-- name: create cert directory
   shell: "mkdir -p /etc/infrastructure/certs/vpn"
 - name: create vpn directory
   shell: "mkdir -p /etc/infrastructure/vpn"
 - name: create vpn directory
   shell: "mkdir -p /etc/infrastructure/vpn/clients"
+- name: create cert directory
+  shell: "mkdir -p /etc/infrastructure/environments"
 - name: "openvpn log file"
   shell: "touch /var/log/openvpn/main.log"
