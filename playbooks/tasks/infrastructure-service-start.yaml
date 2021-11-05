@@ -4,8 +4,8 @@
   shell: "systemctl enable infrastructure"
 - name: enable infrastructure-vpn
   shell: "systemctl enable infrastructure-vpn"
-- name: enable firewall
-  shell: "systemctl enable nftables"
+#- name: enable firewall
+#  shell: "systemctl enable nftables"
 - name: start infrastructure service
   shell: "systemctl start infrastructure-vpn"
 - name: start infrastructure service
