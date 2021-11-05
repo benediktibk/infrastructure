@@ -1,8 +1,8 @@
 - name: copy sql environment
   become: true
   copy:
-    src: /etc/infrastructure/sql.env
-    dest: /etc/infrastructure/sql.env
+    src: /etc/infrastructure/environments/sql.env
+    dest: /etc/infrastructure/environments/sql.env
     owner: infrastructure
     group: infrastructure
     mode: 0600
