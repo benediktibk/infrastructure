@@ -56,11 +56,3 @@
     mode: 0755
 - name: update root CA certificates
   shell: "update-ca-certificates"
-- name: copy nftables config
-  become: true
-  copy:
-    src: ../configs/nftables.conf
-    dest: /etc/nftables.conf
-    owner: root
-    group: root
-    mode: 0644
