@@ -8,7 +8,8 @@ ENVIRONMENTFILES := $(addprefix /etc/infrastructure/environments/,$(addsuffix .e
 IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sqldata coronadata valheimdata downloadsdata webcertificatesdata
+VOLUMES := sql corona valheim downloads webcertificates
+VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname server-client-*)
 
 CONTEXTSWITCHRESULT := $(shell docker context use default)
 
@@ -19,7 +20,7 @@ DOCKERCOMPOSESERVER := docker-compose --project-name infrastructure -f compose-f
 
 ############ general
 
-all: $(IMAGEIDS) tests
+all: $(IMAGEPUSHEDIDS) $(ENVIRONMENTFILES) tests
 
 clean:
 	git clean -xdff
@@ -31,22 +32,11 @@ deploy-update: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
 	ansible-playbook playbooks/dockerhost-update.yaml
 	
 data-clean-local: $(ENVIRONMENTFILES)
-	$(DELETEVOLUMES)	
-	
-data-clean-remote: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
-	docker context use server-1
 	$(DELETEVOLUMES)
-	docker context use default
 	
 data-init-local: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	$(CREATEVOLUMES)
 	$(DOCKERCOMPOSESERVERINIT)
-
-data-init-remote: $(IMAGEIDS) $(ENVIRONMENTFILES)
-	docker context use server-1
-	$(CREATEVOLUMES)
-	$(DOCKERCOMPOSESERVERINIT)
-	docker context use default
 
 build/guard: Makefile
 	mkdir -p build
@@ -125,13 +115,18 @@ build/downloads-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-downloads servers/d
 	docker build -t benediktibk/downloads build/servers/downloads
 	docker images --format "{{.ID}}" benediktibk/downloads > $@
 	
-build/vpn-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-vpn
+build/vpn-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-vpn servers/vpn/server.conf.template servers/vpn/openvpn-start.sh $(VPNCLIENTCONFIGS)
 	cp dockerfiles/Dockerfile-vpn build/servers/vpn/Dockerfile
+	cp servers/vpn/server.conf.template build/servers/vpn/
+	cp servers/vpn/openvpn-start.sh build/servers/vpn
+	cp $(VPNCLIENTCONFIGS) build/servers/vpn/
 	docker build -t benediktibk/vpn build/servers/vpn
 	docker images --format "{{.ID}}" benediktibk/vpn > $@
 
-build/firewall-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-firewall
+build/firewall-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-firewall servers/firewall/firewall.sh servers/firewall/nftables.conf
 	cp dockerfiles/Dockerfile-firewall build/servers/firewall/Dockerfile
+	cp servers/firewall/firewall.sh build/servers/firewall/
+	cp servers/firewall/nftables.conf build/servers/firewall/
 	docker build -t benediktibk/firewall build/servers/firewall
 	docker images --format "{{.ID}}" benediktibk/firewall > $@
 	

@@ -14,15 +14,15 @@ verb 3
 tls-server
 
 # paths to other files
-client-config-dir /etc/infrastructure/vpn/clients
-ifconfig-pool-persist /etc/infrastructure/vpn/pool-persist.txt
+client-config-dir /etc/openvpn/server/clients
+ifconfig-pool-persist /etc/openvpn/server/pool-persist.txt
 status /var/log/openvpn/main.log
 
 # SSL
-ca /etc/infrastructure/certs/vpn/ca.crt
-cert /etc/infrastructure/certs/vpn/server.crt
-key /etc/infrastructure/certs/vpn/server.key
-dh /etc/infrastructure/certs/vpn/dh.pem
+ca /etc/openvpn/certs/ca.crt
+cert /etc/openvpn/certs/server.crt
+key /etc/openvpn/certs/server.key
+dh /etc/openvpn/certs/dh.pem
 cipher AES-256-CBC
 data-ciphers AES-256-CBC
 

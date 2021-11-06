@@ -5,7 +5,7 @@ services:
             - /etc/infrastructure/environments/sql.env
         image: "benediktibk/database-server"
         volumes:
-            - sqldata:/var/opt/mssql/data
+            - sql:/var/opt/mssql/data
         networks:
             - internal
         ports:
@@ -19,7 +19,7 @@ services:
             - /etc/infrastructure/environments/valheim.env
         image: "benediktibk/valheim"
         volumes:
-            - valheimdata:/srv/valheim
+            - valheim:/srv/valheim
         networks:
             - dmz
     corona-viewer:
@@ -36,7 +36,7 @@ services:
             - /etc/infrastructure/environments/corona.env
         image: "benediktibk/corona-updater"
         volumes:
-            - coronadata:/tmp/corona
+            - corona:/tmp/corona
         networks:
             - internal
     reverse-proxy:
@@ -49,7 +49,7 @@ services:
             - /etc/infrastructure/environments/reverse-proxy.env
         image: "benediktibk/reverse-proxy"
         volumes:
-            - webcertificatesdata:/etc/nginx/certs/
+            - webcertificates:/etc/nginx/certs/
         networks:
             dmz:
                 aliases:
@@ -62,7 +62,7 @@ services:
     downloads:
         image: "benediktibk/downloads"
         volumes:
-            - downloadsdata:/srv/downloads
+            - downloads:/srv/downloads
         networks:
             - dmz
 volumes:

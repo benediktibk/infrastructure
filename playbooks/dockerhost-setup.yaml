@@ -7,5 +7,7 @@
     - include_tasks: tasks/infrastructure-service-create-directories.yaml
     - include_tasks: tasks/infrastructure-service-directories-permissions.yaml
     - include_tasks: tasks/system-environment-create.yaml
+    - include_tasks: tasks/infrastructure-service-create-volumes.yaml
     - include_tasks: tasks/infrastructure-service-files.yaml
     - include_tasks: tasks/infrastructure-service-directories-permissions.yaml
+    #- include_tasks: tasks/infrastructure-service-init.yaml

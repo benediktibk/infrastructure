@@ -1,0 +1,2 @@
+- name: initialize services data
+  shell: "docker-compose --project-name infrastructure-init -f /etc/infrastructure/services-init.yaml up --abort-on-container-exit"

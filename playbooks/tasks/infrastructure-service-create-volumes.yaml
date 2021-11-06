@@ -1,0 +1,12 @@
+- name: create volume
+  shell: "docker volume create sql"
+- name: create volume
+  shell: "docker volume create corona"
+- name: create volume
+  shell: "docker volume create valheim"
+- name: create volume
+  shell: "docker volume create downloads"
+- name: create volume
+  shell: "docker volume create webcertificates"
+- name: create volume
+  shell: "docker volume create vpncertificates"

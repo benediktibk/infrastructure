@@ -18,21 +18,41 @@
   copy:
     src: /etc/infrastructure/environments/valheim.env
     dest: /etc/infrastructure/environments/valheim.env
+- name: copy vpn environment
+  become: true
+  copy:
+    src: /etc/infrastructure/environments/vpn.env
+    dest: /etc/infrastructure/environments/vpn.env
+- name: copy firewall environment
+  become: true
+  copy:
+    src: /etc/infrastructure/environments/firewall.env
+    dest: /etc/infrastructure/environments/firewall.env
 - name: copy infrastructure-network service definition
   become: true
   copy:
-    src: ../service-definitions/network.service
+    src: ../service-definitions/infrastructure-network.service
     dest: /etc/systemd/system/infrastructure-network.service
 - name: copy infrastructure-services service definition
   become: true
   copy:
-    src: ../service-definitions/services.service
+    src: ../service-definitions/infrastructure-services.service
     dest: /etc/systemd/system/infrastructure-services.service
 - name: copy docker compose file
   become: true
   copy:
-    src: ../compose-files/server.yaml
-    dest: /etc/infrastructure/server.yaml
+    src: ../compose-files/services.yaml
+    dest: /etc/infrastructure/services.yaml
+- name: copy docker compose file
+  become: true
+  copy:
+    src: ../compose-files/services-init.yaml
+    dest: /etc/infrastructure/services-init.yaml
+- name: copy docker compose file
+  become: true
+  copy:
+    src: ../compose-files/network.yaml
+    dest: /etc/infrastructure/network.yaml
 - name: copy root CA certificate
   become: true
   copy:
@@ -40,3 +60,23 @@
     dest: /usr/local/share/ca-certificates/
 - name: update root CA certificates
   shell: "update-ca-certificates"
+- name: copy VPN certificate
+  become: true
+  copy:
+    src: ../build/secrets/ca/root_ca.crt
+    dest: /var/lib/docker/volumes/vpncertificates/_data/ca.crt
+- name: copy VPN certificate
+  become: true
+  copy:
+    src: ../build/secrets/ca/vpn_server.crt
+    dest: /var/lib/docker/volumes/vpncertificates/_data/server.crt
+- name: copy VPN certificate
+  become: true
+  copy:
+    src: ../build/secrets/ca/vpn_server.key
+    dest: /var/lib/docker/volumes/vpncertificates/_data/server.key
+- name: copy VPN certificate
+  become: true
+  copy:
+    src: ../build/secrets/ca/dh-vpn.pem
+    dest: /var/lib/docker/volumes/vpncertificates/_data/dh.pem

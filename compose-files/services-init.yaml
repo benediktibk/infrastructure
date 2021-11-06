@@ -5,7 +5,7 @@ services:
             - /etc/infrastructure/environments/sql.env
         image: "benediktibk/database-server"
         volumes:
-            - sqldata:/var/opt/mssql/data
+            - sql:/var/opt/mssql/data
         networks:
             - internal
     corona-init:
@@ -16,13 +16,13 @@ services:
             - /etc/infrastructure/environments/sql.env
         image: "benediktibk/corona-init"
         volumes:
-            - coronadata:/tmp/corona
+            - corona:/tmp/corona
         networks:
             - internal
 volumes:
-    sqldata:
+    sql:
         external: true
-    coronadata:
+    corona:
         external: true
 networks:
     internal:

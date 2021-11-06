@@ -4,6 +4,8 @@ services:
         env_file:
             - /etc/infrastructure/environments/vpn.env
         image: "benediktibk/vpn"
+        volumes:
+            - vpncertificates:/etc/openvpn/certs
         networks:
             - dmz
         ports:
@@ -12,17 +14,18 @@ services:
         env_file:
             - /etc/infrastructure/environments/firewall.env
         image: "benediktibk/firewall"
+        networks:
+            - internal
+            - dmz
 volumes:
-    vpncertificatesdata:
+    vpncertificates:
         external: true
 networks:
     internal:
         ipam:
             config:
                 - subnet: 192.168.39.0/24
-                  gateway: 192.168.39.1
     dmz:
         ipam:
             config:
                 - subnet: 192.168.38.0/24
-                  gateway: 192.168.38.1

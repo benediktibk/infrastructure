@@ -1,1 +1,3 @@
 FROM debian:stable
+COPY firewall.sh /
+CMD ["/firewall.sh"]

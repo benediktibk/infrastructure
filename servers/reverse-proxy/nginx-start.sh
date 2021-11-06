@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 
-
 if [ "$(ls -A /etc/nginx/certs)" ]; then
     echo "it seems like there are already certificates available"
 else

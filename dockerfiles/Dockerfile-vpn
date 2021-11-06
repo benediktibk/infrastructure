@@ -1,1 +1,9 @@
 FROM debian:stable
+RUN apt-get update
+RUN apt-get -y install openvpn
+COPY server.conf.template /etc/openvpn/server/
+RUN mkdir -p /etc/openvpn/server/clients
+RUN mkdir -p /etc/openvpn/certs
+COPY server-client-* /etc/openvpn/server/clients/
+COPY openvpn-start.sh /
+CMD ["/openvpn-start.sh"]
