@@ -1,14 +1,4 @@
 - name: create config directory
   shell: "mkdir -p /etc/infrastructure"
-- name: create cert directory
-  shell: "mkdir -p /etc/infrastructure/certs"
-- name: create cert directory
-  shell: "mkdir -p /etc/infrastructure/certs/vpn"
-- name: create vpn directory
-  shell: "mkdir -p /etc/infrastructure/vpn"
-- name: create vpn directory
-  shell: "mkdir -p /etc/infrastructure/vpn/clients"
-- name: create cert directory
+- name: create environments directory
   shell: "mkdir -p /etc/infrastructure/environments"
-- name: "openvpn log file"
-  shell: "touch /var/log/openvpn/main.log"

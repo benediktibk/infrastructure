@@ -38,14 +38,6 @@
     owner: root
     group: root
     mode: 0755
-- name: copy VPN service definition
-  become: true
-  copy:
-    src: ../service-definitions/infrastructure-vpn.service
-    dest: /etc/systemd/system/infrastructure-vpn.service
-    owner: root
-    group: root
-    mode: 0755
 - name: copy docker compose file
   become: true
   copy:
@@ -64,72 +56,6 @@
     mode: 0755
 - name: update root CA certificates
   shell: "update-ca-certificates"
-- name: copy vpn config
-  become: true
-  copy:
-    src: ../configs/vpnserver.conf.template
-    dest: /etc/infrastructure/vpn/server.conf.template
-    owner: root
-    group: root
-    mode: 0644
-- name: replace vpnserver template entries
-  shell: "env $(cat /etc/infrastructure/host.env | xargs) envsubst '${HOSTIP}' < /etc/infrastructure/vpn/server.conf.template > /etc/infrastructure/vpn/server.conf"
-- name: copy vpn client config admin
-  become: true
-  copy:
-    src: ../configs/vpnserver-client-admin
-    dest: /etc/infrastructure/vpn/clients/admin.location.benediktschmidt.at
-    owner: openvpn
-    group: openvpn
-    mode: 0755
-- name: copy vpn client config Mitterweg
-  become: true
-  copy:
-    src: ../configs/vpnserver-client-mitterweg
-    dest: /etc/infrastructure/vpn/clients/mitterweg.location.benediktschmidt.at
-    owner: openvpn
-    group: openvpn
-    mode: 0755
-- name: copy vpn client config Pradlerstrasse
-  become: true
-  copy:
-    src: ../configs/vpnserver-client-pradlerstrasse
-    dest: /etc/infrastructure/vpn/clients/pradlerstrasse.location.benediktschmidt.at
-    owner: openvpn
-    group: openvpn
-    mode: 0755
-- name: copy vpn certificate
-  become: true
-  copy:
-    src: ../build/secrets/ca/vpn_server.crt
-    dest: /etc/infrastructure/certs/vpn/server.crt
-    owner: openvpn
-    group: openvpn
-    mode: 0600
-- name: copy vpn certificate
-  become: true
-  copy:
-    src: ../build/secrets/ca/vpn_server.key
-    dest: /etc/infrastructure/certs/vpn/server.key
-    owner: openvpn
-    group: openvpn
-    mode: 0600
-- name: copy vpn certificate
-  become: true
-  copy:
-    src: ../build/secrets/ca/root_ca.crt
-    dest: /etc/infrastructure/certs/vpn/ca.crt
-    owner: openvpn
-    group: openvpn
-    mode: 0600
-- name: copy vpn certificate
-  become: true
-  copy:
-    src: ../build/secrets/ca/dh-vpn.pem
-    dest: /etc/infrastructure/certs/vpn/dh.pem
-    owner: openvpn
-    group: openvpn
-    mode: 0600
 - name: copy nftables config
   become: true
   copy:

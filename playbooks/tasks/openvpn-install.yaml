@@ -1,4 +1,0 @@
-- name: update package sources
-  shell: "apt-get update"
-- name: install openvpn packages
-  shell: "apt-get -y install openvpn"

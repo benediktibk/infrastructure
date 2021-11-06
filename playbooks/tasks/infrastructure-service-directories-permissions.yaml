@@ -1,14 +1,4 @@
 - name: ownership config top level
   shell: "chown root:root -R /etc/infrastructure"
-- name: ownership config vpn
-  shell: "chown openvpn:openvpn -R /etc/infrastructure/vpn"
-- name: ownership config vpn certs
-  shell: "chown openvpn:openvpn -R /etc/infrastructure/certs/vpn"
-- name: ownership openvpn log file
-  shell: "chown openvpn:openvpn /var/log/openvpn/main.log"
 - name: access rights config top level
   shell: "chmod -R 755 /etc/infrastructure"
-- name: access rights config certs
-  shell: "chmod -R 500 /etc/infrastructure/certs"
-- name: access rights config certs
-  shell: "chmod -R 400 /etc/infrastructure/certs/*"
