@@ -1,0 +1,22 @@
+[Unit]
+Description=infrastructure-network service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+TimeoutStartSec=1200
+
+# Remove old containers, images and volumes and update it
+ExecStartPre=/usr/bin/docker-compose --project-name infrastructure-network -f /etc/infrastructure/network.yaml down -v
+ExecStartPre=/usr/bin/docker-compose --project-name infrastructure-network -f /etc/infrastructure/network.yaml rm -fv
+ExecStartPre=/usr/bin/docker-compose --project-name infrastructure-network -f /etc/infrastructure/network.yaml pull
+
+# Compose up
+ExecStart=/usr/bin/docker-compose --project-name infrastructure-network -f /etc/infrastructure/network.yaml up
+
+# Compose down, remove containers and volumes
+ExecStop=/usr/bin/docker-compose --project-name infrastructure-network -f /etc/infrastructure/network.yaml down -v
+
+[Install]
+WantedBy=multi-user.target

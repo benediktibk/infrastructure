@@ -49,7 +49,7 @@ services:
             - /etc/infrastructure/environments/reverse-proxy.env
         image: "benediktibk/reverse-proxy"
         volumes:
-            - certificatesdata:/etc/nginx/certs/
+            - webcertificatesdata:/etc/nginx/certs/
         networks:
             dmz:
                 aliases:
@@ -74,8 +74,10 @@ volumes:
         external: true
     downloadsdata:
         external: true
-    certificatesdata:
+    webcertificatesdata:
         external: true
 networks:
     internal:
+        external: true
     dmz:
+        external: true

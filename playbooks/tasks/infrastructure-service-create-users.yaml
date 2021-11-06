@@ -1,2 +1,4 @@
-- name: create infrastructure service user
-  shell: "if ! id infrastructure &>/dev/null; then adduser --system --no-create-home --shell /dev/null --group --disabled-login infrastructure; fi;"
+- name: create infrastructure-services user
+  shell: "if ! id infrastructure-services &>/dev/null; then adduser --system --no-create-home --shell /dev/null --group --disabled-login infrastructure-services; fi;"
+- name: create infrastructure-network user
+  shell: "if ! id infrastructure-network &>/dev/null; then adduser --system --no-create-home --shell /dev/null --group --disabled-login infrastructure-network; fi;"

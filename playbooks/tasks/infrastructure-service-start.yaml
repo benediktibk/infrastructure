@@ -1,6 +1,10 @@
 - name: reload daemons
   shell: "systemctl daemon-reload"
-- name: enable infrastructure service
-  shell: "systemctl enable infrastructure"
-- name: start infrastructure service
-  shell: "systemctl start infrastructure"
+- name: enable infrastructure-services
+  shell: "systemctl enable infrastructure-services"
+- name: enable infrastructure-network
+  shell: "systemctl enable infrastructure-network"
+- name: start infrastructure-services
+  shell: "systemctl start infrastructure-services"
+- name: start infrastructure-network
+  shell: "systemctl start infrastructure-network"

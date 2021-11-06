@@ -3,12 +3,12 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile
-ENVIRONMENTS := sql valheim corona reverse-proxy
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall
 ENVIRONMENTFILES := $(addprefix /etc/infrastructure/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sqldata coronadata valheimdata downloadsdata certificatesdata
+VOLUMES := sqldata coronadata valheimdata downloadsdata webcertificatesdata
 
 CONTEXTSWITCHRESULT := $(shell docker context use default)
 
@@ -65,6 +65,8 @@ build/guard: Makefile
 	mkdir -p build/servers/valheim/bin
 	mkdir -p build/servers/reverse-proxy
 	mkdir -p build/servers/downloads
+	mkdir -p build/servers/vpn
+	mkdir -p build/servers/firewall
 	touch $@
 
 tests:
@@ -123,6 +125,16 @@ build/downloads-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-downloads servers/d
 	docker build -t benediktibk/downloads build/servers/downloads
 	docker images --format "{{.ID}}" benediktibk/downloads > $@
 	
+build/vpn-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-vpn
+	cp dockerfiles/Dockerfile-vpn build/servers/vpn/Dockerfile
+	docker build -t benediktibk/vpn build/servers/vpn
+	docker images --format "{{.ID}}" benediktibk/vpn > $@
+
+build/firewall-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-firewall
+	cp dockerfiles/Dockerfile-firewall build/servers/firewall/Dockerfile
+	docker build -t benediktibk/firewall build/servers/firewall
+	docker images --format "{{.ID}}" benediktibk/firewall > $@
+	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
 	docker push benediktibk/$*
@@ -145,7 +157,7 @@ build/%-pushed-id.txt: build/%-id.txt
 	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
 	sed -i "s/##DBCORONAPASSWORD##/${DBCORONAPASSWORD}/g" $@
 
-/etc/infrastructure/environments/reverse-proxy.env: environments/reverse-proxy.env
+/etc/infrastructure/environments/%.env: environments/%.env
 	cp $< $@
 
 

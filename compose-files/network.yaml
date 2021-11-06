@@ -1,0 +1,28 @@
+version: "3.6"
+services:
+    vpn:
+        env_file:
+            - /etc/infrastructure/environments/vpn.env
+        image: "benediktibk/vpn"
+        networks:
+            - dmz
+        ports:
+            - "1194:1194"
+    firewall:
+        env_file:
+            - /etc/infrastructure/environments/firewall.env
+        image: "benediktibk/firewall"
+volumes:
+    vpncertificatesdata:
+        external: true
+networks:
+    internal:
+        ipam:
+            config:
+                - subnet: 192.168.39.0/24
+                  gateway: 192.168.39.1
+    dmz:
+        ipam:
+            config:
+                - subnet: 192.168.38.0/24
+                  gateway: 192.168.38.1

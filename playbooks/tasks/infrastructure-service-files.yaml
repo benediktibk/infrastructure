@@ -3,56 +3,40 @@
   copy:
     src: /etc/infrastructure/environments/sql.env
     dest: /etc/infrastructure/environments/sql.env
-    owner: infrastructure
-    group: infrastructure
-    mode: 0600
 - name: copy corona environment
   become: true
   copy:
     src: /etc/infrastructure/environments/corona.env
     dest: /etc/infrastructure/environments/corona.env
-    owner: infrastructure
-    group: infrastructure
-    mode: 0600
 - name: copy reverse-proxy environment
   become: true
   copy:
     src: /etc/infrastructure/environments/reverse-proxy.env
     dest: /etc/infrastructure/environments/reverse-proxy.env
-    owner: infrastructure
-    group: infrastructure
-    mode: 0600
 - name: copy valheim environment
   become: true
   copy:
     src: /etc/infrastructure/environments/valheim.env
     dest: /etc/infrastructure/environments/valheim.env
-    owner: infrastructure
-    group: infrastructure
-    mode: 0600
-- name: copy infrastructure service definition
+- name: copy infrastructure-network service definition
   become: true
   copy:
-    src: ../service-definitions/infrastructure.service
-    dest: /etc/systemd/system/infrastructure.service
-    owner: root
-    group: root
-    mode: 0755
+    src: ../service-definitions/network.service
+    dest: /etc/systemd/system/infrastructure-network.service
+- name: copy infrastructure-services service definition
+  become: true
+  copy:
+    src: ../service-definitions/services.service
+    dest: /etc/systemd/system/infrastructure-services.service
 - name: copy docker compose file
   become: true
   copy:
     src: ../compose-files/server.yaml
     dest: /etc/infrastructure/server.yaml
-    owner: root
-    group: root
-    mode: 0755
 - name: copy root CA certificate
   become: true
   copy:
     src: ../build/secrets/ca/root_ca.crt
     dest: /usr/local/share/ca-certificates/
-    owner: root
-    group: root
-    mode: 0755
 - name: update root CA certificates
   shell: "update-ca-certificates"
