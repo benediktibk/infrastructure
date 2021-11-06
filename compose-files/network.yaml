@@ -3,13 +3,12 @@ services:
     vpn:
         env_file:
             - /etc/infrastructure/environments/vpn.env
+            - /etc/infrastructure/environments/host.env
         image: "benediktibk/vpn"
         volumes:
             - vpncertificates:/etc/openvpn/certs
-        networks:
-            - dmz
-        ports:
-            - "1194:1194"
+        network_mode: host
+        privileged: true
     firewall:
         env_file:
             - /etc/infrastructure/environments/firewall.env
@@ -17,6 +16,7 @@ services:
         networks:
             - internal
             - dmz
+        privileged: true
 volumes:
     vpncertificates:
         external: true
