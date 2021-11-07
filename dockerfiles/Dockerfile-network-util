@@ -1,0 +1,5 @@
+FROM debian:stable
+RUN apt-get update
+RUN apt-get -y install inetutils-ping telnet iproute2
+COPY endless-loop.sh /
+CMD ["/endless-loop.sh"]

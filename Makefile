@@ -5,7 +5,7 @@ SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 COMMONDEPS := build/guard Makefile
 ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall dc dc-init
 ENVIRONMENTFILES := $(addprefix /etc/infrastructure/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc
@@ -58,6 +58,7 @@ build/guard: Makefile
 	mkdir -p build/servers/vpn
 	mkdir -p build/servers/firewall
 	mkdir -p build/servers/dc
+	mkdir -p build/servers/network-util
 	touch $@
 
 tests:
@@ -135,6 +136,12 @@ build/dc-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-dc servers/dc/smb.conf
 	cp servers/dc/smb.conf build/servers/dc/
 	docker build -t benediktibk/dc build/servers/dc
 	docker images --format "{{.ID}}" benediktibk/dc > $@
+
+build/network-util-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-network-util servers/network-util/endless-loop.sh
+	cp dockerfiles/Dockerfile-network-util build/servers/network-util/Dockerfile
+	cp servers/network-util/endless-loop.sh build/servers/network-util/
+	docker build -t benediktibk/network-util build/servers/network-util
+	docker images --format "{{.ID}}" benediktibk/network-util > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@

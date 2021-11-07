@@ -56,8 +56,8 @@
 - name: copy docker compose file
   become: true
   copy:
-    src: ../compose-files/services-init.yaml
-    dest: /etc/infrastructure/services-init.yaml
+    src: ../compose-files/corona-init.yaml
+    dest: /etc/infrastructure/corona-init.yaml
 - name: copy docker compose file
   become: true
   copy:
