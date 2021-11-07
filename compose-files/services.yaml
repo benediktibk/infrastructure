@@ -32,8 +32,6 @@ services:
         networks:
             dmz:
                 ipv4_address: 192.168.38.4
-            internal:
-                ipv4_address: 192.168.39.3
     corona-updater:
         env_file:
             - /etc/infrastructure/environments/corona.env
@@ -82,7 +80,7 @@ services:
             - /etc/localtime:/etc/localtime:ro
         networks:
             internal:
-                ipv4_address: 192.168.39.5
+                ipv4_address: 192.168.39.3
 volumes:
     sql:
         external: true
