@@ -3,12 +3,12 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall dc dc-init
 ENVIRONMENTFILES := $(addprefix /etc/infrastructure/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona valheim downloads webcertificates
+VOLUMES := sql corona valheim downloads webcertificates dc
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname server-client-*)
 
 CONTEXTSWITCHRESULT := $(shell docker context use default)
@@ -57,6 +57,7 @@ build/guard: Makefile
 	mkdir -p build/servers/downloads
 	mkdir -p build/servers/vpn
 	mkdir -p build/servers/firewall
+	mkdir -p build/servers/dc
 	touch $@
 
 tests:
@@ -128,6 +129,12 @@ build/firewall-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-firewall servers/fir
 	cp servers/firewall/firewall.sh build/servers/firewall/
 	docker build -t benediktibk/firewall build/servers/firewall
 	docker images --format "{{.ID}}" benediktibk/firewall > $@
+
+build/dc-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-dc servers/dc/smb.conf
+	cp dockerfiles/Dockerfile-dc build/servers/dc/Dockerfile
+	cp servers/dc/smb.conf build/servers/dc/
+	docker build -t benediktibk/dc build/servers/dc
+	docker images --format "{{.ID}}" benediktibk/dc > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
@@ -150,6 +157,11 @@ build/%-pushed-id.txt: build/%-id.txt
 	cp $< $@
 	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
 	sed -i "s/##DBCORONAPASSWORD##/${DBCORONAPASSWORD}/g" $@
+
+/etc/infrastructure/environments/dc-init.env: environments/dc-init.env.in build/secrets/passwords/domainpass $(COMMONDEPS)
+	cp $< $@
+	$(eval DOMAINPASS := $(shell cat build/secrets/passwords/domainpass))
+	sed -i "s/##DOMAINPASS##/${DOMAINPASS}/g" $@
 
 /etc/infrastructure/environments/%.env: environments/%.env
 	cp $< $@

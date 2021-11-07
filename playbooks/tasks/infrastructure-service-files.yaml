@@ -28,6 +28,16 @@
   copy:
     src: /etc/infrastructure/environments/firewall.env
     dest: /etc/infrastructure/environments/firewall.env
+- name: copy dc environment
+  become: true
+  copy:
+    src: /etc/infrastructure/environments/dc.env
+    dest: /etc/infrastructure/environments/dc.env
+- name: copy dc-init environment
+  become: true
+  copy:
+    src: /etc/infrastructure/environments/dc-init.env
+    dest: /etc/infrastructure/environments/dc-init.env
 - name: copy infrastructure-network service definition
   become: true
   copy:

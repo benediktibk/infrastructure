@@ -7,13 +7,13 @@ services:
         volumes:
             - sql:/var/opt/mssql/data
         networks:
-            - internal
-        ports:
-            - "1433:1433"
+            internal:
+                ipv4_address: 192.168.39.2
     homepage:
         image: "benediktibk/homepage"
         networks:
-            - dmz
+            dmz:
+                ipv4_address: 192.168.38.2
     valheim:
         env_file:
             - /etc/infrastructure/environments/valheim.env
@@ -21,7 +21,8 @@ services:
         volumes:
             - valheim:/srv/valheim
         networks:
-            - dmz
+            dmz:
+                ipv4_address: 192.168.38.3
     corona-viewer:
         environment:
             - DBHOST=database-server
@@ -29,8 +30,10 @@ services:
             - /etc/infrastructure/environments/corona.env
         image: "benediktibk/corona-viewer"
         networks:
-            - dmz
-            - internal
+            dmz:
+                ipv4_address: 192.168.38.4
+            internal:
+                ipv4_address: 192.168.39.3
     corona-updater:
         env_file:
             - /etc/infrastructure/environments/corona.env
@@ -38,7 +41,8 @@ services:
         volumes:
             - corona:/tmp/corona
         networks:
-            - internal
+            internal:
+                ipv4_address: 192.168.39.4
     reverse-proxy:
         environment:
             - WEBFQDN=dev.benediktschmidt.at
@@ -52,6 +56,7 @@ services:
             - webcertificates:/etc/nginx/certs/
         networks:
             dmz:
+                ipv4_address: 192.168.38.5
                 aliases:
                     - me.reverse-proxy
                     - corona.reverse-proxy
@@ -64,7 +69,20 @@ services:
         volumes:
             - downloads:/srv/downloads
         networks:
-            - dmz
+            dmz:
+                ipv4_address: 192.168.38.6
+        env_file:
+            - /etc/infrastructure/environments/sql.env
+    dc:
+        env_file:
+            - /etc/infrastructure/environments/dc.env
+        image: "benediktibk/dc"
+        volumes:
+            - dc:/var/lib/samba
+            - /etc/localtime:/etc/localtime:ro
+        networks:
+            internal:
+                ipv4_address: 192.168.39.5
 volumes:
     sql:
         external: true
@@ -75,6 +93,8 @@ volumes:
     downloads:
         external: true
     webcertificates:
+        external: true
+    dc:
         external: true
 networks:
     internal:
