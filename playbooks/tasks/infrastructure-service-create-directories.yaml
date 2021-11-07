@@ -2,3 +2,5 @@
   shell: "mkdir -p /etc/infrastructure"
 - name: create environments directory
   shell: "mkdir -p /etc/infrastructure/environments"
+- name: create nftables log directory
+  shell: "mkdir -p /var/log/nftables/"

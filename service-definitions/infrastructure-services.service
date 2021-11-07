@@ -1,6 +1,8 @@
 [Unit]
 Description=infrastructure-services service
+Requires=infrastructure-network.service
 Requires=docker.service
+After=infrastructure-network.service
 After=docker.service
 
 [Service]

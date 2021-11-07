@@ -4,6 +4,8 @@
   shell: "systemctl enable infrastructure-services"
 - name: enable infrastructure-network
   shell: "systemctl enable infrastructure-network"
+- name: restart syslog
+  shell: "systemctl restart rsyslog"
 - name: start infrastructure-services
   shell: "systemctl start infrastructure-services"
 - name: start infrastructure-network

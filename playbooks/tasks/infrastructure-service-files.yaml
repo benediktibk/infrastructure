@@ -80,3 +80,13 @@
   copy:
     src: ../build/secrets/ca/dh-vpn.pem
     dest: /var/lib/docker/volumes/vpncertificates/_data/dh.pem
+- name: copy syslog config
+  become: true
+  copy:
+    src: ../configs/syslog-nftables.conf
+    dest: /etc/rsyslog.d/nftables.conf
+- name: copy logrotate config
+  become: true
+  copy:
+    src: ../configs/logrotate-nftables
+    dest: /etc/logrotate.d/nftables

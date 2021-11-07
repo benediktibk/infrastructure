@@ -1,0 +1,13 @@
+/var/log/nftables/*
+{
+        rotate 5
+        daily
+        maxsize 50M
+        missingok
+        notifempty
+        delaycompress
+        compress
+        postrotate
+                invoke-rc.d rsyslog rotate > /dev/null
+        endscript
+}
