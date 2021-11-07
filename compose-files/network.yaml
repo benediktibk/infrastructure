@@ -22,10 +22,12 @@ volumes:
         external: true
 networks:
     internal:
+        name: internal
         ipam:
             config:
                 - subnet: 192.168.39.0/24
     dmz:
+        name: dmz
         ipam:
             config:
                 - subnet: 192.168.38.0/24
