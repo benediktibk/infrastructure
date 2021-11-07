@@ -1,3 +1,5 @@
 FROM debian:stable
+RUN apt-get update
+RUN apt-get -y install nftables
 COPY firewall.sh /
 CMD ["/firewall.sh"]

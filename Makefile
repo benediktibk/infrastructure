@@ -123,10 +123,9 @@ build/vpn-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-vpn servers/vpn/server.co
 	docker build -t benediktibk/vpn build/servers/vpn
 	docker images --format "{{.ID}}" benediktibk/vpn > $@
 
-build/firewall-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-firewall servers/firewall/firewall.sh servers/firewall/nftables.conf
+build/firewall-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-firewall servers/firewall/firewall.sh
 	cp dockerfiles/Dockerfile-firewall build/servers/firewall/Dockerfile
 	cp servers/firewall/firewall.sh build/servers/firewall/
-	cp servers/firewall/nftables.conf build/servers/firewall/
 	docker build -t benediktibk/firewall build/servers/firewall
 	docker images --format "{{.ID}}" benediktibk/firewall > $@
 	
