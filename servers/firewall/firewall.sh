@@ -20,31 +20,29 @@ nft delete chain ip filter FORWARD-DMZ-INTERNAL
 nft add chain ip filter FORWARD-DMZ-INTERNAL
 nft insert rule ip filter FORWARD jump FORWARD-DMZ-INTERNAL
 
-echo "allow traffic on loopback device"
+echo "configure chain INPUT"
+echo "    allow traffic on loopback device"
 nft add rule filter INPUT iifname "lo" accept
-
-echo "allow already established connections"
+echo "    allow already established connections"
 nft add rule filter INPUT ct state established accept
-
-echo "allow specific services from VPN"
+echo "    allow specific services from VPN"
 nft add rule filter INPUT ip daddr $HOSTVPNIP tcp dport 22 accept
-
-echo "allow specific services from external"
+echo "    allow specific services from external"
 nft add rule filter INPUT ip daddr $HOSTIP tcp dport 1194 accept
 nft add rule filter INPUT ip daddr $HOSTIP tcp dport 80 accept
 nft add rule filter INPUT ip daddr $HOSTIP tcp dport 443 accept
-
-echo "allow ICMP requests"
+echo "    allow ICMP requests"
 nft add rule filter INPUT icmp type echo-request accept
-
-echo "log dropped packets of input"
+echo "    log dropped packets of input"
 nft add rule filter INPUT log prefix "nft.ip.filter.input.drop "
-
-echo "allow access to database from corona-viewer"
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.4 ip daddr 192.168.39.2 tcp dport 1433 accept
-
-echo "set chain filter INPUT default policy to drop"
+echo "    set chain filter INPUT default policy to drop"
 nft 'add chain ip filter INPUT { type filter hook input priority 0; policy drop; }'
+
+echo "configure chain FORWARD-DMZ-INTERNAL"
+echo "    allow already established connections"
+nft add rule filter FORWARD-DMZ-INTERNAL ct state established accept
+echo "    allow access to database from corona-viewer"
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.4 ip daddr 192.168.39.2 tcp dport 1433 accept
 
 while :
 do
