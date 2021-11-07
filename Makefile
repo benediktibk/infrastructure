@@ -15,7 +15,7 @@ CONTEXTSWITCHRESULT := $(shell docker context use default)
 
 CREATEVOLUMES := for volume in $(VOLUMES); do echo "creating volume $$volume"; docker volume create "$$volume"; done;
 DELETEVOLUMES := if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi; docker volume rm $(VOLUMES)
-DOCKERCOMPOSESERVERINIT := docker-compose --project-name infrastructure-init -f compose-files/server-init.yaml up --abort-on-container-exit
+DOCKERCOMPOSESERVERINIT := docker-compose --project-name infrastructure-init -f compose-files/services-init.yaml up --abort-on-container-exit
 DOCKERCOMPOSESERVER := docker-compose --project-name infrastructure -f compose-files/server.yaml up
 
 ############ general

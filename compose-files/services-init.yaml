@@ -6,8 +6,6 @@ services:
         image: "benediktibk/database-server"
         volumes:
             - sql:/var/opt/mssql/data
-        networks:
-            - internal
     corona-init:
         environment:
             - DBHOST=database-server
@@ -17,12 +15,8 @@ services:
         image: "benediktibk/corona-init"
         volumes:
             - corona:/tmp/corona
-        networks:
-            - internal
 volumes:
     sql:
         external: true
     corona:
         external: true
-networks:
-    internal:
