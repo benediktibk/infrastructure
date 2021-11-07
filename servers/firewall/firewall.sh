@@ -25,11 +25,12 @@ nft delete chain ip filter FORWARD-DMZ-INTERNAL
 nft add chain ip filter FORWARD-DMZ-INTERNAL
 nft insert rule ip filter FORWARD jump FORWARD-DMZ-INTERNAL
 
-echo "setup chain filter FORWARD-DMZ-INTERNAL"
-delete_forward_rule "jump FORWARD-DMZ-INTERNAL"
-nft delete chain ip filter FORWARD-DMZ-INTERNAL
-nft add chain ip filter FORWARD-DMZ-INTERNAL
-nft insert rule ip filter FORWARD jump FORWARD-DMZ-INTERNAL
+echo "setup chain filter FORWARD"
+nft 'add chain ip filter FORWARD { type filter hook forward priority 0; policy accept; }'
+
+echo "setup chain filter FORWARD-LOGGING"
+nft delete chain ip filter FORWARD-LOGGING
+nft 'add chain ip filter FORWARD-LOGGING { type filter hook forward priority -1; policy drop; }'
 
 echo "configure chain INPUT"
 echo "    allow traffic on loopback device"
@@ -54,8 +55,13 @@ echo "    allow already established connections"
 nft add rule filter FORWARD-DMZ-INTERNAL ct state established accept
 echo "    allow access to database from corona-viewer"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.4 ip daddr 192.168.39.2 tcp dport 1433 accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.2 tcp dport 1433 accept
 echo "    allow ICMP requests"
 nft add rule filter FORWARD-DMZ-INTERNAL icmp type echo-request accept
+
+echo "configure chain FORWARD-LOGGING"
+echo "    log dropped packets"
+nft add rule filter FORWARD-LOGGING log prefix "nft.ip.filter.forward.drop "
 
 while :
 do
