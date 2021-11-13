@@ -38,15 +38,15 @@ nft add rule filter INPUT iifname "lo" accept
 echo "    allow already established connections"
 nft add rule filter INPUT ct state established accept
 echo "    allow specific services from VPN"
-nft add rule filter INPUT ip daddr $HOSTVPNIP tcp dport 22 accept
+nft add rule filter INPUT ip daddr $HOSTVPNIP tcp dport 22 counter accept
 echo "    allow specific services from external"
-nft add rule filter INPUT ip daddr $HOSTIP tcp dport 1194 accept
-nft add rule filter INPUT ip daddr $HOSTIP tcp dport 80 accept
-nft add rule filter INPUT ip daddr $HOSTIP tcp dport 443 accept
+nft add rule filter INPUT ip daddr $HOSTIP tcp dport 1194 counter accept
+nft add rule filter INPUT ip daddr $HOSTIP tcp dport 80 counter accept
+nft add rule filter INPUT ip daddr $HOSTIP tcp dport 443 counter accept
 echo "    allow ICMP requests"
-nft add rule filter INPUT icmp type echo-request accept
+nft add rule filter INPUT icmp type echo-request counter accept
 echo "    log dropped packets"
-nft add rule filter INPUT log prefix "nft.ip.filter.input.drop "
+nft add rule filter INPUT counter log prefix "nft.ip.filter.input.drop "
 echo "    set chain filter INPUT default policy to drop"
 nft 'add chain ip filter INPUT { type filter hook input priority 0; policy drop; }'
 
@@ -54,14 +54,14 @@ echo "configure chain FORWARD-DMZ-INTERNAL"
 echo "    allow already established connections"
 nft add rule filter FORWARD-DMZ-INTERNAL ct state established accept
 echo "    allow access to database from corona-viewer"
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.4 ip daddr 192.168.39.2 tcp dport 1433 accept
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.2 tcp dport 1433 accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.4 ip daddr 192.168.39.2 tcp dport 1433 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.2 tcp dport 1433 counter accept
 echo "    allow ICMP requests"
-nft add rule filter FORWARD-DMZ-INTERNAL icmp type echo-request accept
+nft add rule filter FORWARD-DMZ-INTERNAL icmp type echo-request counter accept
 
 echo "configure chain FORWARD-LOGGING"
 echo "    log dropped packets"
-nft add rule filter FORWARD-LOGGING log prefix "nft.ip.filter.forward.drop "
+nft add rule filter FORWARD-LOGGING counter log prefix "nft.ip.filter.forward.drop "
 
 while :
 do
