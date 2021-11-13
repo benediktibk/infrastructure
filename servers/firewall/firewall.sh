@@ -29,8 +29,10 @@ echo "setup chain filter FORWARD"
 nft 'add chain ip filter FORWARD { type filter hook forward priority 0; policy accept; }'
 
 echo "setup chain filter FORWARD-LOGGING"
+delete_forward_rule "jump FORWARD-LOGGING"
 nft delete chain ip filter FORWARD-LOGGING
-nft 'add chain ip filter FORWARD-LOGGING { type filter hook forward priority 1; policy drop; }'
+nft add chain ip filter FORWARD-LOGGING
+nft add rule ip filter FORWARD jump FORWARD-LOGGING
 
 echo "configure chain INPUT"
 echo "    allow traffic on loopback device"
