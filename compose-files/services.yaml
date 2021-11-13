@@ -81,16 +81,6 @@ services:
         networks:
             internal:
                 ipv4_address: 192.168.39.3
-    util-dmz:
-        image: "benediktibk/network-util"
-        networks:
-            dmz:
-                ipv4_address: 192.168.38.254
-    util-internal:
-        image: "benediktibk/network-util"
-        networks:
-            internal:
-                ipv4_address: 192.168.39.254
 volumes:
     sql:
         external: true
