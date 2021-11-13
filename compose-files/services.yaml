@@ -25,7 +25,7 @@ services:
                 ipv4_address: 192.168.38.3
     corona-viewer:
         environment:
-            - DBHOST=database-server
+            - DBHOST=192.168.39.2
         env_file:
             - /etc/infrastructure/environments/corona.env
         image: "benediktibk/corona-viewer"
