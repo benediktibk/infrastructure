@@ -11,8 +11,6 @@ IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname server-client-*)
 
-CONTEXTSWITCHRESULT := $(shell docker context use default)
-
 CREATEVOLUMES := for volume in $(VOLUMES); do echo "creating volume $$volume"; docker volume create "$$volume"; done;
 DELETEVOLUMES := if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi; docker volume rm $(VOLUMES)
 DOCKERCOMPOSECORONAINIT := docker-compose --project-name infrastructure-init -f compose-files/corona-init.yaml up --abort-on-container-exit
@@ -25,16 +23,16 @@ all: $(IMAGEPUSHEDIDS) $(ENVIRONMENTFILES) tests
 clean:
 	git clean -xdff
 	
-run-local: $(IMAGEIDS) $(ENVIRONMENTFILES)
+run: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	$(DOCKERCOMPOSESERVER)
 
 deploy-update: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
 	ansible-playbook playbooks/dockerhost-update.yaml
 	
-data-clean-local: $(ENVIRONMENTFILES)
+data-clean: $(ENVIRONMENTFILES)
 	$(DELETEVOLUMES)
 	
-data-init-local: $(IMAGEIDS) $(ENVIRONMENTFILES)
+data-init: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	$(CREATEVOLUMES)
 	$(DOCKERCOMPOSECORONAINIT)
 
@@ -64,7 +62,7 @@ build/guard: Makefile
 tests:
 	cd servers/corona/Corona && dotnet test
 	
-.PHONY: all clean data-init-local data-init-remote data-clean-local data-clean-remote run-local deploy-init deploy-update secrets-encrypt build/secrets.tar.gz tests
+.PHONY: all clean data-init data-clean data-clean run-local deploy-update secrets-encrypt build/secrets.tar.gz tests
 	 
 ############ container
 	
