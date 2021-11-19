@@ -5,7 +5,7 @@ services:
             - /etc/infrastructure/environments/sql.env
         image: "benediktibk/database-server"
         volumes:
-            - sql:/var/opt/mssql/data
+            - sql:/var/opt/mssql/data/
         networks:
             internal:
                 ipv4_address: 192.168.39.2
@@ -19,7 +19,7 @@ services:
             - /etc/infrastructure/environments/valheim.env
         image: "benediktibk/valheim"
         volumes:
-            - valheim:/srv/valheim
+            - valheim:/srv/valheim/
         networks:
             dmz:
                 ipv4_address: 192.168.38.3
@@ -37,13 +37,13 @@ services:
             - /etc/infrastructure/environments/corona.env
         image: "benediktibk/corona-updater"
         volumes:
-            - corona:/tmp/corona
+            - corona:/tmp/corona/
         networks:
             internal:
                 ipv4_address: 192.168.39.4
     reverse-proxy:
         environment:
-            - WEBFQDN=dev.benediktschmidt.at
+            - WEBFQDN=benediktschmidt.at
             - TARGETCORONA=corona-viewer:80
             - TARGETME=homepage:80
             - TARGETDOWNLOADS=downloads:80
@@ -52,6 +52,7 @@ services:
         image: "benediktibk/reverse-proxy"
         volumes:
             - webcertificates:/etc/nginx/certs/
+            - acme:/var/www/html/
         networks:
             dmz:
                 ipv4_address: 192.168.38.5
@@ -65,7 +66,7 @@ services:
     downloads:
         image: "benediktibk/downloads"
         volumes:
-            - downloads:/srv/downloads
+            - downloads:/srv/downloads/
         networks:
             dmz:
                 ipv4_address: 192.168.38.6
@@ -76,11 +77,19 @@ services:
             - /etc/infrastructure/environments/dc.env
         image: "benediktibk/dc"
         volumes:
-            - dc:/var/lib/samba
+            - dc:/var/lib/samba/
             - /etc/localtime:/etc/localtime:ro
         networks:
             internal:
                 ipv4_address: 192.168.39.3
+    certbot:
+        image: "benediktibk/certbot"
+        volumes:
+            - webcertificates:/etc/nginx/certs/
+            - acme:/var/www/html/
+        networks:
+            internal:
+                ipv4_address: 192.168.39.5
 volumes:
     sql:
         external: true
@@ -93,6 +102,8 @@ volumes:
     webcertificates:
         external: true
     dc:
+        external: true
+    acme:
         external: true
 networks:
     internal:

@@ -2,8 +2,9 @@ server {
     listen                  80;
     server_name             ${WEBFQDN} *.${WEBFQDN};
 
-    location / {
-        rewrite ^/(.*)$ https://${WEBFQDN}/$1 redirect;
+    location /.well-known/acme-challenge {
+        allow all;
+        root /var/www/html;
     }
 }
 

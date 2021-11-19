@@ -5,10 +5,10 @@ SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 COMMONDEPS := build/guard Makefile
 ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall dc dc-init
 ENVIRONMENTFILES := $(addprefix /etc/infrastructure/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona valheim downloads webcertificates dc
+VOLUMES := sql corona valheim downloads webcertificates dc acme
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname server-client-*)
 
 CREATEVOLUMES := for volume in $(VOLUMES); do echo "creating volume $$volume"; docker volume create "$$volume"; done;
@@ -57,6 +57,7 @@ build/guard: Makefile
 	mkdir -p build/servers/firewall
 	mkdir -p build/servers/dc
 	mkdir -p build/servers/network-util
+	mkdir -p build/servers/certbot
 	touch $@
 
 tests:
@@ -140,6 +141,12 @@ build/network-util-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-network-util ser
 	cp servers/network-util/endless-loop.sh build/servers/network-util/
 	docker build -t benediktibk/network-util build/servers/network-util
 	docker images --format "{{.ID}}" benediktibk/network-util > $@
+
+build/certbot-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-certbot servers/certbot/certbot.sh
+	cp dockerfiles/Dockerfile-certbot build/servers/certbot/Dockerfile
+	cp servers/certbot/certbot.sh build/servers/certbot/
+	docker build -t benediktibk/certbot build/servers/certbot
+	docker images --format "{{.ID}}" benediktibk/certbot > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
