@@ -19,7 +19,7 @@ sleep 1m
 for DOMAIN in $DOMAINS;
 do
     DOMAINPATH="/etc/letsencrypt/live/$DOMAIN"
-    if [ ! -d DOMAINPATH ]; then
+    if [ ! -d $DOMAINPATH ]; then
         echo "$DOMAINPATH does not yet exist, requesting new certificate for $DOMAIN"
         certbot certonly --webroot --webroot-path=/var/www/html --email benediktibk@gmail.com --agree-tos --no-eff-email --domain $DOMAIN
         installCertificate $DOMAIN
