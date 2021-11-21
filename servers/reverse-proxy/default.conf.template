@@ -23,11 +23,13 @@ server {
 }
 
 server {
-    listen                  443 ssl;
-    server_name             ${WEBFQDN};
-    ssl_protocols           TLSv1.2 TLSv1.3;
-    ssl_certificate         /etc/nginx/certs/web_benediktschmidt.at.crt;
-    ssl_certificate_key     /etc/nginx/certs/web_benediktschmidt.at.key;
+    listen                      443 ssl;
+    server_name                 ${WEBFQDN};
+    ssl_protocols               TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers   on;
+    ssl_ciphers                 "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS +RC4 RC4";
+    ssl_certificate             /etc/nginx/certs/web_benediktschmidt.at.crt;
+    ssl_certificate_key         /etc/nginx/certs/web_benediktschmidt.at.key;
 
     location / {
         rewrite ^/(.*)$ https://me.${WEBFQDN}/$1 redirect;
@@ -35,11 +37,13 @@ server {
 }
 
 server {
-    listen                  443 ssl;
-    server_name             me.${WEBFQDN};
-    ssl_protocols           TLSv1.2 TLSv1.3;
-    ssl_certificate         /etc/nginx/certs/web_me.benediktschmidt.at.crt;
-    ssl_certificate_key     /etc/nginx/certs/web_me.benediktschmidt.at.key;
+    listen                      443 ssl;
+    server_name                 me.${WEBFQDN};
+    ssl_protocols               TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers   on;
+    ssl_ciphers                 "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS +RC4 RC4";
+    ssl_certificate             /etc/nginx/certs/web_me.benediktschmidt.at.crt;
+    ssl_certificate_key         /etc/nginx/certs/web_me.benediktschmidt.at.key;
 
     location / {
         proxy_pass http://${TARGETME};
@@ -58,11 +62,13 @@ server {
 }
 
 server {
-    listen                  443 ssl;
-    server_name             corona.${WEBFQDN};
-    ssl_protocols           TLSv1.2 TLSv1.3;
-    ssl_certificate         /etc/nginx/certs/web_corona.benediktschmidt.at.crt;
-    ssl_certificate_key     /etc/nginx/certs/web_corona.benediktschmidt.at.key;
+    listen                      443 ssl;
+    server_name                 corona.${WEBFQDN};
+    ssl_protocols               TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers   on;
+    ssl_ciphers                 "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS +RC4 RC4";
+    ssl_certificate             /etc/nginx/certs/web_corona.benediktschmidt.at.crt;
+    ssl_certificate_key         /etc/nginx/certs/web_corona.benediktschmidt.at.key;
 
     location / {
         proxy_pass http://${TARGETCORONA};
@@ -81,11 +87,13 @@ server {
 }
 
 server {
-    listen                  443 ssl;
-    server_name             downloads.${WEBFQDN};
-    ssl_protocols           TLSv1.2 TLSv1.3;
-    ssl_certificate         /etc/nginx/certs/web_downloads.benediktschmidt.at.crt;
-    ssl_certificate_key     /etc/nginx/certs/web_downloads.benediktschmidt.at.key;
+    listen                      443 ssl;
+    server_name                 downloads.${WEBFQDN};
+    ssl_protocols               TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers   on;
+    ssl_ciphers                 "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS +RC4 RC4";
+    ssl_certificate             /etc/nginx/certs/web_downloads.benediktschmidt.at.crt;
+    ssl_certificate_key         /etc/nginx/certs/web_downloads.benediktschmidt.at.key;
 
     location / {
         proxy_pass http://${TARGETDOWNLOADS};
