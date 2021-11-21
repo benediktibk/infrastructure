@@ -1,5 +1,11 @@
 FROM debian:stable
 COPY bin/ /opt/valheim/
 COPY start_server.sh /opt/valheim/start_server.sh
+EXPOSE 2456/udp
+EXPOSE 2456/tcp
+EXPOSE 2457/udp
+EXPOSE 2457/tcp
+EXPOSE 2458/udp
+EXPOSE 2458/tcp
 WORKDIR /opt/valheim/
 CMD ["/bin/bash", "start_server.sh"] 
