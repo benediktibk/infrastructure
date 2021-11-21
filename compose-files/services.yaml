@@ -87,6 +87,7 @@ services:
         volumes:
             - webcertificates:/etc/nginx/certs/
             - acme:/var/www/html/
+            - letsencrypt:/etc/letsencrypt/live/
         networks:
             internal:
                 ipv4_address: 192.168.39.5
@@ -104,6 +105,8 @@ volumes:
     dc:
         external: true
     acme:
+        external: true
+    letsencrypt:
         external: true
 networks:
     internal:

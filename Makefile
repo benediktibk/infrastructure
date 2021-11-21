@@ -8,7 +8,7 @@ ENVIRONMENTFILES := $(addprefix /etc/infrastructure/environments/,$(addsuffix .e
 IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona valheim downloads webcertificates dc acme
+VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname server-client-*)
 
 CREATEVOLUMES := for volume in $(VOLUMES); do echo "creating volume $$volume"; docker volume create "$$volume"; done;
