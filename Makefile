@@ -10,6 +10,8 @@ IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname server-client-*)
+VALHEIMDIRECTORY = ~/.steam/debian-installation/steamapps/common/Valheim\ dedicated\ server
+VALHEIMFILES = $(shell find '$(VALHEIMDIRECTORY)')
 
 CREATEVOLUMES := for volume in $(VOLUMES); do echo "creating volume $$volume"; docker volume create "$$volume"; done;
 DELETEVOLUMES := if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi; docker volume rm $(VOLUMES)
@@ -67,10 +69,10 @@ tests:
 	 
 ############ container
 	
-build/valheim-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-valheim servers/valheim/start_server.sh
+build/valheim-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-valheim servers/valheim/start_server.sh $(VALHEIMFILES)
 	cp dockerfiles/Dockerfile-valheim build/servers/valheim/Dockerfile
 	cp servers/valheim/start_server.sh build/servers/valheim/start_server.sh
-	cp -R ~/.steam/debian-installation/steamapps/common/Valheim\ dedicated\ server/* build/servers/valheim/bin/
+	cp -R $(VALHEIMDIRECTORY)/* build/servers/valheim/bin/
 	docker build -t benediktibk/valheim build/servers/valheim
 	docker images --format "{{.ID}}" benediktibk/valheim > $@
 	
