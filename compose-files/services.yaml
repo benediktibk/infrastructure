@@ -33,6 +33,8 @@ services:
             dmz:
                 ipv4_address: 192.168.38.4
     corona-updater:
+        environment:
+            - DBHOST=192.168.39.2
         env_file:
             - /etc/infrastructure/environments/corona.env
         image: "benediktibk/corona-updater"
