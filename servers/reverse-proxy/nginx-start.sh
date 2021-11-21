@@ -11,4 +11,11 @@ set -eu
 
 envsubst '${WEBFQDN} ${TARGETCORONA} ${TARGETME} ${TARGETDOWNLOADS}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
 
-exec nginx -g 'daemon off;'
+nginx -g 'daemon on;'
+
+while :
+do
+    sleep 1h &
+    wait $!
+    nginx -s reload
+done
