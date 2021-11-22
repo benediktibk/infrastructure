@@ -62,6 +62,7 @@ services:
         volumes:
             - webcertificates:/etc/nginx/certs/
             - acme:/var/www/html/
+            - proxycache:/data/nginx/cache/
         networks:
             dmz:
                 ipv4_address: 192.168.38.5
@@ -116,6 +117,8 @@ volumes:
     acme:
         external: true
     letsencrypt:
+        external: true
+    proxycache:
         external: true
 networks:
     internal:
