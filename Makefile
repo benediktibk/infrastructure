@@ -12,6 +12,7 @@ VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname server-client-*)
 VALHEIMDIRECTORY = ~/.steam/debian-installation/steamapps/common/Valheim\ dedicated\ server
 VALHEIMFILES = $(shell find '$(VALHEIMDIRECTORY)')
+HOMEPAGEFILES = $(shell find servers/homepage)
 
 CREATEVOLUMES := for volume in $(VOLUMES); do echo "creating volume $$volume"; docker volume create "$$volume"; done;
 DELETEVOLUMES := if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi; docker volume rm $(VOLUMES)
@@ -81,9 +82,11 @@ build/database-server-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-database
 	docker build -t benediktibk/database-server build/servers/database
 	docker images --format "{{.ID}}" benediktibk/database-server > $@
 	
-build/homepage-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-homepage
+build/homepage-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-homepage $(HOMEPAGEFILES)
 	cp dockerfiles/Dockerfile-homepage build/servers/homepage/Dockerfile
 	cp -R servers/homepage/me build/servers/homepage/bin
+	cp servers/homepage/default.conf build/servers/homepage/default.conf
+	cp servers/homepage/nginx.conf build/servers/homepage/nginx.conf
 	docker build -t benediktibk/homepage build/servers/homepage
 	docker images --format "{{.ID}}" benediktibk/homepage > $@
 	
