@@ -85,8 +85,6 @@ build/database-server-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-database
 build/homepage-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-homepage $(HOMEPAGEFILES)
 	cp dockerfiles/Dockerfile-homepage build/servers/homepage/Dockerfile
 	cp -R servers/homepage/me build/servers/homepage/bin
-	cp servers/homepage/default.conf build/servers/homepage/default.conf
-	cp servers/homepage/nginx.conf build/servers/homepage/nginx.conf
 	docker build -t benediktibk/homepage build/servers/homepage
 	docker images --format "{{.ID}}" benediktibk/homepage > $@
 	
@@ -107,9 +105,10 @@ build/corona-init-id.txt: $(COMMONDEPS) build/servers/corona/init/bin/Updater.dl
 	docker build -t benediktibk/corona-init build/servers/corona/init
 	docker images --format "{{.ID}}" benediktibk/corona-init > $@
 	
-build/reverse-proxy-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-reverse-proxy servers/reverse-proxy/default.conf.template servers/reverse-proxy/nginx-start.sh
+build/reverse-proxy-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-reverse-proxy servers/reverse-proxy/default.conf.template servers/reverse-proxy/nginx-start.sh servers/reverse-proxy/nginx.conf
 	cp dockerfiles/Dockerfile-reverse-proxy build/servers/reverse-proxy/Dockerfile
 	cp servers/reverse-proxy/default.conf.template build/servers/reverse-proxy/
+	cp servers/reverse-proxy/nginx.conf build/servers/reverse-proxy/
 	cp servers/reverse-proxy/nginx-start.sh build/servers/reverse-proxy/nginx-start.sh
 	cp build/secrets/ca/root_ca.crt build/servers/reverse-proxy/root_ca.crt
 	docker build -t benediktibk/reverse-proxy build/servers/reverse-proxy

@@ -1,5 +1,6 @@
 FROM nginx
 COPY default.conf.template /etc/nginx/conf.d/
+COPY nginx.conf /etc/nginx/
 COPY nginx-start.sh /
 RUN mkdir -p /etc/nginx/certs
 RUN mkdir -p /etc/nginx/certs-temp
