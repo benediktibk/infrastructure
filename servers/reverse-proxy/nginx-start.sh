@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+echo "install trap for signals"
+trap "echo 'got signal to stop, exiting'; nginx -s stop; exit 0;" QUIT HUP INT TERM
+
 if [ "$(ls -A /etc/nginx/certs)" ]; then
     echo "it seems like there are already certificates available"
 else

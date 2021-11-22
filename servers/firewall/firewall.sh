@@ -10,7 +10,7 @@ delete_forward_rule () {
 }
 
 echo "install trap for signals"
-trap "echo 'got signal to stop, exiting'; exit 0;" SIGHUP SIGINT SIGTERM
+trap "echo 'got signal to stop, exiting'; exit 0;" QUIT HUP INT TERM
 
 echo "host IP: $HOSTIP"
 echo "host VPN IP: $HOSTVPNIP"

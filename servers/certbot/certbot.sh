@@ -10,11 +10,15 @@ installCertificate () {
     cp $DOMAINPATH/fullchain.pem /etc/nginx/certs/web_$DOMAIN.crt
 }
 
+echo "install trap for signals"
+trap "echo 'got signal to stop, exiting'; exit 0;" QUIT HUP INT TERM
+
 echo "create necessary directories"
 mkdir -p /etc/letsencrypt/archive
 
 echo "wait for reverse proxy to be up and running"
-sleep 1m
+sleep 1m &
+wait $!
 
 for DOMAIN in $DOMAINS;
 do
