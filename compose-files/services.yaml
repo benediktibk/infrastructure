@@ -53,9 +53,9 @@ services:
     reverse-proxy:
         environment:
             - WEBFQDN=benediktschmidt.at
-            - TARGETCORONA=corona-viewer:80
-            - TARGETME=homepage:80
-            - TARGETDOWNLOADS=downloads:80
+            - TARGETCORONA=192.168.38.4:80
+            - TARGETME=192.168.38.2:80
+            - TARGETDOWNLOADS=192.168.38.6:80
         env_file:
             - /etc/infrastructure/environments/reverse-proxy.env
         image: "benediktibk/reverse-proxy"
