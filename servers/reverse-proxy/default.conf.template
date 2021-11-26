@@ -107,9 +107,9 @@ server {
         proxy_set_header X-Forwarded-Host   $host;
         proxy_set_header X-Forwarded-Port   $server_port;
         proxy_cache                         STATIC;
-        proxy_cache_valid                   200  6h;
+        proxy_cache_valid                   200  1h;
         proxy_cache_use_stale               error timeout invalid_header updating http_500 http_502 http_503 http_504;
-        expires                             6h;
+        expires                             1h;
         add_header                          Cache-Control "public";
     }
 }
