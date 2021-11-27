@@ -2,7 +2,6 @@
   hosts: docker_hosts_vpn
   tasks:
     - include_tasks: tasks/system-update.yaml
-    - include_tasks: tasks/infrastructure-service-stop.yaml
     - include_tasks: tasks/infrastructure-service-files.yaml
     - include_tasks: tasks/infrastructure-service-directories-permissions.yaml
-    - include_tasks: tasks/infrastructure-service-start.yaml
+    - include_tasks: tasks/infrastructure-service-container-update.yaml

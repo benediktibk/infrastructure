@@ -1,0 +1,8 @@
+- name: pull images of infrastructure-network
+  shell: "/usr/bin/docker-compose --project-name infrastructure-network -f /etc/infrastructure/network.yaml pull"
+- name: pull images of infrastructure-services
+  shell: "/usr/bin/docker-compose --project-name infrastructure-services -f /etc/infrastructure/services.yaml pull"
+- name: update containers of infrastructure-network
+  shell: "/usr/bin/docker-compose --project-name infrastructure-network -f /etc/infrastructure/network.yaml up -d"
+- name: update containers of infrastructure-services
+  shell: "/usr/bin/docker-compose --project-name infrastructure-services -f /etc/infrastructure/services.yaml up -d"
