@@ -4,4 +4,4 @@ RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y pkg-config inetutils-ping attr acl samba smbclient ldap-utils winbind libnss-winbind libpam-winbind krb5-user krb5-kdc supervisor
 COPY init.sh /
 RUN chmod 755 /init.sh
-CMD /init.sh setup
+CMD /init.sh start
