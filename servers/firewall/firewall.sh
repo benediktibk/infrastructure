@@ -9,6 +9,13 @@ delete_forward_rule () {
     done
 }
 
+add_forward_rule_from_vpn () {
+    echo "allowing port $2 on protocol $1 from VPN"
+    nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.40.0/24 ip daddr 192.168.39.3 $1 dport $2 counter accept
+    nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.42.0/24 ip daddr 192.168.39.3 $1 dport $2 counter accept
+    nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.43.0/24 ip daddr 192.168.39.3 $1 dport $2 counter accept
+}
+
 echo "install trap for signals"
 trap "echo 'got signal to stop, exiting'; exit 0;" QUIT HUP INT TERM
 
@@ -67,12 +74,11 @@ nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.16
 echo "    allow ICMP requests"
 nft add rule filter FORWARD-DMZ-INTERNAL icmp type echo-request counter accept
 echo "    allow DNS from VPN"
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.40.0/24 ip daddr 192.168.39.3 udp dport 53 counter accept
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.42.0/24 ip daddr 192.168.39.3 udp dport 53 counter accept
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.42.0/24 ip daddr 192.168.39.3 tcp dport 53 counter accept
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.40.0/24 ip daddr 192.168.39.3 udp dport 53 counter accept
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.43.0/24 ip daddr 192.168.39.3 udp dport 53 counter accept
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.43.0/24 ip daddr 192.168.39.3 tcp dport 53 counter accept
+add_forward_rule_from_vpn udp 53
+add_forward_rule_from_vpn tcp 53
+echo "    allow Kerberos from VPN"
+add_forward_rule_from_vpn udp 88
+add_forward_rule_from_vpn tcp 88
 echo "    return to previous chain"
 nft add rule filter FORWARD-DMZ-INTERNAL counter return
 
