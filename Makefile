@@ -3,7 +3,7 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall dc dc-init
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall dc
 ENVIRONMENTFILES := $(addprefix /etc/infrastructure/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
 IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
@@ -134,9 +134,9 @@ build/firewall-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-firewall servers/fir
 	docker build -t benediktibk/firewall build/servers/firewall
 	docker images --format "{{.ID}}" benediktibk/firewall > $@
 
-build/dc-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-dc servers/dc/smb.conf
+build/dc-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-dc servers/dc/init.sh
 	cp dockerfiles/Dockerfile-dc build/servers/dc/Dockerfile
-	cp servers/dc/smb.conf build/servers/dc/
+	cp servers/dc/init.sh build/servers/dc/
 	docker build -t benediktibk/dc build/servers/dc
 	docker images --format "{{.ID}}" benediktibk/dc > $@
 
@@ -173,11 +173,6 @@ build/%-pushed-id.txt: build/%-id.txt
 	cp $< $@
 	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
 	sed -i "s/##DBCORONAPASSWORD##/${DBCORONAPASSWORD}/g" $@
-
-/etc/infrastructure/environments/dc-init.env: environments/dc-init.env.in build/secrets/passwords/domainpass $(COMMONDEPS)
-	cp $< $@
-	$(eval DOMAINPASS := $(shell cat build/secrets/passwords/domainpass))
-	sed -i "s/##DOMAINPASS##/${DOMAINPASS}/g" $@
 
 /etc/infrastructure/environments/%.env: environments/%.env
 	cp $< $@
