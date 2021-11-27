@@ -81,14 +81,6 @@ appSetup () {
 	echo "" >> /etc/supervisor/conf.d/supervisord.conf
 	echo "[program:samba]" >> /etc/supervisor/conf.d/supervisord.conf
 	echo "command=/usr/sbin/samba -i" >> /etc/supervisor/conf.d/supervisord.conf
-	if [[ ${MULTISITE,,} == "true" ]]; then
-		if [[ -n $VPNPID ]]; then
-			kill $VPNPID
-		fi
-		echo "" >> /etc/supervisor/conf.d/supervisord.conf
-		echo "[program:openvpn]" >> /etc/supervisor/conf.d/supervisord.conf
-		echo "command=/usr/sbin/openvpn --config /docker.ovpn" >> /etc/supervisor/conf.d/supervisord.conf
-	fi
 	
 	appStart
 }
