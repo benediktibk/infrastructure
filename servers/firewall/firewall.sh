@@ -66,6 +66,13 @@ nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.4 ip daddr 192.168.
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.2 tcp dport 1433 counter accept
 echo "    allow ICMP requests"
 nft add rule filter FORWARD-DMZ-INTERNAL icmp type echo-request counter accept
+echo "    allow DNS from VPN"
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.40.0/24 ip daddr 192.168.39.3 udp dport 53 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.42.0/24 ip daddr 192.168.39.3 udp dport 53 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.42.0/24 ip daddr 192.168.39.3 tcp dport 53 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.40.0/24 ip daddr 192.168.39.3 udp dport 53 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.43.0/24 ip daddr 192.168.39.3 udp dport 53 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.43.0/24 ip daddr 192.168.39.3 tcp dport 53 counter accept
 echo "    return to previous chain"
 nft add rule filter FORWARD-DMZ-INTERNAL counter return
 
