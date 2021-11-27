@@ -73,12 +73,37 @@ nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.4 ip daddr 192.168.
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.2 tcp dport 1433 counter accept
 echo "    allow ICMP requests"
 nft add rule filter FORWARD-DMZ-INTERNAL icmp type echo-request counter accept
+echo "    allow WINS replication from VPN"
+add_forward_rule_from_vpn tcp 42
 echo "    allow DNS from VPN"
 add_forward_rule_from_vpn udp 53
 add_forward_rule_from_vpn tcp 53
 echo "    allow Kerberos from VPN"
 add_forward_rule_from_vpn udp 88
 add_forward_rule_from_vpn tcp 88
+echo "    allow NTP from VPN"
+add_forward_rule_from_vpn udp 123
+echo "    allow endpoint mapper from VPN"
+add_forward_rule_from_vpn tcp 135
+echo "    allow netbios from VPN"
+add_forward_rule_from_vpn udp 137
+add_forward_rule_from_vpn udp 138
+add_forward_rule_from_vpn tcp 139
+echo "    allow LDAP from VPN"
+add_forward_rule_from_vpn udp 389
+add_forward_rule_from_vpn tcp 389
+echo "    allow SMB from VPN"
+add_forward_rule_from_vpn tcp 445
+echo "    allow Kerberos kpasswd from VPN"
+add_forward_rule_from_vpn udp 464
+add_forward_rule_from_vpn tcp 464
+echo "    allow LDAPS from VPN"
+add_forward_rule_from_vpn tcp 636
+echo "    allow global catalog from VPN"
+add_forward_rule_from_vpn tcp 3268
+add_forward_rule_from_vpn tcp 3269
+echo "    allow dynamic RPC ports from VPN"
+add_forward_rule_from_vpn tcp 49152-65535
 echo "    return to previous chain"
 nft add rule filter FORWARD-DMZ-INTERNAL counter return
 
