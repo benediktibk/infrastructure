@@ -2,6 +2,7 @@ FROM debian:stable
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y pkg-config inetutils-ping attr acl samba smbclient ldap-utils winbind libnss-winbind libpam-winbind krb5-user krb5-kdc supervisor
-COPY init.sh /
-RUN chmod 755 /init.sh
-CMD /init.sh start
+COPY smb.conf /etc/samba/smb.conf
+COPY start.sh /
+RUN chmod 755 /start.sh
+CMD /start.sh

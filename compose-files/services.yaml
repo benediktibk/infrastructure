@@ -83,12 +83,9 @@ services:
         env_file:
             - /etc/infrastructure/environments/sql.env
     dc:
-        env_file:
-            - /etc/infrastructure/environments/dc.env
         image: "benediktibk/dc"
         volumes:
             - dc:/var/lib/samba/
-            - dc-config:/etc/samba/external
             - /etc/localtime:/etc/localtime:ro
         networks:
             internal:
@@ -114,8 +111,6 @@ volumes:
     webcertificates:
         external: true
     dc:
-        external: true
-    dc-config:
         external: true
     acme:
         external: true
