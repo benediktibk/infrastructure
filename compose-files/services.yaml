@@ -90,6 +90,8 @@ services:
         networks:
             internal:
                 ipv4_address: 192.168.39.3
+        cap_add:
+            - SYS_ADMIN
     certbot:
         image: "benediktibk/certbot"
         volumes:
