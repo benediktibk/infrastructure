@@ -5,7 +5,7 @@ SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 COMMONDEPS := build/guard Makefile
 ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall
 ENVIRONMENTFILES := $(addprefix /etc/infrastructure/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache
@@ -61,6 +61,7 @@ build/guard: Makefile
 	mkdir -p build/servers/dc
 	mkdir -p build/servers/network-util
 	mkdir -p build/servers/certbot
+	mkdir -p build/servers/amongus
 	touch $@
 
 tests:
@@ -152,6 +153,12 @@ build/certbot-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-certbot servers/certb
 	cp servers/certbot/certbot.sh build/servers/certbot/
 	docker build -t benediktibk/certbot build/servers/certbot
 	docker images --format "{{.ID}}" benediktibk/certbot > $@
+
+build/amongus-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-amongus servers/amongus/config.json
+	cp dockerfiles/Dockerfile-amongus build/servers/amongus/Dockerfile
+	cp servers/amongus/config.json build/servers/amongus/
+	docker build -t benediktibk/amongus build/servers/amongus
+	docker images --format "{{.ID}}" benediktibk/amongus > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@

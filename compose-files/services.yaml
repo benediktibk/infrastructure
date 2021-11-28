@@ -101,6 +101,14 @@ services:
         networks:
             internal:
                 ipv4_address: 192.168.39.5
+    amongus:
+        image: "benediktibk/amongus"
+        networks:
+            dmz:
+                ipv4_address: 192.168.38.7
+        ports:
+            - "22023:22023/udp"
+
 volumes:
     sql:
         external: true
