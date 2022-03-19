@@ -18,6 +18,11 @@
   copy:
     src: /etc/infrastructure/environments/valheim.env
     dest: /etc/infrastructure/environments/valheim.env
+- name: copy postgres environment
+  become: true
+  copy:
+    src: /etc/infrastructure/environments/postgres.env
+    dest: /etc/infrastructure/environments/postgres.env
 - name: copy vpn environment
   become: true
   copy:

@@ -16,3 +16,5 @@
   shell: "docker volume create acme"
 - name: create volume
   shell: "docker volume create letsencrypt"
+- name: create volume
+  shell: "docker volume create postgres"

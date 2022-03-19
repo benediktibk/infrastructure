@@ -3,12 +3,12 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres
 ENVIRONMENTFILES := $(addprefix /etc/infrastructure/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache
+VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname server-client-*)
 VALHEIMDIRECTORY = ~/.steam/debian-installation/steamapps/common/valheim_dedicated_server
 VALHEIMFILES = $(shell find '$(VALHEIMDIRECTORY)')
@@ -62,6 +62,7 @@ build/guard: Makefile
 	mkdir -p build/servers/network-util
 	mkdir -p build/servers/certbot
 	mkdir -p build/servers/amongus
+	mkdir -p build/servers/postgres
 	touch $@
 
 tests:
@@ -159,6 +160,12 @@ build/amongus-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-amongus servers/among
 	cp servers/amongus/config.json build/servers/amongus/
 	docker build -t benediktibk/amongus build/servers/amongus
 	docker images --format "{{.ID}}" benediktibk/amongus > $@
+
+build/postgres-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-postgres servers/postgres/init-db-zabbix.sh
+	cp dockerfiles/Dockerfile-postgres build/servers/postgres/Dockerfile
+	cp servers/postgres/init-db-zabbix.sh build/servers/postgres/
+	docker build -t benediktibk/postgres build/servers/postgres
+	docker images --format "{{.ID}}" benediktibk/postgres > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
@@ -181,6 +188,13 @@ build/%-pushed-id.txt: build/%-id.txt
 	cp $< $@
 	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
 	sed -i "s/##DBCORONAPASSWORD##/${DBCORONAPASSWORD}/g" $@
+
+/etc/infrastructure/environments/postgres.env: environments/postgres.env.in build/secrets/passwords/db_zabbix build/secrets/passwords/postgres $(COMMONDEPS)
+	cp $< $@
+	$(eval POSTGRES_PASSWORD := $(shell cat build/secrets/passwords/postgres))
+	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
+	sed -i "s/##POSTGRES_PASSWORD##/${POSTGRES_PASSWORD}/g" $@
+	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
 
 /etc/infrastructure/environments/%.env: environments/%.env
 	cp $< $@
@@ -217,7 +231,11 @@ build/secrets.tar.gz: Makefile
 	tar -czvf $@ build/secrets
 
 build/secrets/passwords/db_sa: build/secrets/guard
-	
+
 build/secrets/passwords/db_corona: build/secrets/guard
-	
+
 build/secrets/passwords/valheim: build/secrets/guard
+
+build/secrets/passwords/postgres: build/secrets/guard
+
+build/secrets/passwords/db_zabbix: build/secrets/guard
