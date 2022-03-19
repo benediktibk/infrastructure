@@ -23,6 +23,16 @@
   copy:
     src: /etc/infrastructure/environments/postgres.env
     dest: /etc/infrastructure/environments/postgres.env
+- name: copy zabbix-server environment
+  become: true
+  copy:
+    src: /etc/infrastructure/environments/zabbix-server.env
+    dest: /etc/infrastructure/environments/zabbix-server.env
+- name: copy zabbix-frontend environment
+  become: true
+  copy:
+    src: /etc/infrastructure/environments/zabbix-frontend.env
+    dest: /etc/infrastructure/environments/zabbix-frontend.env
 - name: copy vpn environment
   become: true
   copy:

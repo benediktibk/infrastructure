@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-DOMAINS="benediktschmidt.at www.benediktschmidt.at me.benediktschmidt.at downloads.benediktschmidt.at corona.benediktschmidt.at"
+DOMAINS="benediktschmidt.at www.benediktschmidt.at me.benediktschmidt.at downloads.benediktschmidt.at corona.benediktschmidt.at monitoring.benediktschmidt.at"
 
 installCertificate () {
     DOMAIN=$1

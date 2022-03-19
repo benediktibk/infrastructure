@@ -3,9 +3,9 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend
 ENVIRONMENTFILES := $(addprefix /etc/infrastructure/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres
@@ -63,6 +63,8 @@ build/guard: Makefile
 	mkdir -p build/servers/certbot
 	mkdir -p build/servers/amongus
 	mkdir -p build/servers/postgres
+	mkdir -p build/servers/zabbix-server
+	mkdir -p build/servers/zabbix-frontend
 	touch $@
 
 tests:
@@ -166,6 +168,16 @@ build/postgres-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-postgres servers/pos
 	cp servers/postgres/init-db-zabbix.sh build/servers/postgres/
 	docker build -t benediktibk/postgres build/servers/postgres
 	docker images --format "{{.ID}}" benediktibk/postgres > $@
+
+build/zabbix-server-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-zabbix-server
+	cp dockerfiles/Dockerfile-zabbix-server build/servers/zabbix-server/Dockerfile
+	docker build -t benediktibk/zabbix-server build/servers/zabbix-server
+	docker images --format "{{.ID}}" benediktibk/zabbix-server > $@
+
+build/zabbix-frontend-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-zabbix-frontend
+	cp dockerfiles/Dockerfile-zabbix-frontend build/servers/zabbix-frontend/Dockerfile
+	docker build -t benediktibk/zabbix-frontend build/servers/zabbix-frontend
+	docker images --format "{{.ID}}" benediktibk/zabbix-frontend > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
@@ -194,6 +206,16 @@ build/%-pushed-id.txt: build/%-id.txt
 	$(eval POSTGRES_PASSWORD := $(shell cat build/secrets/passwords/postgres))
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##POSTGRES_PASSWORD##/${POSTGRES_PASSWORD}/g" $@
+	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
+
+/etc/infrastructure/environments/zabbix-server.env: environments/zabbix-server.env.in build/secrets/passwords/db_zabbix $(COMMONDEPS)
+	cp $< $@
+	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
+	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
+
+/etc/infrastructure/environments/zabbix-frontend.env: environments/zabbix-frontend.env.in build/secrets/passwords/db_zabbix $(COMMONDEPS)
+	cp $< $@
+	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
 
 /etc/infrastructure/environments/%.env: environments/%.env
