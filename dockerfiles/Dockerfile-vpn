@@ -5,6 +5,6 @@ COPY server.conf.template /etc/openvpn/server/
 RUN mkdir -p /etc/openvpn/server/clients
 RUN mkdir -p /etc/openvpn/certs
 RUN adduser --system --no-create-home --shell /dev/null --group --disabled-login openvpn
-COPY server-client-* /etc/openvpn/server/clients/
+COPY *.location.benediktschmidt.at /etc/openvpn/server/clients/
 COPY openvpn-start.sh /
 CMD ["/openvpn-start.sh"]
