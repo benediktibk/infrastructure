@@ -1,10 +1,26 @@
 FROM debian:stable
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y pkg-config inetutils-ping attr acl samba smbclient ldap-utils winbind libnss-winbind libpam-winbind krb5-user krb5-kdc supervisor ldb-tools nano dnsutils net-tools
+RUN apt-get install -y pkg-config
+RUN apt-get install -y inetutils-ping
+RUN apt-get install -y attr
+RUN apt-get install -y acl
+RUN apt-get install -y samba
+RUN apt-get install -y smbclient
+RUN apt-get install -y ldap-utils
+RUN apt-get install -y winbind
+RUN apt-get install -y libnss-winbind
+RUN apt-get install -y libpam-winbind
+RUN apt-get install -y krb5-user
+RUN apt-get install -y krb5-kdc
+RUN apt-get install -y supervisor
+RUN apt-get install -y ldb-tools
+RUN apt-get install -y nano
+RUN apt-get install -y dnsutils
+RUN apt-get install -y net-tools
 COPY smb.conf /etc/samba/smb.conf
 COPY krb5.conf /etc/krb5.conf
-COPY resolv.conf /etc/resolv.conf
+COPY resolv.conf /etc/resolv_prepared.conf
 COPY start.sh /
 RUN chmod 755 /start.sh
 CMD /start.sh
