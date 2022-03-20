@@ -141,10 +141,12 @@ build/firewall-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-firewall servers/fir
 	docker build -t benediktibk/firewall build/servers/firewall
 	docker images --format "{{.ID}}" benediktibk/firewall > $@
 
-build/dc-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-dc servers/dc/start.sh servers/dc/smb.conf
+build/dc-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-dc servers/dc/start.sh servers/dc/smb.conf servers/dc/krb5.conf servers/dc/resolv.conf
 	cp dockerfiles/Dockerfile-dc build/servers/dc/Dockerfile
 	cp servers/dc/start.sh build/servers/dc/
 	cp servers/dc/smb.conf build/servers/dc/
+	cp servers/dc/krb5.conf build/servers/dc/
+	cp servers/dc/resolv.conf build/servers/dc/
 	docker build -t benediktibk/dc build/servers/dc
 	docker images --format "{{.ID}}" benediktibk/dc > $@
 
