@@ -30,7 +30,10 @@ run: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	$(DOCKERCOMPOSESERVER)
 
 deploy-update: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
-	ansible-playbook playbooks/dockerhost-update.yaml
+	ansible-playbook playbooks/dockerhost-deploy-update.yaml
+
+deploy: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
+	ansible-playbook playbooks/dockerhost-deploy.yaml
 	
 data-clean: $(ENVIRONMENTFILES)
 	$(DELETEVOLUMES)
