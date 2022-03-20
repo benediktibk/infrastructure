@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/usr/sbin/samba -i
+/usr/sbin/samba --foreground --debuglevel=3 --debug-stderr
