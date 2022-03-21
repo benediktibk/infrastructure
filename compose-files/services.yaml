@@ -93,6 +93,7 @@ services:
                 ipv4_address: 192.168.39.3
         cap_add:
             - SYS_ADMIN
+        hostname: DC1
     certbot:
         image: "benediktibk/certbot"
         volumes:
