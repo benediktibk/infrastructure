@@ -1,5 +1,9 @@
 FROM debian:stable
 RUN apt-get update
-RUN apt-get -y install inetutils-ping telnet iproute2
+RUN apt-get -y install inetutils-ping
+RUN apt-get -y install telnet
+RUN apt-get -y install iproute2
+RUN apt-get -y install net-tools
+RUN apt-get -y install traceroute
 COPY endless-loop.sh /
 CMD ["/endless-loop.sh"]
