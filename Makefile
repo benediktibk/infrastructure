@@ -11,7 +11,7 @@ IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 VALHEIMDIRECTORY = ~/.steam/debian-installation/steamapps/common/valheim_dedicated_server
-VALHEIMFILES = $(shell find '$(VALHEIMDIRECTORY)')
+VALHEIMFILES = $(shell find $(VALHEIMDIRECTORY))
 HOMEPAGEFILES = $(shell find servers/homepage)
 
 CREATEVOLUMES := for volume in $(VOLUMES); do echo "creating volume $$volume"; docker volume create "$$volume"; done;
