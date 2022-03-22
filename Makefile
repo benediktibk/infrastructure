@@ -4,7 +4,7 @@ SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
 ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend
-ENVIRONMENTFILES := $(addprefix /etc/infrastructure/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
+ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
 IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
@@ -68,6 +68,7 @@ build/guard: Makefile
 	mkdir -p build/servers/postgres
 	mkdir -p build/servers/zabbix-server
 	mkdir -p build/servers/zabbix-frontend
+	mkdir -p build/environments
 	touch $@
 
 tests:
@@ -191,39 +192,39 @@ build/%-pushed-id.txt: build/%-id.txt
 
 ############ environment definitions
 	
-/etc/infrastructure/environments/sql.env: environments/sql.env.in build/secrets/passwords/db_sa $(COMMONDEPS)
+build/environments/sql.env: environments/sql.env.in build/secrets/passwords/db_sa $(COMMONDEPS)
 	cp $< $@
 	$(eval SA_PASSWORD := $(shell cat build/secrets/passwords/db_sa))
 	sed -i "s/##SA_PASSWORD##/${SA_PASSWORD}/g" $@
 
-/etc/infrastructure/environments/valheim.env: environments/valheim.env.in build/secrets/passwords/valheim $(COMMONDEPS)
+build/environments/valheim.env: environments/valheim.env.in build/secrets/passwords/valheim $(COMMONDEPS)
 	cp $< $@
 	$(eval SERVER_PASSWORD := $(shell cat build/secrets/passwords/valheim))
 	sed -i "s/##SERVER_PASSWORD##/$(SERVER_PASSWORD)/g" $@
 
-/etc/infrastructure/environments/corona.env: environments/corona.env.in build/secrets/passwords/db_corona $(COMMONDEPS)
+build/environments/corona.env: environments/corona.env.in build/secrets/passwords/db_corona $(COMMONDEPS)
 	cp $< $@
 	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
 	sed -i "s/##DBCORONAPASSWORD##/${DBCORONAPASSWORD}/g" $@
 
-/etc/infrastructure/environments/postgres.env: environments/postgres.env.in build/secrets/passwords/db_zabbix build/secrets/passwords/postgres $(COMMONDEPS)
+build/environments/postgres.env: environments/postgres.env.in build/secrets/passwords/db_zabbix build/secrets/passwords/postgres $(COMMONDEPS)
 	cp $< $@
 	$(eval POSTGRES_PASSWORD := $(shell cat build/secrets/passwords/postgres))
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##POSTGRES_PASSWORD##/${POSTGRES_PASSWORD}/g" $@
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
 
-/etc/infrastructure/environments/zabbix-server.env: environments/zabbix-server.env.in build/secrets/passwords/db_zabbix $(COMMONDEPS)
+build/environments/zabbix-server.env: environments/zabbix-server.env.in build/secrets/passwords/db_zabbix $(COMMONDEPS)
 	cp $< $@
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
 
-/etc/infrastructure/environments/zabbix-frontend.env: environments/zabbix-frontend.env.in build/secrets/passwords/db_zabbix $(COMMONDEPS)
+build/environments/zabbix-frontend.env: environments/zabbix-frontend.env.in build/secrets/passwords/db_zabbix $(COMMONDEPS)
 	cp $< $@
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
 
-/etc/infrastructure/environments/%.env: environments/%.env
+build/environments/%.env: environments/%.env
 	cp $< $@
 
 

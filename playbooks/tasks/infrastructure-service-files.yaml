@@ -1,47 +1,47 @@
 - name: copy sql environment
   become: true
   copy:
-    src: /etc/infrastructure/environments/sql.env
+    src: ../build/environments/sql.env
     dest: /etc/infrastructure/environments/sql.env
 - name: copy corona environment
   become: true
   copy:
-    src: /etc/infrastructure/environments/corona.env
+    src: ../build/environments/corona.env
     dest: /etc/infrastructure/environments/corona.env
 - name: copy reverse-proxy environment
   become: true
   copy:
-    src: /etc/infrastructure/environments/reverse-proxy.env
+    src: ../build/environments/reverse-proxy.env
     dest: /etc/infrastructure/environments/reverse-proxy.env
 - name: copy valheim environment
   become: true
   copy:
-    src: /etc/infrastructure/environments/valheim.env
+    src: ../build/environments/valheim.env
     dest: /etc/infrastructure/environments/valheim.env
 - name: copy postgres environment
   become: true
   copy:
-    src: /etc/infrastructure/environments/postgres.env
+    src: ../build/environments/postgres.env
     dest: /etc/infrastructure/environments/postgres.env
 - name: copy zabbix-server environment
   become: true
   copy:
-    src: /etc/infrastructure/environments/zabbix-server.env
+    src: ../build/environments/zabbix-server.env
     dest: /etc/infrastructure/environments/zabbix-server.env
 - name: copy zabbix-frontend environment
   become: true
   copy:
-    src: /etc/infrastructure/environments/zabbix-frontend.env
+    src: ../build/environments/zabbix-frontend.env
     dest: /etc/infrastructure/environments/zabbix-frontend.env
 - name: copy vpn environment
   become: true
   copy:
-    src: /etc/infrastructure/environments/vpn.env
+    src: ../build/environments/vpn.env
     dest: /etc/infrastructure/environments/vpn.env
 - name: copy firewall environment
   become: true
   copy:
-    src: /etc/infrastructure/environments/firewall.env
+    src: ../build/environments/firewall.env
     dest: /etc/infrastructure/environments/firewall.env
 - name: copy infrastructure-network service definition
   become: true
