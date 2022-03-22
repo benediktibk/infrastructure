@@ -49,6 +49,7 @@ nft add rule filter INPUT ct state established accept
 echo "    allow specific services from VPN"
 nft add rule filter INPUT ip daddr $HOSTVPNIP tcp dport 22 counter accept
 echo "    allow specific services from external"
+nft add rule filter INPUT ip daddr $HOSTIP tcp dport 8954 counter accept
 nft add rule filter INPUT ip daddr $HOSTIP tcp dport 1194 counter accept
 nft add rule filter INPUT ip daddr $HOSTIP tcp dport 80 counter accept
 nft add rule filter INPUT ip daddr $HOSTIP tcp dport 443 counter accept
