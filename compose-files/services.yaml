@@ -138,6 +138,13 @@ services:
         networks:
             dmz:
                 ipv4_address: 192.168.38.8
+    downloads-share:
+        image: "benediktibk/downloads-share"
+        volumes:
+            - downloads:/srv/downloads/
+        networks:
+            internal:
+                ipv4_address: 192.168.39.8
 
 volumes:
     sql:
