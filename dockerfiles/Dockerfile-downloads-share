@@ -9,4 +9,5 @@ COPY smb.conf /etc/samba/smb.conf
 COPY start.sh /
 RUN chmod 755 /start.sh
 RUN mkdir /srv/downloads
+RUN chmod 777 /srv/downloads
 CMD /start.sh
