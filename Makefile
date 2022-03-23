@@ -5,7 +5,7 @@ SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 COMMONDEPS := build/guard Makefile build/secrets/guard
 ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres
@@ -68,6 +68,7 @@ build/guard: Makefile
 	mkdir -p build/servers/postgres
 	mkdir -p build/servers/zabbix-server
 	mkdir -p build/servers/zabbix-frontend
+	mkdir -p build/servers/downloads-share
 	mkdir -p build/environments
 	touch $@
 
@@ -184,6 +185,13 @@ build/zabbix-frontend-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-zabbix-fronte
 	cp dockerfiles/Dockerfile-zabbix-frontend build/servers/zabbix-frontend/Dockerfile
 	docker build -t benediktibk/zabbix-frontend build/servers/zabbix-frontend
 	docker images --format "{{.ID}}" benediktibk/zabbix-frontend > $@
+
+build/downloads-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-downloads-share servers/downloads-share/start.sh servers/downloads-share/smb.conf
+	cp dockerfiles/Dockerfile-downloads-share build/servers/downloads-share/Dockerfile
+	cp servers/downloads-share/start.sh build/servers/downloads-share/
+	cp servers/downloads-share/smb.conf build/servers/downloads-share/
+	docker build -t benediktibk/downloads-share build/servers/downloads-share
+	docker images --format "{{.ID}}" benediktibk/downloads-share > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
