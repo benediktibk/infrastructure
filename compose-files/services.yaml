@@ -145,6 +145,13 @@ services:
         networks:
             internal:
                 ipv4_address: 192.168.39.8
+    cron-passwords:
+        env_file:
+            - /etc/infrastructure/environments/cron-passwords.env
+        image: "benediktibk/cron-passwords"
+        networks:
+            internal:
+                ipv4_address: 192.168.39.9
 
 volumes:
     sql:
