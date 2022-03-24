@@ -1,9 +1,11 @@
 #!/bin/bash
-set -e
 
 FILENAME=volumes_$(date +%Y-%m-%d_%H-%M-%S).tar.gz
 
-mount.cifs -o username=system-cron-volume,domain=benediktschmidt.at,password=$DOMAINPASSWORD,rw //storage1.benediktschmidt.at/data /mnt/storage1
+umount /mnt/storage1
+
+set -e
+mount.cifs -o username=system-cron-volume,domain=benediktschmidt.at,password=$DOMAINPASSWORD,rw //192.168.42.4/data /mnt/storage1
 rm -fR /tmp/backup/*
 cp -R /mnt/volumes /tmp/backup/
 tar -czvf /tmp/backup/$FILENAME /tmp/backup/volumes
