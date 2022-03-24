@@ -33,6 +33,11 @@
   copy:
     src: ../build/environments/zabbix-frontend.env
     dest: /etc/infrastructure/environments/zabbix-frontend.env
+- name: copy cron-passwords environment
+  become: true
+  copy:
+    src: ../build/environments/cron-passwords.env
+    dest: /etc/infrastructure/environments/cron-passwords.env
 - name: copy vpn environment
   become: true
   copy:

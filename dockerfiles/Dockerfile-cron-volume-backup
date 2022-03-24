@@ -1,0 +1,12 @@
+FROM debian:stable
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get install -y cifs-utils
+RUN apt-get install -y cron
+RUN mkdir /mnt/volumes
+RUN mkdir /mnt/storage1
+RUN mkdir /tmp/backup
+COPY cronjobs /etc/crontabs/root
+COPY backup-volumes.sh /
+RUN chmod 755 /backup-volumes.sh
+CMD ["cron", "-f"]
