@@ -172,6 +172,16 @@ services:
         networks:
             internal:
                 ipv4_address: 192.168.39.10
+    cron-storage-backup:
+        env_file:
+            - /etc/infrastructure/environments/cron-storage-backup.env
+        image: "benediktibk/cron-volume-backup"
+        volumes:
+            - storagebackup:/mnt/storagebackup
+        privileged: true
+        networks:
+            internal:
+                ipv4_address: 192.168.39.11
 
 volumes:
     sql:
@@ -195,6 +205,8 @@ volumes:
     proxycache:
         external: true
     postgres:
+        external: true
+    storagebackup:
         external: true
 networks:
     internal:
