@@ -3,9 +3,9 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres
@@ -71,6 +71,7 @@ build/guard: Makefile
 	mkdir -p build/servers/downloads-share
 	mkdir -p build/servers/cron-passwords
 	mkdir -p build/servers/cron-volume-backup
+	mkdir -p build/servers/cron-storage-backup
 	mkdir -p build/environments
 	touch $@
 
@@ -208,6 +209,13 @@ build/cron-volume-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-volum
 	cp servers/cron-volume-backup/cronjobs build/servers/cron-volume-backup/
 	docker build -t benediktibk/cron-volume-backup build/servers/cron-volume-backup
 	docker images --format "{{.ID}}" benediktibk/cron-volume-backup > $@
+
+build/cron-storage-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-storage-backup servers/cron-storage-backup/backup-storage.sh servers/cron-storage-backup/cronjobs
+	cp dockerfiles/Dockerfile-cron-storage-backup build/servers/cron-storage-backup/Dockerfile
+	cp servers/cron-storage-backup/backup-storage.sh build/servers/cron-storage-backup/
+	cp servers/cron-storage-backup/cronjobs build/servers/cron-storage-backup/
+	docker build -t benediktibk/cron-storage-backup build/servers/cron-storage-backup
+	docker images --format "{{.ID}}" benediktibk/cron-storage-backup > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
@@ -258,6 +266,11 @@ build/environments/cron-volume-backup.env: environments/cron-volume-backup.env.i
 	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-volume))
 	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
 
+build/environments/cron-storage-backup.env: environments/cron-storage-backup.env.in build/secrets/passwords/system-cron-storage $(COMMONDEPS)
+	cp $< $@
+	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-storage))
+	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
+
 build/environments/%.env: environments/%.env
 	cp $< $@
 
@@ -303,3 +316,7 @@ build/secrets/passwords/postgres: build/secrets/guard
 build/secrets/passwords/db_zabbix: build/secrets/guard
 
 build/secrets/passwords/system-cron-passwords: build/secrets/guard
+
+build/secrets/passwords/system-cron-volume: build/secrets/guard
+
+build/secrets/passwords/system-cron-storage: build/secrets/guard

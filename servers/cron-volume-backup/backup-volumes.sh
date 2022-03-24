@@ -2,7 +2,7 @@
 
 FILENAME=volumes_$(date +%Y-%m-%d_%H-%M-%S).tar.gz
 
-umount /mnt/storage1
+umount /mnt/storage1 > /dev/null 2>&1
 
 set -e
 mount.cifs -o username=system-cron-volume,domain=benediktschmidt.at,password=$DOMAINPASSWORD,rw //192.168.42.4/data /mnt/storage1

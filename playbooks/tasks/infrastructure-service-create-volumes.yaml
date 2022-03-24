@@ -18,3 +18,5 @@
   shell: "docker volume create letsencrypt"
 - name: create volume
   shell: "docker volume create postgres"
+- name: create volume
+  shell: "docker volume create storagebackup"
