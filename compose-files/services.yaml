@@ -141,7 +141,7 @@ services:
     downloads-share:
         image: "benediktibk/downloads-share"
         volumes:
-            - downloads:/srv/downloads/88
+            - downloads:/srv/downloads
         networks:
             internal:
                 ipv4_address: 192.168.39.8
@@ -152,6 +152,26 @@ services:
         networks:
             internal:
                 ipv4_address: 192.168.39.9
+    cron-volume-backup:
+        env_file:
+            - /etc/infrastructure/environments/cron-volume-backup.env
+        image: "benediktibk/cron-volume-backup"
+        volumes:
+            - acme:/mnt/volumes/acme
+            - corona:/mnt/volumes/corona
+            - dc:/mnt/volumes/dc
+            - downloads:/mnt/volumes/downloads
+            - letsencrypt:/mnt/volumes/letsencrypt
+            - postgres:/mnt/volumes/postgres
+            - proxycache:/mnt/volumes/proxycache
+            - sql:/mnt/volumes/sql
+            - valheim:/mnt/volumes/valheim
+            - vpncertificates:/mnt/volumes/vpncertificates
+            - webcertificates:/mnt/volumes/webcertificates
+        privileged: true
+        networks:
+            internal:
+                ipv4_address: 192.168.39.10
 
 volumes:
     sql:
@@ -163,6 +183,8 @@ volumes:
     downloads:
         external: true
     webcertificates:
+        external: true
+    vpncertificates:
         external: true
     dc:
         external: true
