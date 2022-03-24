@@ -3,9 +3,9 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres
@@ -69,6 +69,7 @@ build/guard: Makefile
 	mkdir -p build/servers/zabbix-server
 	mkdir -p build/servers/zabbix-frontend
 	mkdir -p build/servers/downloads-share
+	mkdir -p build/servers/cron-passwords
 	mkdir -p build/environments
 	touch $@
 
@@ -192,6 +193,13 @@ build/downloads-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-downloads-sha
 	cp servers/downloads-share/smb.conf build/servers/downloads-share/
 	docker build -t benediktibk/downloads-share build/servers/downloads-share
 	docker images --format "{{.ID}}" benediktibk/downloads-share > $@
+
+build/cron-passwords-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-passwords servers/cron-passwords/copy-passwords.sh servers/cron-passwords/cronjobs
+	cp dockerfiles/Dockerfile-cron-passwords build/servers/cron-passwords/Dockerfile
+	cp servers/cron-passwords/copy-passwords.sh build/servers/cron-passwords/
+	cp servers/cron-passwords/cronjobs build/servers/cron-passwords/
+	docker build -t benediktibk/cron-passwords build/servers/cron-passwords
+	docker images --format "{{.ID}}" benediktibk/cron-passwords > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
@@ -231,6 +239,11 @@ build/environments/zabbix-frontend.env: environments/zabbix-frontend.env.in buil
 	cp $< $@
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
+
+build/environments/cron-passwords.env: environments/cron-passwords.env.in build/secrets/passwords/system-cron-passwords $(COMMONDEPS)
+	cp $< $@
+	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-passwords))
+	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
 
 build/environments/%.env: environments/%.env
 	cp $< $@
@@ -275,3 +288,5 @@ build/secrets/passwords/valheim: build/secrets/guard
 build/secrets/passwords/postgres: build/secrets/guard
 
 build/secrets/passwords/db_zabbix: build/secrets/guard
+
+build/secrets/passwords/system-cron-passwords: build/secrets/guard

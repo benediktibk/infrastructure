@@ -141,7 +141,7 @@ services:
     downloads-share:
         image: "benediktibk/downloads-share"
         volumes:
-            - downloads:/srv/downloads/
+            - downloads:/srv/downloads/88
         networks:
             internal:
                 ipv4_address: 192.168.39.8
