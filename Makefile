@@ -5,10 +5,10 @@ SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 COMMONDEPS := build/guard Makefile build/secrets/guard
 ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres
+VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 VALHEIMDIRECTORY = ~/.steam/debian-installation/steamapps/common/valheim_dedicated_server
 VALHEIMFILES = $(shell find $(VALHEIMDIRECTORY))
@@ -72,6 +72,7 @@ build/guard: Makefile
 	mkdir -p build/servers/cron-passwords
 	mkdir -p build/servers/cron-volume-backup
 	mkdir -p build/servers/cron-storage-backup
+	mkdir -p build/servers/google-drive-triest
 	mkdir -p build/environments
 	touch $@
 
@@ -216,6 +217,15 @@ build/cron-storage-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-stor
 	cp servers/cron-storage-backup/cronjobs build/servers/cron-storage-backup/
 	docker build -t benediktibk/cron-storage-backup build/servers/cron-storage-backup
 	docker images --format "{{.ID}}" benediktibk/cron-storage-backup > $@
+
+build/google-drive-triest-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-google-drive-triest servers/google-drive-triest/start.sh servers/google-drive-triest/credentials.json.template servers/google-drive-triest/rclone.conf.template servers/google-drive-triest/cronjobs
+	cp dockerfiles/Dockerfile-google-drive-triest build/servers/google-drive-triest/Dockerfile
+	cp servers/google-drive-triest/start.sh build/servers/google-drive-triest/
+	cp servers/google-drive-triest/credentials.json.template build/servers/google-drive-triest/
+	cp servers/google-drive-triest/rclone.conf.template build/servers/google-drive-triest/
+	cp servers/google-drive-triest/cronjobs build/servers/google-drive-triest/
+	docker build -t benediktibk/google-drive-triest build/servers/google-drive-triest
+	docker images --format "{{.ID}}" benediktibk/google-drive-triest > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
@@ -274,7 +284,9 @@ build/environments/cron-storage-backup.env: environments/cron-storage-backup.env
 build/environments/google-drive-triest.env: environments/google-drive-triest.env.in build/secrets/passwords/google-drive-triest $(COMMONDEPS)
 	cp $< $@
 	$(eval GOOGLEDRIVEPRIVATEKEY := $(shell cat build/secrets/passwords/google-drive-triest))
-	sed -i "s/##GOOGLEDRIVEPRIVATEKEY##/${GOOGLEDRIVEPRIVATEKEY}/g" $@
+	$(eval GOOGLEDRIVECLIENTSECRET := $(shell cat build/secrets/passwords/google-drive-client-secret))
+	sed -i "s~##GOOGLEDRIVEPRIVATEKEY##~${GOOGLEDRIVEPRIVATEKEY}~g" $@
+	sed -i "s/##GOOGLEDRIVECLIENTSECRET##/${GOOGLEDRIVECLIENTSECRET}/g" $@
 
 build/environments/%.env: environments/%.env
 	cp $< $@

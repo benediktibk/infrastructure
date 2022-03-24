@@ -1,0 +1,13 @@
+FROM ubuntu:latest
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get install -y cron
+RUN apt-get install -y sed
+RUN apt-get install -y ca-certificates
+RUN apt-get install -y rclone
+COPY cronjobs /etc/crontabs/root
+COPY rclone.conf.template /
+COPY credentials.json.template /
+COPY start.sh /
+RUN chmod 755 /start.sh
+RUN mkdir /mnt/googledrivetriest
+CMD /start.sh
