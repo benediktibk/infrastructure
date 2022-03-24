@@ -3,7 +3,7 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
 IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
@@ -270,6 +270,11 @@ build/environments/cron-storage-backup.env: environments/cron-storage-backup.env
 	cp $< $@
 	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-storage))
 	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
+
+build/environments/google-drive-triest.env: environments/google-drive-triest.env.in build/secrets/passwords/google-drive-triest $(COMMONDEPS)
+	cp $< $@
+	$(eval GOOGLEDRIVEPRIVATEKEY := $(shell cat build/secrets/passwords/google-drive-triest))
+	sed -i "s/##GOOGLEDRIVEPRIVATEKEY##/${GOOGLEDRIVEPRIVATEKEY}/g" $@
 
 build/environments/%.env: environments/%.env
 	cp $< $@
