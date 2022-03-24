@@ -38,6 +38,11 @@
   copy:
     src: ../build/environments/cron-passwords.env
     dest: /etc/infrastructure/environments/cron-passwords.env
+- name: copy cron-volume-backup environment
+  become: true
+  copy:
+    src: ../build/environments/cron-volume-backup.env
+    dest: /etc/infrastructure/environments/cron-volume-backup.env
 - name: copy vpn environment
   become: true
   copy:
