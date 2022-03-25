@@ -7,4 +7,4 @@ sed -i "s/##GOOGLEDRIVECLIENTSECRET##/$GOOGLEDRIVECLIENTSECRET/g" /rclone.conf
 sed -i "s/##GOOGLEDRIVECLIENTID##/$GOOGLEDRIVECLIENTID/g" /rclone.conf
 
 echo "execute cron in foreground"
-cron -f
+exec cron -f

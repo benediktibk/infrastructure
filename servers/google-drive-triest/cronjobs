@@ -1,1 +1,1 @@
-*/10 * * * * rclone sync --progress --config /rclone.conf google_drive_triest: /mnt/googledrivetriest > /proc/1/fd/1 2>/proc/1/fd/2
+* * * * * /sync.sh > /proc/1/fd/1 2>/proc/1/fd/2

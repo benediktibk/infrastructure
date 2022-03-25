@@ -1,4 +1,4 @@
 #!/bin/bash
 
 echo "start samba"
-/usr/sbin/smbd --foreground
+exec /usr/sbin/smbd --foreground

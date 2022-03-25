@@ -1,12 +1,17 @@
-FROM ubuntu:latest
+FROM debian:stable
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y cron
 RUN apt-get install -y sed
 RUN apt-get install -y ca-certificates
 RUN apt-get install -y rclone
 COPY cronjobs /var/spool/cron/crontabs/root
+RUN chown root:crontab /var/spool/cron/crontabs/root
+RUN chmod 600 /var/spool/cron/crontabs/root
 COPY rclone.conf.template /
 COPY start.sh /
+COPY sync.sh /
 RUN chmod 755 /start.sh
+RUN chmod 755 /sync.sh
 RUN mkdir /mnt/googledrivetriest
 CMD /start.sh
