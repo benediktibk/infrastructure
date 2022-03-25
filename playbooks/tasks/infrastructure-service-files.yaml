@@ -125,3 +125,8 @@
   copy:
     src: ../configs/logrotate-nftables
     dest: /etc/logrotate.d/nftables
+- name: copy google drive triest credentials
+  become: true
+  copy:
+    src: ../build/secrets/passwords/google-drive-triest-credentials.json
+    dest: /etc/infrastructure/google-drive-triest-credentials.json

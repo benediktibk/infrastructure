@@ -218,10 +218,9 @@ build/cron-storage-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-stor
 	docker build -t benediktibk/cron-storage-backup build/servers/cron-storage-backup
 	docker images --format "{{.ID}}" benediktibk/cron-storage-backup > $@
 
-build/google-drive-triest-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-google-drive-triest servers/google-drive-triest/start.sh servers/google-drive-triest/credentials.json.template servers/google-drive-triest/rclone.conf.template servers/google-drive-triest/cronjobs
+build/google-drive-triest-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-google-drive-triest servers/google-drive-triest/start.sh servers/google-drive-triest/rclone.conf.template servers/google-drive-triest/cronjobs
 	cp dockerfiles/Dockerfile-google-drive-triest build/servers/google-drive-triest/Dockerfile
 	cp servers/google-drive-triest/start.sh build/servers/google-drive-triest/
-	cp servers/google-drive-triest/credentials.json.template build/servers/google-drive-triest/
 	cp servers/google-drive-triest/rclone.conf.template build/servers/google-drive-triest/
 	cp servers/google-drive-triest/cronjobs build/servers/google-drive-triest/
 	docker build -t benediktibk/google-drive-triest build/servers/google-drive-triest
@@ -281,11 +280,9 @@ build/environments/cron-storage-backup.env: environments/cron-storage-backup.env
 	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-storage))
 	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
 
-build/environments/google-drive-triest.env: environments/google-drive-triest.env.in build/secrets/passwords/google-drive-triest $(COMMONDEPS)
+build/environments/google-drive-triest.env: environments/google-drive-triest.env.in build/secrets/passwords/google-drive-client-secret $(COMMONDEPS)
 	cp $< $@
-	$(eval GOOGLEDRIVEPRIVATEKEY := $(shell cat build/secrets/passwords/google-drive-triest))
 	$(eval GOOGLEDRIVECLIENTSECRET := $(shell cat build/secrets/passwords/google-drive-client-secret))
-	sed -i "s~##GOOGLEDRIVEPRIVATEKEY##~${GOOGLEDRIVEPRIVATEKEY}~g" $@
 	sed -i "s/##GOOGLEDRIVECLIENTSECRET##/${GOOGLEDRIVECLIENTSECRET}/g" $@
 
 build/environments/%.env: environments/%.env
@@ -337,3 +334,7 @@ build/secrets/passwords/system-cron-passwords: build/secrets/guard
 build/secrets/passwords/system-cron-volume: build/secrets/guard
 
 build/secrets/passwords/system-cron-storage: build/secrets/guard
+
+build/secrets/passwords/google-drive-triest-credentials.json: build/secrets/guard
+
+build/secrets/passwords/google-drive-client-secret: build/secrets/guard
