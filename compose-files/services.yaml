@@ -182,6 +182,16 @@ services:
         networks:
             internal:
                 ipv4_address: 192.168.39.11
+    google-drive-triest:
+        env_file:
+            - /etc/infrastructure/environments/google-drive-triest.env
+        image: "benediktibk/google-drive-triest"
+        volumes:
+            - googledrivetriest:/mnt/googledrivetriest
+            - /etc/infrastructure/google-drive-triest-credentials.json:/credentials.json
+        networks:
+            internal:
+                ipv4_address: 192.168.39.12
 
 volumes:
     sql:
@@ -207,6 +217,8 @@ volumes:
     postgres:
         external: true
     storagebackup:
+        external: true
+    googledrivetriest:
         external: true
 networks:
     internal:
