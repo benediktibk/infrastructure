@@ -53,6 +53,11 @@
   copy:
     src: ../build/environments/google-drive-triest.env
     dest: /etc/infrastructure/environments/google-drive-triest.env
+- name: copy cron-triest-backup environment
+  become: true
+  copy:
+    src: ../build/environments/cron-triest-backup.env
+    dest: /etc/infrastructure/environments/cron-triest-backup.env
 - name: copy vpn environment
   become: true
   copy:

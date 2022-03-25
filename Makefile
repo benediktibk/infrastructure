@@ -3,9 +3,9 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest
@@ -73,6 +73,7 @@ build/guard: Makefile
 	mkdir -p build/servers/cron-volume-backup
 	mkdir -p build/servers/cron-storage-backup
 	mkdir -p build/servers/google-drive-triest
+	mkdir -p build/servers/cron-triest-backup
 	mkdir -p build/environments
 	touch $@
 
@@ -225,6 +226,13 @@ build/google-drive-triest-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-google-dr
 	cp servers/google-drive-triest/cronjobs build/servers/google-drive-triest/
 	docker build -t benediktibk/google-drive-triest build/servers/google-drive-triest
 	docker images --format "{{.ID}}" benediktibk/google-drive-triest > $@
+
+build/cron-triest-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-triest-backup servers/cron-triest-backup/backup-triest.sh servers/cron-triest-backup/cronjobs
+	cp dockerfiles/Dockerfile-cron-triest-backup build/servers/cron-triest-backup/Dockerfile
+	cp servers/cron-triest-backup/backup-triest.sh build/servers/cron-triest-backup/
+	cp servers/cron-triest-backup/cronjobs build/servers/cron-triest-backup/
+	docker build -t benediktibk/cron-triest-backup build/servers/cron-triest-backup
+	docker images --format "{{.ID}}" benediktibk/cron-triest-backup > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
@@ -285,6 +293,11 @@ build/environments/google-drive-triest.env: environments/google-drive-triest.env
 	$(eval GOOGLEDRIVECLIENTSECRET := $(shell cat build/secrets/passwords/google-drive-client-secret))
 	sed -i "s/##GOOGLEDRIVECLIENTSECRET##/${GOOGLEDRIVECLIENTSECRET}/g" $@
 
+build/environments/cron-triest-backup.env: environments/cron-triest-backup.env.in build/secrets/passwords/system-cron-triest $(COMMONDEPS)
+	cp $< $@
+	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-triest))
+	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
+
 build/environments/%.env: environments/%.env
 	cp $< $@
 
@@ -338,3 +351,5 @@ build/secrets/passwords/system-cron-storage: build/secrets/guard
 build/secrets/passwords/google-drive-triest-credentials.json: build/secrets/guard
 
 build/secrets/passwords/google-drive-client-secret: build/secrets/guard
+
+build/secrets/passwords/system-cron-triest: build/secrets/guard

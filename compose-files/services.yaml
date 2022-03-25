@@ -175,7 +175,7 @@ services:
     cron-storage-backup:
         env_file:
             - /etc/infrastructure/environments/cron-storage-backup.env
-        image: "benediktibk/cron-volume-backup"
+        image: "benediktibk/cron-storage-backup"
         volumes:
             - storagebackup:/mnt/storagebackup
         privileged: true
@@ -192,6 +192,16 @@ services:
         networks:
             internal:
                 ipv4_address: 192.168.39.12
+    cron-triest-backup:
+        env_file:
+            - /etc/infrastructure/environments/cron-triest-backup.env
+        image: "benediktibk/cron-triest-backup"
+        volumes:
+            - webcertificates:/mnt/googledrivetriest
+        privileged: true
+        networks:
+            internal:
+                ipv4_address: 192.168.39.13
 
 volumes:
     sql:
