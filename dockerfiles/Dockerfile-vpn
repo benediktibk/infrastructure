@@ -1,6 +1,8 @@
 FROM debian:stable
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
-RUN apt-get -y install openvpn gettext-base
+RUN apt-get -y install openvpn
+RUN apt-get -y install gettext-base
 COPY server.conf.template /etc/openvpn/server/
 RUN mkdir -p /etc/openvpn/server/clients
 RUN mkdir -p /etc/openvpn/certs

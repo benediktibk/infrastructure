@@ -66,8 +66,6 @@ nft 'add chain ip filter INPUT { type filter hook input priority 0; policy drop;
 echo "configure chain FORWARD-DMZ-INTERNAL"
 echo "    allow already established connections"
 nft add rule filter FORWARD-DMZ-INTERNAL ct state established accept
-echo "    allow access from DMZ to the outside"
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 counter accept
 echo "    allow access from internal to the outside"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.39.0/24 counter accept
 echo "    allow access to database from corona-viewer"
@@ -75,10 +73,17 @@ nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.4 ip daddr 192.168.
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.2 tcp dport 1433 counter accept
 echo "    allow access to database from zabbix-frontend"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.8 ip daddr 192.168.39.6 tcp dport 5432 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.6 tcp dport 5432 counter accept
 echo "    allow access to zabbix-server from zabbix-frontend"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.8 ip daddr 192.168.39.7 tcp dport 10051 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.7 tcp dport 10051 counter accept
 echo "    allow ICMP requests"
 nft add rule filter FORWARD-DMZ-INTERNAL icmp type echo-request counter accept
+echo "    forbid access from DMZ to something else than external"
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.39.0/24 counter log prefix "nft.ip.filter.forward.reject " reject
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.40.0/24 counter log prefix "nft.ip.filter.forward.reject " reject
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.41.0/24 counter log prefix "nft.ip.filter.forward.reject " reject
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.42.0/24 counter log prefix "nft.ip.filter.forward.reject " reject
 echo "    allow WINS replication from VPN"
 add_forward_rule_from_vpn tcp 42
 echo "    allow DNS from VPN"

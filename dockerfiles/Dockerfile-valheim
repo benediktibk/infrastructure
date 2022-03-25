@@ -1,4 +1,5 @@
 FROM debian:stable
+ENV DEBIAN_FRONTEND noninteractive
 COPY bin/ /opt/valheim/
 COPY start_server.sh /opt/valheim/start_server.sh
 EXPOSE 2456/udp
