@@ -6,7 +6,7 @@ RUN apt-get install -y cron
 RUN mkdir /mnt/volumes
 RUN mkdir /mnt/storage1
 RUN mkdir /tmp/backup
-COPY cronjobs /etc/crontabs/root
+COPY cronjobs /var/spool/cron/crontabs/root
 COPY backup-volumes.sh /
 RUN chmod 755 /backup-volumes.sh
 CMD ["cron", "-f"]

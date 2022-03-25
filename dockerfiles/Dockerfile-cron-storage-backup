@@ -5,7 +5,7 @@ RUN apt-get install -y cifs-utils
 RUN apt-get install -y cron
 RUN apt-get install -y rsync
 RUN mkdir /mnt/storage1
-COPY cronjobs /etc/crontabs/root
+COPY cronjobs /var/spool/cron/crontabs/root
 COPY backup-storage.sh /
 RUN chmod 755 /backup-storage.sh
 CMD ["cron", "-f"]
