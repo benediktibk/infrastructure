@@ -46,6 +46,8 @@ echo "    allow traffic on loopback device"
 nft add rule filter INPUT iifname "lo" accept
 echo "    allow already established connections"
 nft add rule filter INPUT ct state established accept
+echo "    drop packets from suspiciuos IPs silently"
+nft add rule filter INPUT ip saddr 103.145.255.159 counter drop
 echo "    allow specific services from VPN"
 nft add rule filter INPUT ip daddr $HOSTVPNIP tcp dport 22 counter accept
 echo "    allow specific services from external"
