@@ -79,6 +79,11 @@ nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.16
 echo "    allow access to zabbix-server from zabbix-frontend"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.8 ip daddr 192.168.39.7 tcp dport 10051 counter accept
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.7 tcp dport 10051 counter accept
+echo "    allow access to LDAP from zabbix-frontend"
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.8 ip daddr 192.168.39.3 tcp dport 389 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.8 ip daddr 192.168.39.3 tcp dport 636 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.3 tcp dport 389 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.3 tcp dport 636 counter accept
 echo "    allow ICMP requests"
 nft add rule filter FORWARD-DMZ-INTERNAL icmp type echo-request counter accept
 echo "    forbid access from DMZ to something else than external"
