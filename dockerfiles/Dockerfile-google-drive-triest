@@ -5,9 +5,9 @@ RUN apt-get install -y cron
 RUN apt-get install -y sed
 RUN apt-get install -y ca-certificates
 RUN apt-get install -y rclone
-COPY cronjobs /var/spool/cron/crontabs/root
-RUN chown root:crontab /var/spool/cron/crontabs/root
-RUN chmod 600 /var/spool/cron/crontabs/root
+COPY cronjobs /etc/cron.d/cronjobs
+RUN chmod 0644 /etc/cron.d/cronjobs
+RUN crontab /etc/cron.d/cronjobs
 COPY rclone.conf.template /
 COPY start.sh /
 COPY sync.sh /
