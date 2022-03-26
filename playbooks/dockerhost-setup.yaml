@@ -2,7 +2,9 @@
   hosts: docker_hosts
   tasks:
     - include_tasks: tasks/system-update.yaml
+    - include_tasks: tasks/utils-install.yaml
     - include_tasks: tasks/docker-install.yaml
+    - include_tasks: tasks/zabbix-agent-install.yaml
     - include_tasks: tasks/infrastructure-service-create-users.yaml
     - include_tasks: tasks/infrastructure-service-create-directories.yaml
     - include_tasks: tasks/infrastructure-service-directories-permissions.yaml

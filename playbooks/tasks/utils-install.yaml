@@ -1,0 +1,4 @@
+- name: update package sources
+  shell: "apt-get update"
+- name: install other utilites
+  shell: "apt-get -y install htop tcpdump"

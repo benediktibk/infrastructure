@@ -1,0 +1,14 @@
+- name: copy zabbix sources list
+  become: true
+  copy:
+    src: ../configs/zabbix.list
+    dest: /etc/apt/sources.list.d/
+- name: copy zabbix sources key
+  become: true
+  copy:
+    src: ../configs/zabbix-official-repo.gpg
+    dest: /etc/apt/trusted.gpg.d/
+- name: update package sources
+  shell: "apt-get update"
+- name: install zabbix-agent
+  shell: "apt-get -y install zabbix-agent"
