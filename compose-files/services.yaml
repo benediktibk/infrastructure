@@ -88,6 +88,7 @@ services:
         volumes:
             - dc:/var/lib/samba/
             - /etc/localtime:/etc/localtime:ro
+            - ldapcertificates:/etc/samba/tls
         networks:
             internal:
                 ipv4_address: 192.168.39.3
@@ -229,6 +230,8 @@ volumes:
     storagebackup:
         external: true
     googledrivetriest:
+        external: true
+    ldapcertificates:
         external: true
 networks:
     internal:

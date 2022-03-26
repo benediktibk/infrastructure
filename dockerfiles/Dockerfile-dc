@@ -18,6 +18,9 @@ RUN apt-get install -y ldb-tools
 RUN apt-get install -y nano
 RUN apt-get install -y dnsutils
 RUN apt-get install -y net-tools
+COPY root_ca.crt /usr/local/share/ca-certificates/
+RUN update-ca-certificates
+RUN mkdir -p /etc/samba/tls
 COPY smb.conf /etc/samba/smb.conf
 COPY krb5.conf /etc/krb5.conf
 COPY resolv.conf /etc/resolv_prepared.conf

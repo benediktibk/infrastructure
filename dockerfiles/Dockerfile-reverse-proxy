@@ -4,7 +4,7 @@ COPY nginx.conf /etc/nginx/
 COPY nginx-start.sh /
 RUN mkdir -p /etc/nginx/certs
 RUN mkdir -p /etc/nginx/certs-temp
-COPY root_ca.crt //usr/local/share/ca-certificates/
+COPY root_ca.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates
 RUN openssl req -x509 -newkey rsa:4096 -keyout /etc/nginx/certs-temp/web_benediktschmidt.at.key -out /etc/nginx/certs-temp/web_benediktschmidt.at.crt -sha256 -days 365 -nodes -subj '/CN=localhost'
 RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.key /etc/nginx/certs-temp/web_www.benediktschmidt.at.key

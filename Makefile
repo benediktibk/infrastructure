@@ -8,7 +8,7 @@ ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONME
 IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest
+VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 VALHEIMDIRECTORY = ~/.steam/debian-installation/steamapps/common/valheim_dedicated_server
 VALHEIMFILES = $(shell find $(VALHEIMDIRECTORY))
@@ -154,6 +154,9 @@ build/dc-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-dc servers/dc/start.sh ser
 	cp servers/dc/smb.conf build/servers/dc/
 	cp servers/dc/krb5.conf build/servers/dc/
 	cp servers/dc/resolv.conf build/servers/dc/
+	cp build/secrets/ca/root_ca.crt build/servers/dc
+	cp build/secrets/ca/ldap_dc1.benediktschmidt.at.crt build/servers/dc
+	cp build/secrets/ca/ldap_dc1.benediktschmidt.at.key build/servers/dc
 	docker build -t benediktibk/dc build/servers/dc
 	docker images --format "{{.ID}}" benediktibk/dc > $@
 
@@ -242,59 +245,59 @@ build/%-pushed-id.txt: build/%-id.txt
 
 ############ environment definitions
 	
-build/environments/sql.env: environments/sql.env.in build/secrets/passwords/db_sa $(COMMONDEPS)
+build/environments/sql.env: environments/sql.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval SA_PASSWORD := $(shell cat build/secrets/passwords/db_sa))
 	sed -i "s/##SA_PASSWORD##/${SA_PASSWORD}/g" $@
 
-build/environments/valheim.env: environments/valheim.env.in build/secrets/passwords/valheim $(COMMONDEPS)
+build/environments/valheim.env: environments/valheim.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval SERVER_PASSWORD := $(shell cat build/secrets/passwords/valheim))
 	sed -i "s/##SERVER_PASSWORD##/$(SERVER_PASSWORD)/g" $@
 
-build/environments/corona.env: environments/corona.env.in build/secrets/passwords/db_corona $(COMMONDEPS)
+build/environments/corona.env: environments/corona.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
 	sed -i "s/##DBCORONAPASSWORD##/${DBCORONAPASSWORD}/g" $@
 
-build/environments/postgres.env: environments/postgres.env.in build/secrets/passwords/db_zabbix build/secrets/passwords/postgres $(COMMONDEPS)
+build/environments/postgres.env: environments/postgres.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval POSTGRES_PASSWORD := $(shell cat build/secrets/passwords/postgres))
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##POSTGRES_PASSWORD##/${POSTGRES_PASSWORD}/g" $@
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
 
-build/environments/zabbix-server.env: environments/zabbix-server.env.in build/secrets/passwords/db_zabbix $(COMMONDEPS)
+build/environments/zabbix-server.env: environments/zabbix-server.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
 
-build/environments/zabbix-frontend.env: environments/zabbix-frontend.env.in build/secrets/passwords/db_zabbix $(COMMONDEPS)
+build/environments/zabbix-frontend.env: environments/zabbix-frontend.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
 
-build/environments/cron-passwords.env: environments/cron-passwords.env.in build/secrets/passwords/system-cron-passwords $(COMMONDEPS)
+build/environments/cron-passwords.env: environments/cron-passwords.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-passwords))
 	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
 
-build/environments/cron-volume-backup.env: environments/cron-volume-backup.env.in build/secrets/passwords/system-cron-volume $(COMMONDEPS)
+build/environments/cron-volume-backup.env: environments/cron-volume-backup.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-volume))
 	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
 
-build/environments/cron-storage-backup.env: environments/cron-storage-backup.env.in build/secrets/passwords/system-cron-storage $(COMMONDEPS)
+build/environments/cron-storage-backup.env: environments/cron-storage-backup.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-storage))
 	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
 
-build/environments/google-drive-triest.env: environments/google-drive-triest.env.in build/secrets/passwords/google-drive-client-secret $(COMMONDEPS)
+build/environments/google-drive-triest.env: environments/google-drive-triest.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval GOOGLEDRIVECLIENTSECRET := $(shell cat build/secrets/passwords/google-drive-client-secret))
 	sed -i "s/##GOOGLEDRIVECLIENTSECRET##/${GOOGLEDRIVECLIENTSECRET}/g" $@
 
-build/environments/cron-triest-backup.env: environments/cron-triest-backup.env.in build/secrets/passwords/system-cron-triest $(COMMONDEPS)
+build/environments/cron-triest-backup.env: environments/cron-triest-backup.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-triest))
 	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
@@ -332,25 +335,3 @@ secrets-encrypt: Makefile build/secrets.tar.gz
 build/secrets.tar.gz: Makefile
 	rm -f $@
 	tar -czvf $@ build/secrets
-
-build/secrets/passwords/db_sa: build/secrets/guard
-
-build/secrets/passwords/db_corona: build/secrets/guard
-
-build/secrets/passwords/valheim: build/secrets/guard
-
-build/secrets/passwords/postgres: build/secrets/guard
-
-build/secrets/passwords/db_zabbix: build/secrets/guard
-
-build/secrets/passwords/system-cron-passwords: build/secrets/guard
-
-build/secrets/passwords/system-cron-volume: build/secrets/guard
-
-build/secrets/passwords/system-cron-storage: build/secrets/guard
-
-build/secrets/passwords/google-drive-triest-credentials.json: build/secrets/guard
-
-build/secrets/passwords/google-drive-client-secret: build/secrets/guard
-
-build/secrets/passwords/system-cron-triest: build/secrets/guard

@@ -120,6 +120,18 @@
   copy:
     src: ../build/secrets/ca/dh-vpn.pem
     dest: /var/lib/docker/volumes/vpncertificates/_data/dh.pem
+- name: copy LDAP certificate
+  become: true
+  copy:
+    src: ../build/secrets/ca/ldap_dc1.benediktschmidt.at.crt
+    dest: /var/lib/docker/volumes/ldapcertificates/_data/ldap_dc1.benediktschmidt.at.crt
+- name: copy LDAP certificate
+  become: true
+  copy:
+    src: ../build/secrets/ca/ldap_dc1.benediktschmidt.at.key
+    dest: /var/lib/docker/volumes/ldapcertificates/_data/ldap_dc1.benediktschmidt.at.key
+- name: set file permissions of LDAP certificate
+  shell: "chmod 600 /var/lib/docker/volumes/ldapcertificates/_data/ldap_dc1.benediktschmidt.at.key"
 - name: copy syslog config
   become: true
   copy:
