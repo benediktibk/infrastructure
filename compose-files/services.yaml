@@ -136,6 +136,8 @@ services:
         env_file:
             - /etc/infrastructure/environments/zabbix-frontend.env
         image: "benediktibk/zabbix-frontend"
+        dns:
+            - "192.168.39.3"
         networks:
             dmz:
                 ipv4_address: 192.168.38.8

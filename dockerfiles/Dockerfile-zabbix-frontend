@@ -1,1 +1,5 @@
-FROM zabbix/zabbix-web-nginx-pgsql:latest
+FROM zabbix/zabbix-web-nginx-pgsql:ubuntu-latest
+USER root
+COPY root_ca.crt /usr/local/share/ca-certificates/
+RUN update-ca-certificates
+USER 1997

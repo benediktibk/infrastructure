@@ -191,6 +191,7 @@ build/zabbix-server-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-zabbix-server
 
 build/zabbix-frontend-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-zabbix-frontend
 	cp dockerfiles/Dockerfile-zabbix-frontend build/servers/zabbix-frontend/Dockerfile
+	cp build/secrets/ca/root_ca.crt build/servers/zabbix-frontend
 	docker build -t benediktibk/zabbix-frontend build/servers/zabbix-frontend
 	docker images --format "{{.ID}}" benediktibk/zabbix-frontend > $@
 
