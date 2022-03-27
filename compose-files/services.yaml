@@ -56,7 +56,7 @@ services:
             - TARGETCORONA=192.168.38.4:80
             - TARGETME=192.168.38.2:80
             - TARGETDOWNLOADS=192.168.38.6:80
-            - TARGETMONITORING=192.168.38.8:8080
+            - TARGETMONITORING=192.168.38.8:80
         env_file:
             - /etc/infrastructure/environments/reverse-proxy.env
         image: "benediktibk/reverse-proxy"
@@ -128,9 +128,6 @@ services:
             internal:
                 ipv4_address: 192.168.39.7
     zabbix-frontend:
-        environment:
-            - ZBX_SERVER_HOST=192.168.39.7
-            - DB_SERVER_HOST=192.168.39.6
         env_file:
             - /etc/infrastructure/environments/zabbix-frontend.env
         image: "benediktibk/zabbix-frontend"

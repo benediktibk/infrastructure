@@ -1,5 +1,17 @@
-FROM zabbix/zabbix-web-nginx-pgsql:ubuntu-latest
-USER root
+FROM debian:stable
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get install -y wget
+RUN wget https://repo.zabbix.com/zabbix/6.0/debian/pool/main/z/zabbix-release/zabbix-release_6.0-1+debian11_all.deb
+RUN dpkg -i zabbix-release_6.0-1+debian11_all.deb
+RUN apt-get update
+RUN apt-get install -y zabbix-frontend-php
+RUN apt-get install -y php7.4-pgsql
+RUN apt-get install -y zabbix-nginx-conf
 COPY root_ca.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates
-USER 1997
+RUN rm -fR /etc/nginx/conf.d/*.conf
+RUN ln -s /etc/zabbix/nginx.conf /etc/nginx/conf.d/zabbix.conf
+COPY zabbix.conf.php.template /zabbix.conf.php.template
+COPY start.sh /start.sh
+CMD ["/start.sh"]
