@@ -1,0 +1,31 @@
+# should be installed in .config/wireshark/hosts
+
+# internal
+192.168.39.1	server-1-internal
+192.168.39.2	database-server
+192.168.39.3	dc1
+192.168.39.4	corona-updater
+192.168.39.5	certbot
+192.168.39.6	postgres
+192.168.39.7	zabbix-server
+192.168.39.8	downloads-share
+192.168.39.9	cron-passwords
+192.168.39.10	cron-volume-backup
+192.168.39.11	cron-storage-backup
+192.168.39.12	google-drive-triest
+192.168.39.13	cron-triest-backup
+192.168.39.254	utils-internal
+
+# dmz
+192.168.38.1	server-1-dmz
+192.168.38.2	homepage
+192.168.38.3	valheim
+192.168.38.4	corona-viewer
+192.168.38.5	reverse-proxy
+192.168.38.6	downloads
+192.168.38.7	amongus
+192.168.38.8	zabbix-frontend
+192.168.38.254	utils-dmz
+
+# vpn
+192.168.40.1	server-1-vpn
