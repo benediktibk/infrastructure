@@ -10,10 +10,10 @@ delete_forward_rule () {
 }
 
 add_forward_rule_from_vpn () {
-    echo "allowing port $2 on protocol $1 from VPN"
-    nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.40.0/24 ip daddr 192.168.39.3 $1 dport $2 counter accept
-    nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.42.0/24 ip daddr 192.168.39.3 $1 dport $2 counter accept
-    nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.43.0/24 ip daddr 192.168.39.3 $1 dport $2 counter accept
+    echo "allowing port $2 on protocol $1 to $3 from VPN"
+    nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.40.0/24 ip daddr $3 $1 dport $2 counter accept
+    nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.42.0/24 ip daddr $3 $1 dport $2 counter accept
+    nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.43.0/24 ip daddr $3 $1 dport $2 counter accept
 }
 
 echo "install trap for signals"
@@ -95,36 +95,38 @@ nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.1
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.41.0/24 counter log prefix "nft.ip.filter.forward.reject " reject
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.42.0/24 counter log prefix "nft.ip.filter.forward.reject " reject
 echo "    allow WINS replication from VPN"
-add_forward_rule_from_vpn tcp 42
+add_forward_rule_from_vpn tcp 42 192.168.39.3
 echo "    allow DNS from VPN"
-add_forward_rule_from_vpn udp 53
-add_forward_rule_from_vpn tcp 53
+add_forward_rule_from_vpn udp 53 192.168.39.3
+add_forward_rule_from_vpn tcp 53 192.168.39.3
 echo "    allow Kerberos from VPN"
-add_forward_rule_from_vpn udp 88
-add_forward_rule_from_vpn tcp 88
+add_forward_rule_from_vpn udp 88 192.168.39.3
+add_forward_rule_from_vpn tcp 88 192.168.39.3
 echo "    allow NTP from VPN"
-add_forward_rule_from_vpn udp 123
+add_forward_rule_from_vpn udp 123 192.168.39.3
 echo "    allow endpoint mapper from VPN"
-add_forward_rule_from_vpn tcp 135
+add_forward_rule_from_vpn tcp 135 192.168.39.3
 echo "    allow netbios from VPN"
-add_forward_rule_from_vpn udp 137
-add_forward_rule_from_vpn udp 138
-add_forward_rule_from_vpn tcp 139
+add_forward_rule_from_vpn udp 137 192.168.39.3
+add_forward_rule_from_vpn udp 138 192.168.39.3
+add_forward_rule_from_vpn tcp 139 192.168.39.3
 echo "    allow LDAP from VPN"
-add_forward_rule_from_vpn udp 389
-add_forward_rule_from_vpn tcp 389
+add_forward_rule_from_vpn udp 389 192.168.39.3
+add_forward_rule_from_vpn tcp 389 192.168.39.3
 echo "    allow SMB from VPN"
-add_forward_rule_from_vpn tcp 445
+add_forward_rule_from_vpn tcp 445 192.168.39.3
 echo "    allow Kerberos kpasswd from VPN"
-add_forward_rule_from_vpn udp 464
-add_forward_rule_from_vpn tcp 464
+add_forward_rule_from_vpn udp 464 192.168.39.3
+add_forward_rule_from_vpn tcp 464 192.168.39.3
 echo "    allow LDAPS from VPN"
-add_forward_rule_from_vpn tcp 636
+add_forward_rule_from_vpn tcp 636 192.168.39.3
 echo "    allow global catalog from VPN"
-add_forward_rule_from_vpn tcp 3268
-add_forward_rule_from_vpn tcp 3269
+add_forward_rule_from_vpn tcp 3268 192.168.39.3
+add_forward_rule_from_vpn tcp 3269 192.168.39.3
 echo "    allow dynamic RPC ports from VPN"
-add_forward_rule_from_vpn tcp 49152-65535
+add_forward_rule_from_vpn tcp 49152-65535 192.168.39.3
+echo "    allow zabbix from VPN"
+add_forward_rule_from_vpn tcp 10050-10051 192.168.39.7
 echo "    return to previous chain"
 nft add rule filter FORWARD-DMZ-INTERNAL counter return
 
