@@ -1,1 +1,5 @@
-FROM zabbix/zabbix-server-pgsql:latest
+FROM zabbix/zabbix-server-pgsql:ubuntu-latest
+USER root
+COPY zabbix_server.conf.template /zabbix_server.conf.template
+COPY start.sh /start.sh
+CMD ["/start.sh"]

@@ -184,8 +184,10 @@ build/postgres-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-postgres servers/pos
 	docker build -t benediktibk/postgres build/servers/postgres
 	docker images --format "{{.ID}}" benediktibk/postgres > $@
 
-build/zabbix-server-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-zabbix-server
+build/zabbix-server-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-zabbix-server servers/zabbix-server/zabbix_server.conf.template servers/zabbix-server/start.sh
 	cp dockerfiles/Dockerfile-zabbix-server build/servers/zabbix-server/Dockerfile
+	cp servers/zabbix-server/zabbix_server.conf.template build/servers/zabbix-server/
+	cp servers/zabbix-server/start.sh build/servers/zabbix-server/
 	docker build -t benediktibk/zabbix-server build/servers/zabbix-server
 	docker images --format "{{.ID}}" benediktibk/zabbix-server > $@
 

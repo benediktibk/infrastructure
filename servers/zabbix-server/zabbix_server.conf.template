@@ -1,0 +1,10 @@
+ListenPort=10051
+LogType=console
+DebugLevel=3
+DBHost=192.168.39.6
+DBName=zabbix
+DBUser=zabbix
+DBPassword=##DBPASSWORD##
+Timeout=4
+LogSlowQueries=3000
+StatsAllowedIP=127.0.0.1

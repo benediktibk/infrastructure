@@ -121,8 +121,6 @@ services:
             internal:
                 ipv4_address: 192.168.39.6
     zabbix-server:
-        environment:
-            - DB_SERVER_HOST=192.168.39.6
         env_file:
             - /etc/infrastructure/environments/zabbix-server.env
         image: "benediktibk/zabbix-server"
