@@ -67,7 +67,6 @@ nft add rule filter INPUT ip saddr 79.124.62.34 counter drop
 nft add rule filter INPUT ip saddr 45.146.165.209 counter drop
 nft add rule filter INPUT ip saddr 144.172.71.192 counter drop
 nft add rule filter INPUT ip saddr 165.232.157.135 counter drop
-add_drop_rules_from_file "/blacklist_ipadb.txt"
 add_drop_rules_from_file "/blacklist_firehol.txt"
 echo "    allow specific services from VPN"
 nft add rule filter INPUT ip daddr $HOSTVPNIP tcp dport 22 counter accept
