@@ -16,6 +16,14 @@ add_forward_rule_from_vpn () {
     nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.43.0/24 ip daddr $3 $1 dport $2 counter accept
 }
 
+add_drop_rules_from_file () {
+    echo "drop IPs from file $1"
+    while read LINE; do
+        echo "    drop packets from suspiciuos IP $LINE silently"
+        nft add rule filter INPUT ip saddr $LINE counter drop
+    done < $1
+}
+
 echo "install trap for signals"
 trap "echo 'got signal to stop, exiting'; exit 0;" QUIT HUP INT TERM
 
@@ -46,7 +54,7 @@ echo "    allow traffic on loopback device"
 nft add rule filter INPUT iifname "lo" accept
 echo "    allow already established connections"
 nft add rule filter INPUT ct state established accept
-echo "    drop packets from suspiciuos IPs silently"
+echo "    drop packets from custom collected suspiciuos IPs silently"
 nft add rule filter INPUT ip saddr 103.145.255.159 counter drop
 nft add rule filter INPUT ip saddr 103.99.0.5 counter drop
 nft add rule filter INPUT ip saddr 92.19.122.184 counter drop
@@ -59,6 +67,8 @@ nft add rule filter INPUT ip saddr 79.124.62.34 counter drop
 nft add rule filter INPUT ip saddr 45.146.165.209 counter drop
 nft add rule filter INPUT ip saddr 144.172.71.192 counter drop
 nft add rule filter INPUT ip saddr 165.232.157.135 counter drop
+add_drop_rules_from_file "/blacklist_ipadb.txt"
+add_drop_rules_from_file "/blacklist_firehol.txt"
 echo "    allow specific services from VPN"
 nft add rule filter INPUT ip daddr $HOSTVPNIP tcp dport 22 counter accept
 echo "    allow specific services from external"
