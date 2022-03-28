@@ -87,6 +87,7 @@ tests:
 build/valheim-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-valheim servers/valheim/start_server.sh $(VALHEIMFILES)
 	cp dockerfiles/Dockerfile-valheim build/servers/valheim/Dockerfile
 	cp servers/valheim/start_server.sh build/servers/valheim/start_server.sh
+	bash -c "if [[ ! -d $(VALHEIMDIRECTORY) ]]; then echo '$(VALHEIMDIRECTORY) does not exist'; exit 1; fi;"
 	cp -R $(VALHEIMDIRECTORY)/* build/servers/valheim/bin/
 	docker build -t benediktibk/valheim build/servers/valheim
 	docker images --format "{{.ID}}" benediktibk/valheim > $@
