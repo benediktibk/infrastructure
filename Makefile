@@ -146,6 +146,8 @@ build/vpn-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-vpn servers/vpn/server.co
 build/firewall-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-firewall servers/firewall/firewall.sh
 	cp dockerfiles/Dockerfile-firewall build/servers/firewall/Dockerfile
 	cp servers/firewall/firewall.sh build/servers/firewall/
+	$(eval IPABUSEDBAPIKEY := $(shell cat build/secrets/passwords/ipabusedb))
+	curl -G https://api.abuseipdb.com/api/v2/blacklist -d limit=500000 -d confidenceMinimum=90 -d plaintext -H "Key: $(IPABUSEDBAPIKEY)" -H "Accept: application/json" > build/servers/firewall/ip_blacklist.txt
 	docker build -t benediktibk/firewall build/servers/firewall
 	docker images --format "{{.ID}}" benediktibk/firewall > $@
 
