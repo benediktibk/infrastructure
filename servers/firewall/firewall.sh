@@ -126,7 +126,7 @@ add_forward_rule_from_vpn tcp 3269 192.168.39.3
 echo "    allow dynamic RPC ports from VPN"
 add_forward_rule_from_vpn tcp 49152-65535 192.168.39.3
 echo "    allow zabbix from VPN"
-add_forward_rule_from_vpn tcp 10050-10051 192.168.39.7
+add_forward_rule_from_vpn tcp 10051 192.168.39.7
 echo "    return to previous chain"
 nft add rule filter FORWARD-DMZ-INTERNAL counter return
 
