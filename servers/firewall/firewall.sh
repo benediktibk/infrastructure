@@ -48,6 +48,17 @@ echo "    allow already established connections"
 nft add rule filter INPUT ct state established accept
 echo "    drop packets from suspiciuos IPs silently"
 nft add rule filter INPUT ip saddr 103.145.255.159 counter drop
+nft add rule filter INPUT ip saddr 103.99.0.5 counter drop
+nft add rule filter INPUT ip saddr 92.19.122.184 counter drop
+nft add rule filter INPUT ip saddr 167.94.138.64 counter drop
+nft add rule filter INPUT ip saddr 171.227.162.38 counter drop
+nft add rule filter INPUT ip saddr 183.136.225.42 counter drop
+nft add rule filter INPUT ip saddr 102.186.170.157 counter drop
+nft add rule filter INPUT ip saddr 174.138.31.95 counter drop
+nft add rule filter INPUT ip saddr 79.124.62.34 counter drop
+nft add rule filter INPUT ip saddr 45.146.165.209 counter drop
+nft add rule filter INPUT ip saddr 144.172.71.192 counter drop
+nft add rule filter INPUT ip saddr 165.232.157.135 counter drop
 echo "    allow specific services from VPN"
 nft add rule filter INPUT ip daddr $HOSTVPNIP tcp dport 22 counter accept
 echo "    allow specific services from external"
