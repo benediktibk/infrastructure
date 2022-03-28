@@ -192,11 +192,14 @@ build/zabbix-server-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-zabbix-server s
 	docker build -t benediktibk/zabbix-server build/servers/zabbix-server
 	docker images --format "{{.ID}}" benediktibk/zabbix-server > $@
 
-build/zabbix-frontend-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-zabbix-frontend servers/zabbix-frontend/start.sh servers/zabbix-frontend/zabbix.conf.php.template
+build/zabbix-frontend-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-zabbix-frontend servers/zabbix-frontend/start.sh servers/zabbix-frontend/zabbix.conf.php.template servers/zabbix-frontend/nginx.conf servers/zabbix-frontend/php.conf servers/zabbix-frontend/php-fpm.conf
 	cp dockerfiles/Dockerfile-zabbix-frontend build/servers/zabbix-frontend/Dockerfile
-	cp build/secrets/ca/root_ca.crt build/servers/zabbix-frontend
+	cp build/secrets/ca/root_ca.crt build/servers/zabbix-frontend/
 	cp servers/zabbix-frontend/start.sh build/servers/zabbix-frontend/
 	cp servers/zabbix-frontend/zabbix.conf.php.template build/servers/zabbix-frontend/
+	cp servers/zabbix-frontend/nginx.conf build/servers/zabbix-frontend/
+	cp servers/zabbix-frontend/php.conf build/servers/zabbix-frontend/
+	cp servers/zabbix-frontend/php-fpm.conf build/servers/zabbix-frontend/
 	docker build -t benediktibk/zabbix-frontend build/servers/zabbix-frontend
 	docker images --format "{{.ID}}" benediktibk/zabbix-frontend > $@
 

@@ -1,16 +1,19 @@
 #!/usr/bin/env sh
 
-echo "install trap for signals"
-trap "echo 'got signal to stop, exiting'; nginx -s stop; exit 0;" QUIT HUP INT TERM
-
 set -eu
 
 echo "prepare zabbix config"
 sed -i "s/##DBPASSWORD##/$POSTGRES_PASSWORD/g" /zabbix.conf.php.template
 cp /zabbix.conf.php.template /etc/zabbix/web/zabbix.conf.php
 
+echo "start php"
+php-fpm7.4 --daemonize --fpm-config /etc/php/7.4/fpm/php-fpm.conf
+
 echo "start nginx"
 nginx -g 'daemon on;'
+
+echo "install trap for signals"
+trap "echo 'got signal to stop, exiting'; nginx -s stop; kill -9 $(cat /tmp/php-fpm.pid); exit 0;" QUIT HUP INT TERM
 
 echo "wait for signal to stop"
 while :

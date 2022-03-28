@@ -1,7 +1,7 @@
 <?php
 // Zabbix GUI configuration file.
 
-$DB['TYPE']				= 'POSTGRES';
+$DB['TYPE']				= 'POSTGRESQL';
 $DB['SERVER']			= '192.168.39.6';
 $DB['PORT']				= '5432';
 $DB['DATABASE']			= 'zabbix';
