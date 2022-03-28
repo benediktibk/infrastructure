@@ -154,7 +154,7 @@ nft add rule filter FORWARD-DMZ-INTERNAL counter return
 
 echo "configure chain FORWARD-LOGGING"
 echo "    log dropped packets"
-nft add rule filter FORWARD-LOGGING counter log prefix "nft.ip.filter.forward.drop "
+nft add rule filter FORWARD-LOGGING counter log prefix "nft.ip.filter.forward.drop " drop
 
 while :
 do
