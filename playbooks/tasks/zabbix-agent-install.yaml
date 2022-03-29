@@ -11,6 +11,6 @@
 - name: update package sources
   shell: "apt-get update"
 - name: install zabbix-agent
-  shell: "apt-get -y install zabbix-agent"
+  shell: "apt-get -y install zabbix-agent zabbix-get"
 - name: install zabbix-agent
   shell: "usermod -aG docker zabbix"
