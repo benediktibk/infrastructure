@@ -58,6 +58,11 @@
   copy:
     src: ../build/environments/cron-triest-backup.env
     dest: /etc/infrastructure/environments/cron-triest-backup.env
+- name: copy backup-check environment
+  become: true
+  copy:
+    src: ../build/environments/backup-check.env
+    dest: /etc/infrastructure/environments/backup-check.env
 - name: copy vpn environment
   become: true
   copy:

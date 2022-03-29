@@ -1,0 +1,22 @@
+FROM debian:stable
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get install -y wget
+RUN apt-get install -y cifs-utils
+RUN wget https://repo.zabbix.com/zabbix/6.0/debian/pool/main/z/zabbix-release/zabbix-release_6.0-1+debian11_all.deb
+RUN dpkg -i zabbix-release_6.0-1+debian11_all.deb
+RUN apt-get update
+RUN apt-get install -y zabbix-agent
+RUN mkdir -p /var/run/zabbix
+RUN chown zabbix /var/run/zabbix
+RUN mkdir /mnt/storage1
+RUN mkdir /mnt/downloads-share
+RUN mkdir /mnt/storagebackup
+COPY zabbix_agentd.conf /etc/zabbix/zabbix_agentd.conf
+COPY fstab /etc/fstab
+COPY check-file-age.sh /usr/bin/check-file-age.sh
+RUN chmod 755 /usr/bin/check-file-age.sh
+COPY check-file-size.sh /usr/bin/check-file-size.sh
+RUN chmod 755 /usr/bin/check-file-size.sh
+COPY start.sh /start.sh
+CMD ["/start.sh"]

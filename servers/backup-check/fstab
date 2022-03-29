@@ -1,0 +1,2 @@
+//storage1.benediktschmidt.at/data              /mnt/storage1           cifs    user,ro,username=system-backup-check,domain=BENEDIKTSCHMIDT,password=##DOMAINPASSWORD##   0       0
+//downloads-share.benediktschmidt.at/data       /mnt/downloads-share    cifs    user,ro,guest                                                                                0       0

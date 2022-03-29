@@ -195,11 +195,23 @@ services:
             - /etc/infrastructure/environments/cron-triest-backup.env
         image: "benediktibk/cron-triest-backup"
         volumes:
-            - webcertificates:/mnt/googledrivetriest
+            - googledrivetriest:/mnt/googledrivetriest
         privileged: true
         networks:
             internal:
                 ipv4_address: 192.168.39.13
+    backup-check:
+        env_file:
+            - /etc/infrastructure/environments/backup-check.env
+        image: "benediktibk/backup-check"
+        volumes:
+            - storagebackup:/mnt/storagebackup
+        dns:
+            - "192.168.39.3"
+        privileged: true
+        networks:
+            internal:
+                ipv4_address: 192.168.39.14
 
 volumes:
     sql:
