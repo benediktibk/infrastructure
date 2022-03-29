@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "download passwords file from storage"
 smbclient --timeout 120 --max-protocol=SMB2 -U system-cron-password@benediktschmidt.at%$DOMAINPASSWORD //192.168.42.4/data --directory User/benedikt/Documents/Passwoerter -c 'get passwords.kdbx'
 
