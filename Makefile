@@ -19,12 +19,18 @@ DELETEVOLUMES := if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(she
 DOCKERCOMPOSECORONAINIT := docker-compose --project-name infrastructure-init -f compose-files/corona-init.yaml up --abort-on-container-exit
 DOCKERCOMPOSESERVER := docker-compose --project-name infrastructure -f compose-files/server.yaml up
 
+DOCKERCONTAINERSAVAILABLE := $(shell docker ps -qa)
+DOCKERIMAGESAVAILABLE := $(shell docker images -aq)
+
 ############ general
 
 all: $(IMAGEPUSHEDIDS) $(ENVIRONMENTFILES) tests
 
 clean:
 	git clean -xdff
+
+proper-clean:
+	docker rm -f $(DOCKERCONTAINERSAVAILABLE); docker rmi -f $(DOCKERIMAGESAVAILABLE); docker image prune
 	
 run: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	$(DOCKERCOMPOSESERVER)
