@@ -11,5 +11,8 @@ mount.cifs -o username=system-cron-storage,domain=benediktschmidt.at,password=$D
 echo "create partial backup of storage"
 rsync --recursive --delete-during --progress --exclude Multimedia/Filme --exclude Multimedia/Serien --exclude Software /mnt/storage1/ /mnt/storagebackup
 
+echo "touch guard"
+touch /mnt/storagebackup/guard
+
 echo "umount storage"
 umount /mnt/storage1

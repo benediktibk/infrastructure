@@ -22,5 +22,8 @@ cp /tmp/backup/$FILENAME /mnt/storage1/System/backup/docker-volumes/
 echo "delete too old backups"
 find /mnt/storage1/System/backup/docker-volumes/* -mtime +7 -exec rm {} \;
 
+echo "touch guard"
+touch /mnt/storage1/System/backup/docker-volumes/guard
+
 echo "unmount storage"
 umount /mnt/storage1
