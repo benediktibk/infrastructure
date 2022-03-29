@@ -152,3 +152,10 @@
   copy:
     src: ../configs/zabbix_agentd.conf
     dest: /etc/zabbix/zabbix_agentd.conf
+- name: copy check-open-updates.sh
+  become: true
+  copy:
+    src: ../scripts/check-open-updates.sh
+    dest: /usr/bin/check-open-updates.sh
+- name: set file permissions of check-open-updates.sh
+  shell: "chmod 755 /usr/bin/check-open-updates.sh"
