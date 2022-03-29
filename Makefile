@@ -153,7 +153,7 @@ build/firewall-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-firewall servers/fir
 	cp dockerfiles/Dockerfile-firewall build/servers/firewall/Dockerfile
 	cp servers/firewall/firewall.sh build/servers/firewall/
 	curl -G https://iplists.firehol.org/files/firehol_level1.netset > build/servers/firewall/blacklist_firehol_temp.txt
-	cat build/servers/firewall/blacklist_firehol_temp.txt | grep --invert-match \# > build/servers/firewall/blacklist_firehol.txt
+	cat build/servers/firewall/blacklist_firehol_temp.txt | grep --invert-match \# | grep --invert-match 192.168.0.0/16 > build/servers/firewall/blacklist_firehol.txt
 	docker build -t benediktibk/firewall build/servers/firewall
 	docker images --format "{{.ID}}" benediktibk/firewall > $@
 
