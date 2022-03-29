@@ -1,5 +1,5 @@
 - name: docker host update
-  hosts: docker_hosts_vpn
+  hosts: docker_hosts
   tasks:
     - include_tasks: tasks/infrastructure-service-files.yaml
     - include_tasks: tasks/infrastructure-service-directories-permissions.yaml
