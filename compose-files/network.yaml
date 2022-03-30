@@ -9,6 +9,7 @@ services:
             - vpncertificates:/etc/openvpn/certs
         network_mode: host
         privileged: true
+        restart: unless-stopped
     firewall:
         env_file:
             - /etc/infrastructure/environments/firewall.env
@@ -16,16 +17,19 @@ services:
         image: "benediktibk/firewall"
         network_mode: host
         privileged: true
+        restart: unless-stopped
     util-dmz:
         image: "benediktibk/network-util"
         networks:
             dmz:
                 ipv4_address: 192.168.38.254
+        restart: unless-stopped
     util-internal:
         image: "benediktibk/network-util"
         networks:
             internal:
                 ipv4_address: 192.168.39.254
+        restart: unless-stopped
 volumes:
     vpncertificates:
         external: true
