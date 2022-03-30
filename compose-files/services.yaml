@@ -216,6 +216,17 @@ services:
             internal:
                 ipv4_address: 192.168.39.10
         restart: unless-stopped
+    cron-storage-backup:
+        env_file:
+            - /etc/infrastructure/environments/cron-storage-backup.env
+        image: "benediktibk/cron-storage-backup"
+        volumes:
+            - storagebackup:/mnt/storagebackup
+        privileged: true
+        networks:
+            internal:
+                ipv4_address: 192.168.39.11
+        restart: unless-stopped
     google-drive-triest:
         env_file:
             - /etc/infrastructure/environments/google-drive-triest.env
