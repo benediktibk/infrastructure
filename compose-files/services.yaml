@@ -72,6 +72,7 @@ services:
             - TARGETME=192.168.38.2:80
             - TARGETDOWNLOADS=192.168.38.6:80
             - TARGETMONITORING=192.168.38.8:80
+            - TARGETKIBANA=192.168.38.9:5601
         env_file:
             - /etc/infrastructure/environments/reverse-proxy.env
         image: "benediktibk/reverse-proxy"
@@ -267,6 +268,32 @@ services:
             internal:
                 ipv4_address: 192.168.39.14
         restart: unless-stopped
+    elasticsearch:
+        environment:
+            - xpack.security.enabled=true
+            - discovery.type=single-node
+        image: "docker.elastic.co/elasticsearch/elasticsearch:7.12.0"
+        volumes:
+            - elasticsearch:/usr/share/elasticsearch/data
+        dns:
+            - "192.168.39.3"
+        cap_add: 
+            - IPC_LOCK
+        networks:
+            internal:
+                ipv4_address: 192.168.39.15
+        restart: unless-stopped
+    kibana:
+        environment:
+            SERVER_NAME: kibana
+            ELASTICSEARCH_HOSTS: http://192.168.39.15:9200
+        image: "docker.elastic.co/kibana/kibana:7.12.0"
+        dns:
+            - "192.168.39.3"
+        networks:
+            dmz:
+                ipv4_address: 192.168.38.9
+        restart: unless-stopped
 
 volumes:
     sql:
@@ -296,6 +323,8 @@ volumes:
     googledrivetriest:
         external: true
     ldapcertificates:
+        external: true
+    elasticsearch:
         external: true
 networks:
     internal:
