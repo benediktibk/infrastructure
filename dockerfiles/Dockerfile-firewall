@@ -5,4 +5,5 @@ RUN apt-get -y install nftables
 COPY firewall.sh /
 RUN chmod 700 /firewall.sh
 COPY blacklist_firehol.txt /
+COPY blacklist_custom.txt /
 CMD ["/firewall.sh"]
