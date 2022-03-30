@@ -185,6 +185,8 @@ services:
         env_file:
             - /etc/infrastructure/environments/cron-passwords.env
         image: "benediktibk/cron-passwords"
+        volumes:
+            - downloads:/mnt/downloads
         networks:
             internal:
                 ipv4_address: 192.168.39.9

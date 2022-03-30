@@ -219,23 +219,29 @@ build/downloads-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-downloads-sha
 	docker build -t benediktibk/downloads-share build/servers/downloads-share
 	docker images --format "{{.ID}}" benediktibk/downloads-share > $@
 
-build/cron-passwords-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-passwords servers/cron-passwords/copy-passwords.sh servers/cron-passwords/cronjobs
+build/cron-passwords-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-passwords servers/cron-passwords/copy-passwords.sh servers/cron-passwords/cronjobs servers/cron-passwords/start.sh servers/cron-passwords/fstab
 	cp dockerfiles/Dockerfile-cron-passwords build/servers/cron-passwords/Dockerfile
 	cp servers/cron-passwords/copy-passwords.sh build/servers/cron-passwords/
 	cp servers/cron-passwords/cronjobs build/servers/cron-passwords/
+	cp servers/cron-passwords/start.sh build/servers/cron-passwords/
+	cp servers/cron-passwords/fstab build/servers/cron-passwords/
 	docker build -t benediktibk/cron-passwords build/servers/cron-passwords
 	docker images --format "{{.ID}}" benediktibk/cron-passwords > $@
 
-build/cron-volume-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-volume-backup servers/cron-volume-backup/backup-volumes.sh servers/cron-volume-backup/cronjobs
+build/cron-volume-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-volume-backup servers/cron-volume-backup/backup-volumes.sh servers/cron-volume-backup/cronjobs servers/cron-volume-backup/start.sh servers/cron-volume-backup/fstab
 	cp dockerfiles/Dockerfile-cron-volume-backup build/servers/cron-volume-backup/Dockerfile
 	cp servers/cron-volume-backup/backup-volumes.sh build/servers/cron-volume-backup/
+	cp servers/cron-volume-backup/start.sh build/servers/cron-volume-backup/
+	cp servers/cron-volume-backup/fstab build/servers/cron-volume-backup/
 	cp servers/cron-volume-backup/cronjobs build/servers/cron-volume-backup/
 	docker build -t benediktibk/cron-volume-backup build/servers/cron-volume-backup
 	docker images --format "{{.ID}}" benediktibk/cron-volume-backup > $@
 
-build/cron-storage-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-storage-backup servers/cron-storage-backup/backup-storage.sh servers/cron-storage-backup/cronjobs
+build/cron-storage-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-storage-backup servers/cron-storage-backup/backup-storage.sh servers/cron-storage-backup/cronjobs servers/cron-storage-backup/start.sh servers/cron-storage-backup/fstab
 	cp dockerfiles/Dockerfile-cron-storage-backup build/servers/cron-storage-backup/Dockerfile
 	cp servers/cron-storage-backup/backup-storage.sh build/servers/cron-storage-backup/
+	cp servers/cron-storage-backup/start.sh build/servers/cron-storage-backup/
+	cp servers/cron-storage-backup/fstab build/servers/cron-storage-backup/
 	cp servers/cron-storage-backup/cronjobs build/servers/cron-storage-backup/
 	docker build -t benediktibk/cron-storage-backup build/servers/cron-storage-backup
 	docker images --format "{{.ID}}" benediktibk/cron-storage-backup > $@
