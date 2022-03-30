@@ -249,8 +249,10 @@ build/google-drive-triest-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-google-dr
 	docker build -t benediktibk/google-drive-triest build/servers/google-drive-triest
 	docker images --format "{{.ID}}" benediktibk/google-drive-triest > $@
 
-build/cron-triest-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-triest-backup servers/cron-triest-backup/backup-triest.sh servers/cron-triest-backup/cronjobs
+build/cron-triest-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-triest-backup servers/cron-triest-backup/backup-triest.sh servers/cron-triest-backup/cronjobs servers/cron-triest-backup/start.sh servers/cron-triest-backup/fstab
 	cp dockerfiles/Dockerfile-cron-triest-backup build/servers/cron-triest-backup/Dockerfile
+	cp servers/cron-triest-backup/fstab build/servers/cron-triest-backup/
+	cp servers/cron-triest-backup/start.sh build/servers/cron-triest-backup/
 	cp servers/cron-triest-backup/backup-triest.sh build/servers/cron-triest-backup/
 	cp servers/cron-triest-backup/cronjobs build/servers/cron-triest-backup/
 	docker build -t benediktibk/cron-triest-backup build/servers/cron-triest-backup

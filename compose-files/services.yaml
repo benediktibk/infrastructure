@@ -6,12 +6,16 @@ services:
         image: "benediktibk/database-server"
         volumes:
             - sql:/var/opt/mssql/data/
+        dns:
+            - "192.168.39.3"
         networks:
             internal:
                 ipv4_address: 192.168.39.2
         restart: unless-stopped
     homepage:
         image: "benediktibk/homepage"
+        dns:
+            - "192.168.39.3"
         networks:
             dmz:
                 ipv4_address: 192.168.38.2
@@ -22,6 +26,8 @@ services:
         image: "benediktibk/valheim"
         volumes:
             - valheim:/srv/valheim/
+        dns:
+            - "192.168.39.3"
         networks:
             dmz:
                 ipv4_address: 192.168.38.3
@@ -39,6 +45,8 @@ services:
         env_file:
             - /etc/infrastructure/environments/corona.env
         image: "benediktibk/corona-viewer"
+        dns:
+            - "192.168.39.3"
         networks:
             dmz:
                 ipv4_address: 192.168.38.4
@@ -51,6 +59,8 @@ services:
         image: "benediktibk/corona-updater"
         volumes:
             - corona:/tmp/corona/
+        dns:
+            - "192.168.39.3"
         networks:
             internal:
                 ipv4_address: 192.168.39.4
@@ -69,6 +79,8 @@ services:
             - webcertificates:/etc/nginx/certs/
             - acme:/var/www/html/
             - proxycache:/data/nginx/cache/
+        dns:
+            - "192.168.39.3"
         networks:
             dmz:
                 ipv4_address: 192.168.38.5
@@ -84,6 +96,8 @@ services:
         image: "benediktibk/downloads"
         volumes:
             - downloads:/srv/downloads/
+        dns:
+            - "192.168.39.3"
         networks:
             dmz:
                 ipv4_address: 192.168.38.6
@@ -109,12 +123,16 @@ services:
             - webcertificates:/etc/nginx/certs/
             - acme:/var/www/html/
             - letsencrypt:/etc/letsencrypt/
+        dns:
+            - "192.168.39.3"
         networks:
             internal:
                 ipv4_address: 192.168.39.5
         restart: unless-stopped
     amongus:
         image: "benediktibk/amongus"
+        dns:
+            - "192.168.39.3"
         networks:
             dmz:
                 ipv4_address: 192.168.38.7
@@ -127,6 +145,8 @@ services:
         image: "benediktibk/postgres"
         volumes:
             - postgres:/var/lib/postgresql/data/
+        dns:
+            - "192.168.39.3"
         networks:
             internal:
                 ipv4_address: 192.168.39.6
@@ -135,6 +155,8 @@ services:
         env_file:
             - /etc/infrastructure/environments/zabbix-server.env
         image: "benediktibk/zabbix-server"
+        dns:
+            - "192.168.39.3"
         networks:
             internal:
                 ipv4_address: 192.168.39.7
@@ -153,6 +175,8 @@ services:
         image: "benediktibk/downloads-share"
         volumes:
             - downloads:/srv/downloads
+        dns:
+            - "192.168.39.3"
         networks:
             internal:
                 ipv4_address: 192.168.39.8
@@ -164,6 +188,8 @@ services:
         networks:
             internal:
                 ipv4_address: 192.168.39.9
+        dns:
+            - "192.168.39.3"
         restart: unless-stopped
     cron-volume-backup:
         env_file:
@@ -181,6 +207,8 @@ services:
             - valheim:/mnt/volumes/valheim
             - vpncertificates:/mnt/volumes/vpncertificates
             - webcertificates:/mnt/volumes/webcertificates
+        dns:
+            - "192.168.39.3"
         privileged: true
         networks:
             internal:
@@ -193,6 +221,8 @@ services:
         volumes:
             - googledrivetriest:/mnt/googledrivetriest
             - /etc/infrastructure/google-drive-triest-credentials.json:/credentials.json
+        dns:
+            - "192.168.39.3"
         networks:
             internal:
                 ipv4_address: 192.168.39.12
@@ -203,6 +233,8 @@ services:
         image: "benediktibk/cron-triest-backup"
         volumes:
             - googledrivetriest:/mnt/googledrivetriest
+        dns:
+            - "192.168.39.3"
         privileged: true
         networks:
             internal:

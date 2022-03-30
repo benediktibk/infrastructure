@@ -7,7 +7,7 @@ umount /mnt/storage1 > /dev/null 2>&1
 
 set -e
 echo "mount storage"
-mount.cifs -o username=system-cron-triest,domain=benediktschmidt.at,password=$DOMAINPASSWORD,rw //192.168.42.4/data /mnt/storage1
+mount /mnt/storage1
 
 echo "cleanup temporary directory"
 rm -fR /tmp/backup/*

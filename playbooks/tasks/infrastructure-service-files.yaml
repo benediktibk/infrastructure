@@ -137,16 +137,6 @@
     dest: /var/lib/docker/volumes/ldapcertificates/_data/ldap_dc1.benediktschmidt.at.key
 - name: set file permissions of LDAP certificate
   shell: "chmod 600 /var/lib/docker/volumes/ldapcertificates/_data/ldap_dc1.benediktschmidt.at.key"
-- name: copy syslog config
-  become: true
-  copy:
-    src: ../configs/syslog-nftables.conf
-    dest: /etc/rsyslog.d/nftables.conf
-- name: copy logrotate config
-  become: true
-  copy:
-    src: ../configs/logrotate-nftables
-    dest: /etc/logrotate.d/nftables
 - name: copy google drive triest credentials
   become: true
   copy:

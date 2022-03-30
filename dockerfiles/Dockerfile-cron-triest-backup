@@ -9,6 +9,9 @@ RUN mkdir /tmp/backup
 COPY cronjobs /etc/cron.d/cronjobs
 RUN chmod 0644 /etc/cron.d/cronjobs
 RUN crontab /etc/cron.d/cronjobs
+COPY fstab /etc/fstab
 COPY backup-triest.sh /
 RUN chmod 755 /backup-triest.sh
-CMD ["cron", "-f"]
+COPY start.sh /
+RUN chmod 755 /start.sh
+CMD ["/start.sh"]
