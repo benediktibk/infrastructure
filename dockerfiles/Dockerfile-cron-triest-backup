@@ -3,6 +3,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y cifs-utils
 RUN apt-get install -y cron
+RUN apt-get install -y nano
 RUN mkdir /mnt/googledrivetriest
 RUN mkdir /mnt/storage1
 RUN mkdir /tmp/backup
