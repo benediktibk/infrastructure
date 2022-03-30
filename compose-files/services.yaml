@@ -192,6 +192,7 @@ services:
                 ipv4_address: 192.168.39.9
         dns:
             - "192.168.39.3"
+        privileged: true
         restart: unless-stopped
     cron-volume-backup:
         env_file:
