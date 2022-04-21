@@ -84,7 +84,7 @@ nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.39.0/24 counter accept
 echo "    allow access to database from corona-viewer"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.4 ip daddr 192.168.39.2 tcp dport 1433 counter accept
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.2 tcp dport 1433 counter accept
-echo "    allow access to database from zabbix-frontend"
+echo "    allow access to postgres from zabbix-frontend"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.8 ip daddr 192.168.39.6 tcp dport 5432 counter accept
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.6 tcp dport 5432 counter accept
 echo "    allow access to zabbix-server from zabbix-frontend"
@@ -142,6 +142,10 @@ echo "    allow dynamic RPC ports from VPN"
 add_forward_rule_from_vpn tcp 49152-65535 192.168.39.3
 echo "    allow zabbix from VPN"
 add_forward_rule_from_vpn tcp 10051 192.168.39.7
+echo "    allow postgres from VPN"
+add_forward_rule_from_vpn tcp 5432 192.168.39.6
+echo "    allow database from VPN"
+add_forward_rule_from_vpn tcp 1433 192.168.39.2
 echo "    return to previous chain"
 nft add rule filter FORWARD-DMZ-INTERNAL counter return
 
