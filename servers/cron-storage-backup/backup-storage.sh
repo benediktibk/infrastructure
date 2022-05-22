@@ -9,7 +9,7 @@ echo "mount storage"
 mount /mnt/storage1
 
 echo "create partial backup of storage"
-/usr/bin/rsync --recursive --delete-during --progress --exclude Multimedia --exclude Software --exclude System --exclude Temp /mnt/storage1/ /mnt/storagebackup
+/usr/bin/rsync --recursive --delete-during --progress --exclude Multimedia --exclude Software --exclude System --exclude Temp --exclude User/benedikt/Videos --exclude User/yvonne --exclude User/laura /mnt/storage1/ /mnt/storagebackup
 
 echo "touch guard"
 touch /mnt/storagebackup/guard
