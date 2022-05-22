@@ -235,7 +235,7 @@ services:
         image: "benediktibk/google-drive-triest"
         volumes:
             - googledrivetriest:/mnt/googledrivetriest
-            - /etc/infrastructure/google-drive-triest-credentials.json:/credentials.json
+            - /etc/infrastructure/google-drive-triest.conf:/etc/rclone.conf
         dns:
             - "192.168.39.3"
         networks:

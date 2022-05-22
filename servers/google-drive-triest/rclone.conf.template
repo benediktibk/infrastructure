@@ -1,7 +1,0 @@
-[google_drive_triest]
-type = drive
-client_id = ##GOOGLEDRIVECLIENTID##
-client_secret = ##GOOGLEDRIVECLIENTSECRET##
-scope = drive
-service_account_file = /credentials.json
-

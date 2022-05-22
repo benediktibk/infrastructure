@@ -137,11 +137,11 @@
     dest: /var/lib/docker/volumes/ldapcertificates/_data/ldap_dc1.benediktschmidt.at.key
 - name: set file permissions of LDAP certificate
   shell: "chmod 600 /var/lib/docker/volumes/ldapcertificates/_data/ldap_dc1.benediktschmidt.at.key"
-- name: copy google drive triest credentials
+- name: copy google drive triest config
   become: true
   copy:
-    src: ../build/secrets/passwords/google-drive-triest-credentials.json
-    dest: /etc/infrastructure/google-drive-triest-credentials.json
+    src: ../build/secrets/passwords/google-drive-triest.conf
+    dest: /etc/infrastructure/google-drive-triest.conf
 - name: copy zabbix agent config
   become: true
   copy:

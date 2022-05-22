@@ -247,11 +247,10 @@ build/cron-storage-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-stor
 	docker build -t benediktibk/cron-storage-backup build/servers/cron-storage-backup
 	docker images --format "{{.ID}}" benediktibk/cron-storage-backup > $@
 
-build/google-drive-triest-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-google-drive-triest servers/google-drive-triest/start.sh servers/google-drive-triest/sync.sh servers/google-drive-triest/rclone.conf.template servers/google-drive-triest/cronjobs
+build/google-drive-triest-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-google-drive-triest servers/google-drive-triest/start.sh servers/google-drive-triest/sync.sh servers/google-drive-triest/cronjobs
 	cp dockerfiles/Dockerfile-google-drive-triest build/servers/google-drive-triest/Dockerfile
 	cp servers/google-drive-triest/start.sh build/servers/google-drive-triest/
 	cp servers/google-drive-triest/sync.sh build/servers/google-drive-triest/
-	cp servers/google-drive-triest/rclone.conf.template build/servers/google-drive-triest/
 	cp servers/google-drive-triest/cronjobs build/servers/google-drive-triest/
 	docker build -t benediktibk/google-drive-triest build/servers/google-drive-triest
 	docker images --format "{{.ID}}" benediktibk/google-drive-triest > $@

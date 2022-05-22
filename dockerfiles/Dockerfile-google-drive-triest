@@ -8,7 +8,6 @@ RUN apt-get install -y rclone
 COPY cronjobs /etc/cron.d/cronjobs
 RUN chmod 0644 /etc/cron.d/cronjobs
 RUN crontab /etc/cron.d/cronjobs
-COPY rclone.conf.template /
 COPY start.sh /
 COPY sync.sh /
 RUN chmod 755 /start.sh
