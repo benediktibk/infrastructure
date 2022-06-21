@@ -20,7 +20,7 @@ echo "copy backup to storage"
 cp /tmp/backup/$FILENAME /mnt/storage1/User/laura/google_drive_backup
 
 echo "delete too old backups"
-find /mnt/storage1/User/laura/google_drive_backup/* -mtime +31 -exec rm {} \;
+find /mnt/storage1/User/laura/google_drive_backup/* -mtime +180 -exec rm {} \;
 
 echo "touch guard"
 touch /mnt/storage1/User/laura/google_drive_backup/guard
