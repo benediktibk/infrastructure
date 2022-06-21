@@ -224,6 +224,8 @@ services:
         image: "benediktibk/cron-storage-backup"
         volumes:
             - storagebackup:/mnt/storagebackup
+        dns:
+            - "192.168.39.3"
         privileged: true
         networks:
             internal:
