@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 ENV ACCEPT_EULA=Y
 COPY ./bin/. App/
 COPY corona-init.sh App/
