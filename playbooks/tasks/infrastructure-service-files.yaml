@@ -63,6 +63,11 @@
   copy:
     src: ../build/environments/backup-check.env
     dest: /etc/infrastructure/environments/backup-check.env
+- name: copy mariadb environment
+  become: true
+  copy:
+    src: ../build/environments/mariadb.env
+    dest: /etc/infrastructure/environments/mariadb.env
 - name: copy vpn environment
   become: true
   copy:

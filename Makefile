@@ -3,12 +3,12 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates elasticsearch
+VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates elasticsearch mariadb
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 VALHEIMDIRECTORY = ~/.steam/debian-installation/steamapps/common/valheim_dedicated_server
 VALHEIMFILES = $(shell find $(VALHEIMDIRECTORY))
@@ -81,6 +81,7 @@ build/guard: Makefile
 	mkdir -p build/servers/google-drive-triest
 	mkdir -p build/servers/cron-triest-backup
 	mkdir -p build/servers/backup-check
+	mkdir -p build/servers/mariadb
 	mkdir -p build/environments
 	touch $@
 
@@ -273,6 +274,11 @@ build/backup-check-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-backup-check ser
 	cp servers/backup-check/zabbix_agentd.conf build/servers/backup-check/
 	docker build -t benediktibk/backup-check build/servers/backup-check
 	docker images --format "{{.ID}}" benediktibk/backup-check > $@
+
+build/mariadb-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-mariadb
+	cp dockerfiles/Dockerfile-mariadb build/servers/mariadb/Dockerfile
+	docker build -t benediktibk/mariadb build/servers/mariadb
+	docker images --format "{{.ID}}" benediktibk/mariadb > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
@@ -302,6 +308,11 @@ build/environments/postgres.env: environments/postgres.env.in $(COMMONDEPS)
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##POSTGRES_PASSWORD##/${POSTGRES_PASSWORD}/g" $@
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
+
+build/environments/mariadb.env: environments/mariadb.env.in $(COMMONDEPS)
+	cp $< $@
+	$(eval MARIADB_ROOT_PASSWORD := $(shell cat build/secrets/passwords/mariadb))
+	sed -i "s/##MARIADB_ROOT_PASSWORD##/${MARIADB_ROOT_PASSWORD}/g" $@
 
 build/environments/zabbix-server.env: environments/zabbix-server.env.in $(COMMONDEPS)
 	cp $< $@

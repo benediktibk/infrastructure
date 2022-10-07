@@ -26,3 +26,5 @@
   shell: "docker volume create ldapcertificates"
 - name: create volume
   shell: "docker volume create elasticsearch"
+- name: create volume
+  shell: "docker volume create mariadb"

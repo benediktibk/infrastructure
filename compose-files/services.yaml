@@ -296,6 +296,19 @@ services:
             dmz:
                 ipv4_address: 192.168.38.9
         restart: unless-stopped
+    mariadb:
+        env_file:
+            - /etc/infrastructure/environments/mariadb.env
+        image: "benediktibk/mariadb"
+        volumes:
+            - mariadb:/var/lib/mysql
+        dns:
+            - "192.168.39.3"
+        privileged: true
+        networks:
+            internal:
+                ipv4_address: 192.168.39.16
+        restart: unless-stopped
 
 volumes:
     sql:
@@ -327,6 +340,8 @@ volumes:
     ldapcertificates:
         external: true
     elasticsearch:
+        external: true
+    mariadb:
         external: true
 networks:
     internal:
