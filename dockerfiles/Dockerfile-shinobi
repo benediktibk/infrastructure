@@ -1,0 +1,27 @@
+FROM debian:stable
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && apt-get -y upgrade
+#RUN apt-get install -y gcc-8
+#RUN apt-get install -y g++-8
+RUN apt-get install -y gcc
+RUN apt-get install -y g++
+RUN apt-get install -y net-tools
+RUN apt-get install -y dos2unix
+RUN apt-get install -y wget
+RUN apt-get install -y npm
+RUN apt-get install -y zip
+RUN apt-get install -y ffmpeg
+#RUN apt-get install -y libav-tools
+RUN apt-get install -y x264
+RUN apt-get install -y x265
+#RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
+RUN mkdir -p /opt/nodejs
+RUN wget https://deb.nodesource.com/setup_12.x -o /opt/nodejs/setup
+RUN chmod +x /opt/nodejs/setup
+RUN /opt/nodejs/setup
+RUN npm i npm -g
+RUN npm install --unsafe-perm
+RUN npm install pm2@3.0.0 -g
+COPY source /opt/shinobi
+COPY start.sh /start.sh
+CMD ["/start.sh"]
