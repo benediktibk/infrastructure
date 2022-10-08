@@ -3,7 +3,7 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb shinobi
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
 IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
@@ -323,6 +323,13 @@ build/environments/zabbix-frontend.env: environments/zabbix-frontend.env.in $(CO
 	cp $< $@
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
+
+build/environments/shinobi.env: environments/shinobi.env.in $(COMMONDEPS)
+	cp $< $@
+	$(eval SHINOBI_DB_PASSWORD := $(shell cat build/secrets/passwords/db_shinobi))
+	sed -i "s/##DBPASSWORD##/${SHINOBI_DB_PASSWORD}/g" $@
+	$(eval SHINOBI_ADMIN_PASSWORD := $(shell cat build/secrets/passwords/shinobi-admin))
+	sed -i "s/##SHINOBIADMINPASSWORD##/${SHINOBI_ADMIN_PASSWORD}/g" $@
 
 build/environments/cron-passwords.env: environments/cron-passwords.env.in $(COMMONDEPS)
 	cp $< $@
