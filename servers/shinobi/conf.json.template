@@ -1,0 +1,27 @@
+{
+  "port": 80,
+  "passwordType": "sha256",
+  "detectorMergePamRegionTriggers": true,
+  "wallClockTimestampAsDefault": true,
+  "addStorage": [
+      {"name":"second","path":"__DIR__/videos2"}
+  ],
+  "db": {
+    "host": "192.168.39.16",
+    "user": "shinobi",
+    "password": "##DBPASSWORD##",
+    "database": "shinobi",
+    "port": 3306
+  },
+  "mail":{
+    "service": "gmail",
+    "auth": {
+        "user": "your_email@gmail.com",
+        "pass": "your_password_or_app_specific_password"
+        }
+  },
+  "cron":{
+      "key":"E6Y7GCSGhVn8WbSqcnEQphzcx7pwGWSsF28trX6Na9FGfN4R7bUbibAMLGfy"
+  },
+  "pluginKeys":{}
+}
