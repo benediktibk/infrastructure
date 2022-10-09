@@ -13,10 +13,12 @@ RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.key /etc/nginx/certs-temp/we
 RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.key /etc/nginx/certs-temp/web_downloads.benediktschmidt.at.key
 RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.key /etc/nginx/certs-temp/web_monitoring.benediktschmidt.at.key
 RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.key /etc/nginx/certs-temp/web_kibana.benediktschmidt.at.key
+RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.key /etc/nginx/certs-temp/web_shinobi.benediktschmidt.at.key
 RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.crt /etc/nginx/certs-temp/web_www.benediktschmidt.at.crt
 RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.crt /etc/nginx/certs-temp/web_me.benediktschmidt.at.crt
 RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.crt /etc/nginx/certs-temp/web_corona.benediktschmidt.at.crt
 RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.crt /etc/nginx/certs-temp/web_downloads.benediktschmidt.at.crt
 RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.crt /etc/nginx/certs-temp/web_monitoring.benediktschmidt.at.crt
 RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.crt /etc/nginx/certs-temp/web_kibana.benediktschmidt.at.crt
+RUN cp /etc/nginx/certs-temp/web_benediktschmidt.at.crt /etc/nginx/certs-temp/web_shinobi.benediktschmidt.at.crt
 CMD ["/nginx-start.sh"]

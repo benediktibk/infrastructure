@@ -98,6 +98,9 @@ nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.16
 echo "    allow access to elasticsearch from kibana"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.9 ip daddr 192.168.39.15 tcp dport 9200 counter accept
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.15 tcp dport 9200 counter accept
+echo "    allow access to shinobi from reverse proxy"
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.5 ip daddr 192.168.39.17 tcp dport 80 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.17 tcp dport 80 counter accept
 echo "    allow access to DNS from DMZ"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.39.3 udp dport 53 counter accept
 echo "    allow ICMP requests"
