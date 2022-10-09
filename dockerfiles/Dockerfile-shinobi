@@ -24,5 +24,7 @@ COPY source /opt/shinobi
 RUN cd /opt/shinobi/ && npm install npm -g
 RUN cd /opt/shinobi/ && npm install --unsafe-perm
 RUN cd /opt/shinobi/ && npm install pm2@3.0.0 -g
+COPY conf.json.template /
+COPY super.json.template /
 COPY start.sh /start.sh
 CMD ["/start.sh"]
