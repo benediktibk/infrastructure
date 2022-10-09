@@ -304,10 +304,19 @@ services:
             - mariadb:/var/lib/mysql
         dns:
             - "192.168.39.3"
-        privileged: true
         networks:
             internal:
                 ipv4_address: 192.168.39.16
+        restart: unless-stopped
+    shinobi:
+        env_file:
+            - /etc/infrastructure/environments/shinobi.env
+        image: "benediktibk/shinobi"
+        dns:
+            - "192.168.39.3"
+        networks:
+            internal:
+                ipv4_address: 192.168.39.17
         restart: unless-stopped
 
 volumes:

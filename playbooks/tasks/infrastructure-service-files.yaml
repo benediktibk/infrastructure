@@ -68,6 +68,11 @@
   copy:
     src: ../build/environments/mariadb.env
     dest: /etc/infrastructure/environments/mariadb.env
+- name: copy shinobi environment
+  become: true
+  copy:
+    src: ../build/environments/shinobi.env
+    dest: /etc/infrastructure/environments/shinobi.env
 - name: copy vpn environment
   become: true
   copy:
