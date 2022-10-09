@@ -14,14 +14,15 @@ RUN apt-get install -y ffmpeg
 #RUN apt-get install -y libav-tools
 RUN apt-get install -y x264
 RUN apt-get install -y x265
+RUN apt-get install -y nodejs
 #RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
-RUN mkdir -p /opt/nodejs
-RUN wget https://deb.nodesource.com/setup_12.x -o /opt/nodejs/setup
-RUN chmod +x /opt/nodejs/setup
-RUN /opt/nodejs/setup
-RUN npm i npm -g
-RUN npm install --unsafe-perm
-RUN npm install pm2@3.0.0 -g
+#RUN mkdir -p /opt/nodejs
+#RUN wget https://deb.nodesource.com/setup_12.x -o /opt/nodejs/setup
+#RUN chmod +x /opt/nodejs/setup
+#RUN /opt/nodejs/setup
 COPY source /opt/shinobi
+RUN cd /opt/shinobi/ && npm install npm -g
+RUN cd /opt/shinobi/ && npm install --unsafe-perm
+RUN cd /opt/shinobi/ && npm install pm2@3.0.0 -g
 COPY start.sh /start.sh
 CMD ["/start.sh"]
