@@ -313,6 +313,10 @@ services:
         env_file:
             - /etc/infrastructure/environments/shinobi.env
         image: "benediktibk/shinobi"
+        volumes:
+            - shinobi-videos:/opt/shinobi/videos
+            - shinobi-plugins:/opt/shinobi/plugins
+            - shinobi-customAutoLoad:/opt/shinobi/libs/customAutoLoad
         dns:
             - "192.168.39.3"
         networks:
@@ -352,6 +356,12 @@ volumes:
     elasticsearch:
         external: true
     mariadb:
+        external: true
+    shinobi-videos:
+        external: true
+    shinobi-plugins:
+        external: true
+    shinobi-customAutoLoad:
         external: true
 networks:
     internal:

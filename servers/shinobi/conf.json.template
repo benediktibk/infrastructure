@@ -4,7 +4,6 @@
   "detectorMergePamRegionTriggers": true,
   "wallClockTimestampAsDefault": true,
   "addStorage": [
-      {"name":"second","path":"__DIR__/videos2"}
   ],
   "db": {
     "host": "192.168.39.16",
