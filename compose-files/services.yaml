@@ -73,7 +73,7 @@ services:
             - TARGETDOWNLOADS=192.168.38.6:80
             - TARGETMONITORING=192.168.38.8:80
             - TARGETKIBANA=192.168.38.9:5601
-            - TARGETSHINBOI=192.168.39.17:80
+            - TARGETSHINOBI=192.168.39.17:80
         env_file:
             - /etc/infrastructure/environments/reverse-proxy.env
         image: "benediktibk/reverse-proxy"
