@@ -40,6 +40,9 @@ deploy-update: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
 
 deploy: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
 	ansible-playbook playbooks/dockerhost-deploy.yaml
+
+deploy-services: $(ENVIRONMENTFILES) $(IMAGEPUSHEDIDS)
+	ansible-playbook playbooks/dockerhost-deploy-services.yaml
 	
 data-clean: $(ENVIRONMENTFILES)
 	$(DELETEVOLUMES)
@@ -89,7 +92,7 @@ build/guard: Makefile
 tests:
 	cd servers/corona/Corona && dotnet test
 	
-.PHONY: all clean proper-clean data-init data-clean data-clean run-local deploy-update secrets-encrypt build/secrets.tar.gz tests
+.PHONY: all clean proper-clean data-init data-clean data-clean run-local deploy deploy-update deploy-services secrets-encrypt build/secrets.tar.gz tests
 	 
 ############ container
 	
