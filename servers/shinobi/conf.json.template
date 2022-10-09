@@ -3,6 +3,7 @@
   "passwordType": "sha256",
   "detectorMergePamRegionTriggers": true,
   "wallClockTimestampAsDefault": true,
+  "allowLdapSignOn": true,
   "addStorage": [
   ],
   "db": {
