@@ -5,7 +5,7 @@ SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 COMMONDEPS := build/guard Makefile build/secrets/guard
 ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb shinobi
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb shinobi
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb shinobi shinobi-share
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates elasticsearch mariadb shinobi-videos shinobi-plugins shinobi-customAutoLoad
@@ -86,6 +86,7 @@ build/guard: Makefile
 	mkdir -p build/servers/backup-check
 	mkdir -p build/servers/mariadb
 	mkdir -p build/servers/shinobi
+	mkdir -p build/servers/shinobi-share
 	mkdir -p build/environments
 	touch $@
 
@@ -226,6 +227,13 @@ build/shinobi-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-shinobi servers/shino
 	cp -R servers/shinobi/source build/servers/shinobi/source
 	docker build -t benediktibk/shinobi build/servers/shinobi
 	docker images --format "{{.ID}}" benediktibk/shinobi > $@
+
+build/shinobi-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-shinobi-share servers/shinobi-share/start.sh servers/shinobi-share/smb.conf
+	cp dockerfiles/Dockerfile-shinobi-share build/servers/shinobi-share/Dockerfile
+	cp servers/shinobi-share/start.sh build/servers/shinobi-share/
+	cp servers/shinobi-share/smb.conf build/servers/shinobi-share/
+	docker build -t benediktibk/shinobi-share build/servers/shinobi-share
+	docker images --format "{{.ID}}" benediktibk/shinobi-share > $@
 
 build/downloads-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-downloads-share servers/downloads-share/start.sh servers/downloads-share/smb.conf
 	cp dockerfiles/Dockerfile-downloads-share build/servers/downloads-share/Dockerfile
