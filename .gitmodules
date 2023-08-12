@@ -1,9 +1,9 @@
 [submodule "servers/homepage"]
 	path = servers/homepage
-	url = https://benediktibk@bitbucket.org/benediktibk/homepage-git.git
+	url = git@bitbucket.org/benediktibk/homepage-git.git
 [submodule "servers/corona"]
 	path = servers/corona
-	url = https://benediktibk@bitbucket.org/benediktibk/corona.git
+	url = git@bitbucket.org/benediktibk/corona.git
 [submodule "servers/shinobi/source"]
 	path = servers/shinobi/source
 	url = https://gitlab.com/Shinobi-Systems/Shinobi.git
