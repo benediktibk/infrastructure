@@ -10,7 +10,7 @@ IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates elasticsearch mariadb shinobi-videos shinobi-plugins shinobi-customAutoLoad
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
-VALHEIMDIRECTORY = ~/.steam/debian-installation/steamapps/common/valheim_dedicated_server
+VALHEIMDIRECTORY = ~/.local/share/Steam/steamapps/common/valheim_dedicated_server
 VALHEIMFILES = $(shell find $(VALHEIMDIRECTORY))
 HOMEPAGEFILES = $(shell find servers/homepage)
 
