@@ -51,6 +51,8 @@ services:
             dmz:
                 ipv4_address: 192.168.38.4
         restart: unless-stopped
+        depends_on:
+            - database-server
     reverse-proxy:
         environment:
             - WEBFQDN=benediktschmidt.at
@@ -148,6 +150,8 @@ services:
             internal:
                 ipv4_address: 192.168.39.7
         restart: unless-stopped
+        depends_on:
+            - postgres
     zabbix-frontend:
         env_file:
             - /etc/infrastructure/environments/zabbix-frontend.env
@@ -158,6 +162,8 @@ services:
             dmz:
                 ipv4_address: 192.168.38.8
         restart: unless-stopped
+        depends_on:
+            - postgres
     downloads-share:
         image: "benediktibk/downloads-share"
         volumes:
