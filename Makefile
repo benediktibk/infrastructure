@@ -25,6 +25,7 @@ DOCKERIMAGESAVAILABLE := $(shell docker images -aq)
 ############ general
 
 all: $(IMAGEPUSHEDIDS) $(ENVIRONMENTFILES) tests
+	echo "successfully built target $@"
 
 clean:
 	git clean -xdff
