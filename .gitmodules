@@ -4,6 +4,3 @@
 [submodule "servers/corona"]
 	path = servers/corona
 	url = git@bitbucket.org/benediktibk/corona.git
-[submodule "servers/shinobi/source"]
-	path = servers/shinobi/source
-	url = https://gitlab.com/Shinobi-Systems/Shinobi.git

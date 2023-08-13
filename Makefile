@@ -3,12 +3,12 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb shinobi
+ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb shinobi shinobi-share
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates elasticsearch mariadb shinobi-videos shinobi-plugins shinobi-customAutoLoad
+VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates elasticsearch mariadb
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 VALHEIMDIRECTORY = ~/.local/share/Steam/steamapps/common/valheim_dedicated_server
 VALHEIMFILES = $(shell find $(VALHEIMDIRECTORY))
@@ -86,8 +86,6 @@ build/guard: Makefile
 	mkdir -p build/servers/cron-triest-backup
 	mkdir -p build/servers/backup-check
 	mkdir -p build/servers/mariadb
-	mkdir -p build/servers/shinobi
-	mkdir -p build/servers/shinobi-share
 	mkdir -p build/environments
 	touch $@
 
@@ -220,22 +218,6 @@ build/zabbix-frontend-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-zabbix-fronte
 	docker build -t benediktibk/zabbix-frontend build/servers/zabbix-frontend
 	docker images --format "{{.ID}}" benediktibk/zabbix-frontend > $@
 
-build/shinobi-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-shinobi servers/shinobi/start.sh servers/shinobi/conf.json.template servers/shinobi/super.json.template
-	cp dockerfiles/Dockerfile-shinobi build/servers/shinobi/Dockerfile
-	cp servers/shinobi/start.sh build/servers/shinobi/
-	cp servers/shinobi/conf.json.template build/servers/shinobi/
-	cp servers/shinobi/super.json.template build/servers/shinobi/
-	cp -R servers/shinobi/source build/servers/shinobi/source
-	docker build -t benediktibk/shinobi build/servers/shinobi
-	docker images --format "{{.ID}}" benediktibk/shinobi > $@
-
-build/shinobi-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-shinobi-share servers/shinobi-share/start.sh servers/shinobi-share/smb.conf
-	cp dockerfiles/Dockerfile-shinobi-share build/servers/shinobi-share/Dockerfile
-	cp servers/shinobi-share/start.sh build/servers/shinobi-share/
-	cp servers/shinobi-share/smb.conf build/servers/shinobi-share/
-	docker build -t benediktibk/shinobi-share build/servers/shinobi-share
-	docker images --format "{{.ID}}" benediktibk/shinobi-share > $@
-
 build/downloads-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-downloads-share servers/downloads-share/start.sh servers/downloads-share/smb.conf
 	cp dockerfiles/Dockerfile-downloads-share build/servers/downloads-share/Dockerfile
 	cp servers/downloads-share/start.sh build/servers/downloads-share/
@@ -345,13 +327,6 @@ build/environments/zabbix-frontend.env: environments/zabbix-frontend.env.in $(CO
 	cp $< $@
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
-
-build/environments/shinobi.env: environments/shinobi.env.in $(COMMONDEPS)
-	cp $< $@
-	$(eval SHINOBI_DB_PASSWORD := $(shell cat build/secrets/passwords/db_shinobi))
-	sed -i "s/##DBPASSWORD##/${SHINOBI_DB_PASSWORD}/g" $@
-	$(eval SHINOBI_ADMIN_PASSWORD := $(shell cat build/secrets/passwords/shinobi-admin))
-	sed -i "s/##SHINOBIADMINPASSWORD##/${SHINOBI_ADMIN_PASSWORD}/g" $@
 
 build/environments/cron-passwords.env: environments/cron-passwords.env.in $(COMMONDEPS)
 	cp $< $@

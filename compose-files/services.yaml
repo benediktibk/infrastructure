@@ -73,7 +73,6 @@ services:
             - TARGETDOWNLOADS=192.168.38.6:80
             - TARGETMONITORING=192.168.38.8:80
             - TARGETKIBANA=192.168.38.9:5601
-            - TARGETSHINOBI=192.168.39.17:80
         env_file:
             - /etc/infrastructure/environments/reverse-proxy.env
         image: "benediktibk/reverse-proxy"
@@ -309,30 +308,6 @@ services:
             internal:
                 ipv4_address: 192.168.39.16
         restart: unless-stopped
-    shinobi:
-        env_file:
-            - /etc/infrastructure/environments/shinobi.env
-        image: "benediktibk/shinobi"
-        volumes:
-            - shinobi-videos:/opt/shinobi/videos
-            - shinobi-plugins:/opt/shinobi/plugins
-            - shinobi-customAutoLoad:/opt/shinobi/libs/customAutoLoad
-        dns:
-            - "192.168.39.3"
-        networks:
-            internal:
-                ipv4_address: 192.168.39.17
-        restart: unless-stopped
-    shinobi-share:
-        image: "benediktibk/shinobi-share"
-        volumes:
-            - shinobi-videos:/srv/shinobi-videos
-        dns:
-            - "192.168.39.3"
-        networks:
-            internal:
-                ipv4_address: 192.168.39.18
-        restart: unless-stopped
 
 volumes:
     sql:
@@ -366,12 +341,6 @@ volumes:
     elasticsearch:
         external: true
     mariadb:
-        external: true
-    shinobi-videos:
-        external: true
-    shinobi-plugins:
-        external: true
-    shinobi-customAutoLoad:
         external: true
 networks:
     internal:
