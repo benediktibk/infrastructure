@@ -7,7 +7,7 @@ sed -i "s/##DBPASSWORD##/$POSTGRES_PASSWORD/g" /zabbix.conf.php.template
 cp /zabbix.conf.php.template /etc/zabbix/web/zabbix.conf.php
 
 echo "start php"
-php-fpm7.4 --daemonize --fpm-config /etc/php/7.4/fpm/php-fpm.conf
+php-fpm8.2 --daemonize --fpm-config /etc/php/8.2/fpm/php-fpm.conf
 
 echo "start nginx"
 nginx -g 'daemon on;'
