@@ -51,20 +51,6 @@ services:
             dmz:
                 ipv4_address: 192.168.38.4
         restart: unless-stopped
-    corona-updater:
-        environment:
-            - DBHOST=192.168.39.2
-        env_file:
-            - /etc/infrastructure/environments/corona.env
-        image: "benediktibk/corona-updater"
-        volumes:
-            - corona:/tmp/corona/
-        dns:
-            - "192.168.39.3"
-        networks:
-            internal:
-                ipv4_address: 192.168.39.4
-        restart: unless-stopped
     reverse-proxy:
         environment:
             - WEBFQDN=benediktschmidt.at
