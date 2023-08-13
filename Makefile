@@ -5,10 +5,10 @@ SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 COMMONDEPS := build/guard Makefile build/secrets/guard
 ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb
+IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb apt-repo apt-repo-share
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates elasticsearch mariadb
+VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates elasticsearch mariadb apt-repo
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 VALHEIMDIRECTORY = ~/.local/share/Steam/steamapps/common/valheim_dedicated_server
 VALHEIMFILES = $(shell find $(VALHEIMDIRECTORY))
@@ -86,6 +86,8 @@ build/guard: Makefile
 	mkdir -p build/servers/cron-triest-backup
 	mkdir -p build/servers/backup-check
 	mkdir -p build/servers/mariadb
+	mkdir -p build/servers/apt-repo
+	mkdir -p build/servers/apt-repo-share
 	mkdir -p build/environments
 	touch $@
 
@@ -283,6 +285,19 @@ build/mariadb-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-mariadb
 	cp dockerfiles/Dockerfile-mariadb build/servers/mariadb/Dockerfile
 	docker build -t benediktibk/mariadb build/servers/mariadb
 	docker images --format "{{.ID}}" benediktibk/mariadb > $@
+	
+build/apt-repo-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-apt-repo servers/apt-repo/default.conf
+	cp dockerfiles/Dockerfile-apt-repo build/servers/apt-repo/Dockerfile
+	cp servers/apt-repo/default.conf build/servers/apt-repo/default.conf
+	docker build -t benediktibk/apt-repo build/servers/apt-repo
+	docker images --format "{{.ID}}" benediktibk/apt-repo > $@
+
+build/apt-repo-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-apt-repo-share servers/apt-repo-share/start.sh servers/apt-repo-share/smb.conf
+	cp dockerfiles/Dockerfile-apt-repo-share build/servers/apt-repo-share/Dockerfile
+	cp servers/apt-repo-share/start.sh build/servers/apt-repo-share/
+	cp servers/apt-repo-share/smb.conf build/servers/apt-repo-share/
+	docker build -t benediktibk/apt-repo-share build/servers/apt-repo-share
+	docker images --format "{{.ID}}" benediktibk/apt-repo-share > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
