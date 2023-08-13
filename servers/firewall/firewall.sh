@@ -124,14 +124,14 @@ add_forward_rule_from_vpn udp 137 192.168.39.3
 add_forward_rule_from_vpn udp 138 192.168.39.3
 add_forward_rule_from_vpn tcp 139 192.168.39.3
 add_forward_rule_from_vpn tcp 139 192.168.39.8
-add_forward_rule_from_vpn tcp 139 192.168.39.18
+add_forward_rule_from_vpn tcp 139 192.168.39.17
 echo "    allow LDAP from VPN"
 add_forward_rule_from_vpn udp 389 192.168.39.3
 add_forward_rule_from_vpn tcp 389 192.168.39.3
 echo "    allow SMB from VPN"
 add_forward_rule_from_vpn tcp 445 192.168.39.3
 add_forward_rule_from_vpn tcp 445 192.168.39.8
-add_forward_rule_from_vpn tcp 445 192.168.39.18
+add_forward_rule_from_vpn tcp 445 192.168.39.17
 echo "    allow Kerberos kpasswd from VPN"
 add_forward_rule_from_vpn udp 464 192.168.39.3
 add_forward_rule_from_vpn tcp 464 192.168.39.3
