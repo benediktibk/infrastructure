@@ -1,6 +1,6 @@
 [submodule "servers/homepage"]
 	path = servers/homepage
-	url = git@bitbucket.org/benediktibk/homepage-git.git
+	url = git@github.com:benediktibk/homepage.git
 [submodule "servers/corona"]
 	path = servers/corona
-	url = git@bitbucket.org/benediktibk/corona.git
+	url = git@github.com:benediktibk/corona.git
