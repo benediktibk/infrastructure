@@ -9,6 +9,8 @@ php-fpm8.2 --daemonize --fpm-config /etc/php/8.2/fpm/php-fpm.conf
 set -eu
 
 envsubst '${SECRET} ${DBPASSWORD}' < /srv/cloud-web/config/config.php.template > /srv/cloud-web/config/config.php
+chown www-data:www-data /srv/cloud-web/config/config.php
+chmod 640 /srv/cloud-web/config/config.php
 
 nginx -g 'daemon on;'
 

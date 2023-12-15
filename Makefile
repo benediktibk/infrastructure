@@ -283,7 +283,7 @@ build/cloud-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cloud servers/cloud/def
 	cp servers/cloud/php-fpm.conf build/servers/cloud/
 	cp servers/cloud/php.conf build/servers/cloud/
 	cp servers/cloud/nextcloud-php-fpm.conf build/servers/cloud/
-#	wget --output-document build/servers/cloud/source.zip https://github.com/nextcloud/server/archive/refs/tags/v28.0.0.zip
+#	wget --output-document build/servers/cloud/source.zip https://download.nextcloud.com/server/releases/nextcloud-28.0.0.zip
 #	cd build/servers/cloud && unzip source.zip
 	docker build -t benediktibk/cloud build/servers/cloud
 	docker images --format "{{.ID}}" benediktibk/cloud > $@

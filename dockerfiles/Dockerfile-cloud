@@ -28,7 +28,7 @@ RUN apt-get install -y smbclient
 RUN apt-get install -y php-ftp
 RUN apt-get install -y php-imap
 RUN apt-get install -y php-exif
-COPY server-28.0.0 /srv/cloud-web
+COPY nextcloud /srv/cloud-web
 RUN rm -fR /etc/nginx/conf.d/*.conf
 RUN rm -fR /etc/nginx/sites-enabled/*
 RUN rm -f /etc/php/8.2/fpm/pool.d/www.conf
@@ -41,4 +41,12 @@ COPY php-fpm.conf /etc/php/8.2/fpm/php-fpm.conf
 COPY nextcloud-php-fpm.conf /etc/php/8.2/fpm/pool.d/
 RUN mkdir -p /srv/cloud-data
 RUN mkdir -p /srv/cloud-apps
+RUN chown -R www-data:www-data /srv/cloud-web
+RUN chown -R www-data:www-data /srv/cloud-data
+RUN chown -R www-data:www-data /srv/cloud-apps
+RUN find /srv/cloud-web -type d -exec chmod 750 {} \;
+RUN find /srv/cloud-web -type f -exec chmod 640 {} \;
+RUN chmod -R 755 /srv/cloud-data
+RUN chmod -R 755 /srv/cloud-apps
+RUN mkdir -p /tmp/nextcloud
 CMD ["/nginx-start.sh"]
