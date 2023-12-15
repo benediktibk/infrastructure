@@ -4,6 +4,30 @@ RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y nginx
 RUN apt-get install -y gettext
 RUN apt-get install -y php-fpm
+RUN apt-get install -y net-tools
+RUN apt-get install -y php-redis
+RUN apt-get install -y php-memcached
+RUN apt-get install -y php-ctype
+RUN apt-get install -y php-curl
+RUN apt-get install -y php-dom
+RUN apt-get install -y php-fileinfo
+RUN apt-get install -y php-gd
+RUN apt-get install -y libxml2
+RUN apt-get install -y php-mbstring
+RUN apt-get install -y php-posix
+RUN apt-get install -y php-illuminate-session
+RUN apt-get install -y php-simplexml
+RUN apt-get install -y php-xmlreader
+RUN apt-get install -y php-xmlwriter
+RUN apt-get install -y php-zip
+RUN apt-get install -y php-pgsql
+RUN apt-get install -y php-bz2
+RUN apt-get install -y php-intl
+RUN apt-get install -y php-ldap
+RUN apt-get install -y smbclient
+RUN apt-get install -y php-ftp
+RUN apt-get install -y php-imap
+RUN apt-get install -y php-exif
 COPY server-28.0.0 /srv/cloud-web
 RUN rm -fR /etc/nginx/conf.d/*.conf
 RUN rm -fR /etc/nginx/sites-enabled/*
@@ -16,4 +40,5 @@ COPY php.conf /etc/php/8.2/fpm/conf.d/nextcloud.conf
 COPY php-fpm.conf /etc/php/8.2/fpm/php-fpm.conf
 COPY nextcloud-php-fpm.conf /etc/php/8.2/fpm/pool.d/
 RUN mkdir -p /srv/cloud-data
+RUN mkdir -p /srv/cloud-apps
 CMD ["/nginx-start.sh"]

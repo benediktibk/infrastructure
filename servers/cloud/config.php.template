@@ -1073,7 +1073,7 @@ $CONFIG = [
  */
 'apps_paths' => [
 	[
-		'path'=> '/var/www/nextcloud/apps',
+		'path'=> '/srv/cloud-apps',
 		'url' => '/apps',
 		'writable' => true,
 	],
@@ -1747,11 +1747,6 @@ $CONFIG = [
  * does not verify the server cert except --ssl-verify-server-cert is passed manually.
  */
 'dbdriveroptions' => [
-	PDO::MYSQL_ATTR_SSL_CA => '/file/path/to/ca_cert.pem',
-	PDO::MYSQL_ATTR_SSL_KEY => '/file/path/to/mysql-client-key.pem',
-	PDO::MYSQL_ATTR_SSL_CERT => '/file/path/to/mysql-client-cert.pem',
-	PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
-	PDO::MYSQL_ATTR_INIT_COMMAND => 'SET wait_timeout = 28800'
 ],
 
 /**
