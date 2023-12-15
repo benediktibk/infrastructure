@@ -20,25 +20,6 @@ services:
             dmz:
                 ipv4_address: 192.168.38.2
         restart: unless-stopped
-    # valheim:
-    #     env_file:
-    #         - /etc/infrastructure/environments/valheim.env
-    #     image: "benediktibk/valheim"
-    #     volumes:
-    #         - valheim:/srv/valheim/
-    #     dns:
-    #         - "192.168.39.3"
-    #     networks:
-    #         dmz:
-    #             ipv4_address: 192.168.38.3
-    #     ports:
-    #         - "2456:2456/tcp"
-    #         - "2456:2456/udp"
-    #         - "2457:2457/tcp"
-    #         - "2457:2457/udp"
-    #         - "2458:2458/tcp"
-    #         - "2458:2458/udp"
-    #     restart: unless-stopped
     corona-viewer:
         environment:
             - DBHOST=192.168.39.2
@@ -60,7 +41,6 @@ services:
             - TARGETME=192.168.38.2:80
             - TARGETDOWNLOADS=192.168.38.6:80
             - TARGETMONITORING=192.168.38.8:80
-            - TARGETKIBANA=192.168.38.9:5601
             - TARGETAPTREPO=192.168.38.10:80
         env_file:
             - /etc/infrastructure/environments/reverse-proxy.env
@@ -116,16 +96,6 @@ services:
         networks:
             internal:
                 ipv4_address: 192.168.39.5
-        restart: unless-stopped
-    amongus:
-        image: "benediktibk/amongus"
-        dns:
-            - "192.168.39.3"
-        networks:
-            dmz:
-                ipv4_address: 192.168.38.7
-        ports:
-            - "22023:22023/udp"
         restart: unless-stopped
     postgres:
         env_file:
@@ -199,7 +169,6 @@ services:
             - postgres:/mnt/volumes/postgres
             - proxycache:/mnt/volumes/proxycache
             - sql:/mnt/volumes/sql
-            - valheim:/mnt/volumes/valheim
             - vpncertificates:/mnt/volumes/vpncertificates
             - webcertificates:/mnt/volumes/webcertificates
             - apt-repo:/mnt/volumes/apt-repo
@@ -262,44 +231,6 @@ services:
             internal:
                 ipv4_address: 192.168.39.14
         restart: unless-stopped
-    elasticsearch:
-        environment:
-            - xpack.security.enabled=true
-            - discovery.type=single-node
-        image: "docker.elastic.co/elasticsearch/elasticsearch:7.12.0"
-        volumes:
-            - elasticsearch:/usr/share/elasticsearch/data
-        dns:
-            - "192.168.39.3"
-        cap_add: 
-            - IPC_LOCK
-        networks:
-            internal:
-                ipv4_address: 192.168.39.15
-        restart: unless-stopped
-    kibana:
-        environment:
-            SERVER_NAME: kibana
-            ELASTICSEARCH_HOSTS: http://192.168.39.15:9200
-        image: "docker.elastic.co/kibana/kibana:7.12.0"
-        dns:
-            - "192.168.39.3"
-        networks:
-            dmz:
-                ipv4_address: 192.168.38.9
-        restart: unless-stopped
-    mariadb:
-        env_file:
-            - /etc/infrastructure/environments/mariadb.env
-        image: "benediktibk/mariadb"
-        volumes:
-            - mariadb:/var/lib/mysql
-        dns:
-            - "192.168.39.3"
-        networks:
-            internal:
-                ipv4_address: 192.168.39.16
-        restart: unless-stopped
     apt-repo:
         image: "benediktibk/apt-repo"
         volumes:
@@ -326,8 +257,6 @@ volumes:
         external: true
     corona:
         external: true
-    valheim:
-        external: true
     downloads:
         external: true
     webcertificates:
@@ -349,10 +278,6 @@ volumes:
     googledrivetriest:
         external: true
     ldapcertificates:
-        external: true
-    elasticsearch:
-        external: true
-    mariadb:
         external: true
     apt-repo:
         external: true

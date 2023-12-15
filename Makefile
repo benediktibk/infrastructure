@@ -3,15 +3,13 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql valheim corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb
+ENVIRONMENTS := sql corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := valheim database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot amongus postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check mariadb apt-repo apt-repo-share
+IMAGENAMES := database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona valheim downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates elasticsearch mariadb apt-repo
+VOLUMES := sql corona downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
-VALHEIMDIRECTORY = ~/.local/share/Steam/steamapps/common/valheim_dedicated_server
-VALHEIMFILES = $(shell find $(VALHEIMDIRECTORY))
 HOMEPAGEFILES = $(shell find servers/homepage)
 
 CREATEVOLUMES := for volume in $(VOLUMES); do echo "creating volume $$volume"; docker volume create "$$volume"; done;
@@ -65,8 +63,6 @@ build/guard: Makefile
 	mkdir -p build/servers/corona/updater/bin
 	mkdir -p build/servers/corona/init
 	mkdir -p build/servers/corona/init/bin
-	mkdir -p build/servers/valheim
-	mkdir -p build/servers/valheim/bin
 	mkdir -p build/servers/reverse-proxy
 	mkdir -p build/servers/downloads
 	mkdir -p build/servers/vpn
@@ -74,7 +70,6 @@ build/guard: Makefile
 	mkdir -p build/servers/dc
 	mkdir -p build/servers/network-util
 	mkdir -p build/servers/certbot
-	mkdir -p build/servers/amongus
 	mkdir -p build/servers/postgres
 	mkdir -p build/servers/zabbix-server
 	mkdir -p build/servers/zabbix-frontend
@@ -85,7 +80,6 @@ build/guard: Makefile
 	mkdir -p build/servers/google-drive-triest
 	mkdir -p build/servers/cron-triest-backup
 	mkdir -p build/servers/backup-check
-	mkdir -p build/servers/mariadb
 	mkdir -p build/servers/apt-repo
 	mkdir -p build/servers/apt-repo-share
 	mkdir -p build/environments
@@ -97,14 +91,6 @@ tests:
 .PHONY: all clean proper-clean data-init data-clean data-clean run-local deploy deploy-update deploy-services secrets-encrypt build/secrets.tar.gz tests
 	 
 ############ container
-	
-build/valheim-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-valheim servers/valheim/start_server.sh $(VALHEIMFILES)
-	cp dockerfiles/Dockerfile-valheim build/servers/valheim/Dockerfile
-	cp servers/valheim/start_server.sh build/servers/valheim/start_server.sh
-	bash -c "if [[ ! -d $(VALHEIMDIRECTORY) ]]; then echo '$(VALHEIMDIRECTORY) does not exist'; exit 1; fi;"
-	cp -R $(VALHEIMDIRECTORY)/* build/servers/valheim/bin/
-	docker build -t benediktibk/valheim build/servers/valheim
-	docker images --format "{{.ID}}" benediktibk/valheim > $@
 	
 build/database-server-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-database
 	cp dockerfiles/Dockerfile-database build/servers/database/Dockerfile
@@ -190,12 +176,6 @@ build/certbot-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-certbot servers/certb
 	docker build -t benediktibk/certbot build/servers/certbot
 	docker images --format "{{.ID}}" benediktibk/certbot > $@
 
-build/amongus-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-amongus servers/amongus/config.json
-	cp dockerfiles/Dockerfile-amongus build/servers/amongus/Dockerfile
-	cp servers/amongus/config.json build/servers/amongus/
-	docker build -t benediktibk/amongus build/servers/amongus
-	docker images --format "{{.ID}}" benediktibk/amongus > $@
-
 build/postgres-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-postgres servers/postgres/init-db-zabbix.sh
 	cp dockerfiles/Dockerfile-postgres build/servers/postgres/Dockerfile
 	cp servers/postgres/init-db-zabbix.sh build/servers/postgres/
@@ -280,11 +260,6 @@ build/backup-check-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-backup-check ser
 	cp servers/backup-check/zabbix_agentd.conf build/servers/backup-check/
 	docker build -t benediktibk/backup-check build/servers/backup-check
 	docker images --format "{{.ID}}" benediktibk/backup-check > $@
-
-build/mariadb-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-mariadb
-	cp dockerfiles/Dockerfile-mariadb build/servers/mariadb/Dockerfile
-	docker build -t benediktibk/mariadb build/servers/mariadb
-	docker images --format "{{.ID}}" benediktibk/mariadb > $@
 	
 build/apt-repo-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-apt-repo servers/apt-repo/default.conf
 	cp dockerfiles/Dockerfile-apt-repo build/servers/apt-repo/Dockerfile
@@ -311,11 +286,6 @@ build/environments/sql.env: environments/sql.env.in $(COMMONDEPS)
 	$(eval SA_PASSWORD := $(shell cat build/secrets/passwords/db_sa))
 	sed -i "s/##SA_PASSWORD##/${SA_PASSWORD}/g" $@
 
-build/environments/valheim.env: environments/valheim.env.in $(COMMONDEPS)
-	cp $< $@
-	$(eval SERVER_PASSWORD := $(shell cat build/secrets/passwords/valheim))
-	sed -i "s/##SERVER_PASSWORD##/$(SERVER_PASSWORD)/g" $@
-
 build/environments/corona.env: environments/corona.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
@@ -327,11 +297,6 @@ build/environments/postgres.env: environments/postgres.env.in $(COMMONDEPS)
 	$(eval ZABBIX_DB_PASSWORD := $(shell cat build/secrets/passwords/db_zabbix))
 	sed -i "s/##POSTGRES_PASSWORD##/${POSTGRES_PASSWORD}/g" $@
 	sed -i "s/##ZABBIX_DB_PASSWORD##/${ZABBIX_DB_PASSWORD}/g" $@
-
-build/environments/mariadb.env: environments/mariadb.env.in $(COMMONDEPS)
-	cp $< $@
-	$(eval MARIADB_ROOT_PASSWORD := $(shell cat build/secrets/passwords/mariadb))
-	sed -i "s/##MARIADB_ROOT_PASSWORD##/${MARIADB_ROOT_PASSWORD}/g" $@
 
 build/environments/zabbix-server.env: environments/zabbix-server.env.in $(COMMONDEPS)
 	cp $< $@

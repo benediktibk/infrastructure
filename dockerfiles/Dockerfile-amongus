@@ -1,2 +1,0 @@
-FROM aeonlucid/impostor:nightly
-COPY config.json /app/config.json

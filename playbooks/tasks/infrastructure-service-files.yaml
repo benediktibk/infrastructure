@@ -13,11 +13,6 @@
   copy:
     src: ../build/environments/reverse-proxy.env
     dest: /etc/infrastructure/environments/reverse-proxy.env
-- name: copy valheim environment
-  become: true
-  copy:
-    src: ../build/environments/valheim.env
-    dest: /etc/infrastructure/environments/valheim.env
 - name: copy postgres environment
   become: true
   copy:
@@ -63,11 +58,6 @@
   copy:
     src: ../build/environments/backup-check.env
     dest: /etc/infrastructure/environments/backup-check.env
-- name: copy mariadb environment
-  become: true
-  copy:
-    src: ../build/environments/mariadb.env
-    dest: /etc/infrastructure/environments/mariadb.env
 - name: copy vpn environment
   become: true
   copy:
