@@ -3,7 +3,7 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check
+ENVIRONMENTS := sql corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check cloud
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
 IMAGENAMES := database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
@@ -275,8 +275,13 @@ build/apt-repo-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-apt-repo-share
 	docker build -t benediktibk/apt-repo-share build/servers/apt-repo-share
 	docker images --format "{{.ID}}" benediktibk/apt-repo-share > $@
 	
-build/cloud-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cloud
+build/cloud-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cloud servers/cloud/default.conf servers/cloud/config.sample.template servers/cloud/nginx-start.sh
 	cp dockerfiles/Dockerfile-cloud build/servers/cloud/Dockerfile
+	cp servers/cloud/default.conf build/servers/cloud/
+	cp servers/cloud/config.sample.template build/servers/cloud/
+	cp servers/cloud/nginx-start.sh build/servers/cloud/
+#	wget --output-document build/servers/cloud/source.zip https://github.com/nextcloud/server/archive/refs/tags/v28.0.0.zip
+#	cd build/servers/cloud && unzip source.zip
 	docker build -t benediktibk/cloud build/servers/cloud
 	docker images --format "{{.ID}}" benediktibk/cloud > $@
 	
@@ -343,6 +348,13 @@ build/environments/backup-check.env: environments/backup-check.env.in $(COMMONDE
 	cp $< $@
 	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-backup-check))
 	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
+
+build/environments/cloud.env: environments/cloud.env.in $(COMMONDEPS)
+	cp $< $@
+	$(eval NEXTCLOUDDBPASSWORD := $(shell cat build/secrets/passwords/db_nextcloud))
+	$(eval NEXTCLOUDSECRET := $(shell cat build/secrets/passwords/secret_nextcloud))
+	sed -i "s/##DBPASSWORD##/${NEXTCLOUDDBPASSWORD}/g" $@
+	sed -i "s/##SECRET##/${NEXTCLOUDSECRET}/g" $@
 
 build/environments/%.env: environments/%.env
 	cp $< $@

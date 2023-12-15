@@ -1,3 +1,9 @@
 FROM debian:stable
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get -y upgrade
+RUN apt-get install -y nginx
+COPY default.conf /etc/nginx/conf.d/
+COPY server-28.0.0 /srv/cloud
+COPY nginx-start.sh /
+RUN mkdir -p /srv/cloud/data
+CMD ["/nginx-start.sh"]

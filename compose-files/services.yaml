@@ -254,9 +254,11 @@ services:
                 ipv4_address: 192.168.39.17
         restart: unless-stopped
     cloud:
+        env_file:
+            - /etc/infrastructure/environments/cloud.env
         image: "benediktibk/cloud"
         volumes:
-            - cloud-data:/srv/cloud-data
+            - cloud-data:/srv/cloud/data
         dns:
             - "192.168.39.3"
         networks:
