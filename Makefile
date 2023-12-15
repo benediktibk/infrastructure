@@ -275,11 +275,14 @@ build/apt-repo-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-apt-repo-share
 	docker build -t benediktibk/apt-repo-share build/servers/apt-repo-share
 	docker images --format "{{.ID}}" benediktibk/apt-repo-share > $@
 	
-build/cloud-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cloud servers/cloud/default.conf servers/cloud/config.sample.template servers/cloud/nginx-start.sh
+build/cloud-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cloud servers/cloud/default.conf servers/cloud/config.php.template servers/cloud/nginx-start.sh servers/cloud/php-fpm.conf servers/cloud/php.conf servers/cloud/nextcloud-php-fpm.conf
 	cp dockerfiles/Dockerfile-cloud build/servers/cloud/Dockerfile
 	cp servers/cloud/default.conf build/servers/cloud/
-	cp servers/cloud/config.sample.template build/servers/cloud/
+	cp servers/cloud/config.php.template build/servers/cloud/
 	cp servers/cloud/nginx-start.sh build/servers/cloud/
+	cp servers/cloud/php-fpm.conf build/servers/cloud/
+	cp servers/cloud/php.conf build/servers/cloud/
+	cp servers/cloud/nextcloud-php-fpm.conf build/servers/cloud/
 #	wget --output-document build/servers/cloud/source.zip https://github.com/nextcloud/server/archive/refs/tags/v28.0.0.zip
 #	cd build/servers/cloud && unzip source.zip
 	docker build -t benediktibk/cloud build/servers/cloud

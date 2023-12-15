@@ -66,7 +66,7 @@ $CONFIG = [
  *
  * Default to ``data/`` in the Nextcloud directory.
  */
-'datadirectory' => 'data',
+'datadirectory' => '/srv/cloud-data',
 
 /**
  * The current version number of your Nextcloud installation. This is set up

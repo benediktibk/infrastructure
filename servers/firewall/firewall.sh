@@ -95,9 +95,11 @@ nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.8 ip daddr 192.168.
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.8 ip daddr 192.168.39.3 tcp dport 636 counter accept
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.3 tcp dport 389 counter accept
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.3 tcp dport 636 counter accept
-echo "    allow access to elasticsearch from kibana"
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.9 ip daddr 192.168.39.15 tcp dport 9200 counter accept
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.15 tcp dport 9200 counter accept
+echo "    allow access to postgres from nextcloud"
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.9 ip daddr 192.168.39.6 tcp dport 5432 counter accept
+echo "    allow access to LDAP from nextcloud"
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.9 ip daddr 192.168.39.3 tcp dport 389 counter accept
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.9 ip daddr 192.168.39.3 tcp dport 636 counter accept
 echo "    allow access to DNS from DMZ"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.39.3 udp dport 53 counter accept
 echo "    allow ICMP requests"
