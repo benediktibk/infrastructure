@@ -41,6 +41,7 @@ services:
             - TARGETME=192.168.38.2:80
             - TARGETDOWNLOADS=192.168.38.6:80
             - TARGETMONITORING=192.168.38.8:80
+            - TARGETCLOUD=192.168.38.9:80
             - TARGETAPTREPO=192.168.38.10:80
         env_file:
             - /etc/infrastructure/environments/reverse-proxy.env
@@ -172,6 +173,7 @@ services:
             - vpncertificates:/mnt/volumes/vpncertificates
             - webcertificates:/mnt/volumes/webcertificates
             - apt-repo:/mnt/volumes/apt-repo
+            - cloud-data:/mnt/volumes/cloud-data
         dns:
             - "192.168.39.3"
         privileged: true
@@ -251,6 +253,16 @@ services:
             internal:
                 ipv4_address: 192.168.39.17
         restart: unless-stopped
+    cloud:
+        image: "benediktibk/cloud"
+        volumes:
+            - cloud-data:/srv/cloud-data
+        dns:
+            - "192.168.39.3"
+        networks:
+            dmz:
+                ipv4_address: 192.168.38.9
+        restart: unless-stopped
 
 volumes:
     sql:
@@ -280,6 +292,8 @@ volumes:
     ldapcertificates:
         external: true
     apt-repo:
+        external: true
+    cloud-data:
         external: true
 networks:
     internal:

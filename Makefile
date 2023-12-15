@@ -5,10 +5,10 @@ SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
 COMMONDEPS := build/guard Makefile build/secrets/guard
 ENVIRONMENTS := sql corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share
+IMAGENAMES := database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo
+VOLUMES := sql corona downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud-data
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 HOMEPAGEFILES = $(shell find servers/homepage)
 
@@ -82,6 +82,7 @@ build/guard: Makefile
 	mkdir -p build/servers/backup-check
 	mkdir -p build/servers/apt-repo
 	mkdir -p build/servers/apt-repo-share
+	mkdir -p build/servers/cloud
 	mkdir -p build/environments
 	touch $@
 
@@ -273,6 +274,11 @@ build/apt-repo-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-apt-repo-share
 	cp servers/apt-repo-share/smb.conf build/servers/apt-repo-share/
 	docker build -t benediktibk/apt-repo-share build/servers/apt-repo-share
 	docker images --format "{{.ID}}" benediktibk/apt-repo-share > $@
+	
+build/cloud-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cloud
+	cp dockerfiles/Dockerfile-cloud build/servers/cloud/Dockerfile
+	docker build -t benediktibk/cloud build/servers/cloud
+	docker images --format "{{.ID}}" benediktibk/cloud > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
