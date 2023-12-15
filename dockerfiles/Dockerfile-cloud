@@ -49,4 +49,6 @@ RUN find /srv/cloud-web -type f -exec chmod 640 {} \;
 RUN chmod -R 755 /srv/cloud-data
 RUN chmod -R 755 /srv/cloud-apps
 RUN mkdir -p /tmp/nextcloud
+RUN touch /var/log/nextcloud.log
+RUN chown www-data:www-data /var/log/nextcloud.log
 CMD ["/nginx-start.sh"]
