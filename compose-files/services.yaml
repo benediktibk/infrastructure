@@ -173,8 +173,7 @@ services:
             - vpncertificates:/mnt/volumes/vpncertificates
             - webcertificates:/mnt/volumes/webcertificates
             - apt-repo:/mnt/volumes/apt-repo
-            - cloud-data:/mnt/volumes/cloud-data
-            - cloud-apps:/mnt/volumes/cloud-apps
+            - cloud:/mnt/volumes/cloud
         dns:
             - "192.168.39.3"
         privileged: true
@@ -255,12 +254,9 @@ services:
                 ipv4_address: 192.168.39.17
         restart: unless-stopped
     cloud:
-        env_file:
-            - /etc/infrastructure/environments/cloud.env
         image: "benediktibk/cloud"
         volumes:
-            - cloud-data:/srv/cloud-data
-            - cloud-apps:/srv/cloud-apps
+            - cloud:/var/www/html
         dns:
             - "192.168.39.3"
         networks:
@@ -297,9 +293,7 @@ volumes:
         external: true
     apt-repo:
         external: true
-    cloud-data:
-        external: true
-    cloud-apps:
+    cloud:
         external: true
 networks:
     internal:

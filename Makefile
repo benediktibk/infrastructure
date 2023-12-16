@@ -8,7 +8,7 @@ ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONME
 IMAGENAMES := database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud-data cloud-apps
+VOLUMES := sql corona downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 HOMEPAGEFILES = $(shell find servers/homepage)
 
@@ -275,16 +275,8 @@ build/apt-repo-share-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-apt-repo-share
 	docker build -t benediktibk/apt-repo-share build/servers/apt-repo-share
 	docker images --format "{{.ID}}" benediktibk/apt-repo-share > $@
 	
-build/cloud-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cloud servers/cloud/default.conf servers/cloud/config.php.template servers/cloud/nginx-start.sh servers/cloud/php-fpm.conf servers/cloud/php.conf servers/cloud/nextcloud-php-fpm.conf
+build/cloud-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cloud
 	cp dockerfiles/Dockerfile-cloud build/servers/cloud/Dockerfile
-	cp servers/cloud/default.conf build/servers/cloud/
-	cp servers/cloud/config.php.template build/servers/cloud/
-	cp servers/cloud/nginx-start.sh build/servers/cloud/
-	cp servers/cloud/php-fpm.conf build/servers/cloud/
-	cp servers/cloud/php.conf build/servers/cloud/
-	cp servers/cloud/nextcloud-php-fpm.conf build/servers/cloud/
-#	wget --output-document build/servers/cloud/source.zip https://download.nextcloud.com/server/releases/nextcloud-28.0.0.zip
-#	cd build/servers/cloud && unzip source.zip
 	docker build -t benediktibk/cloud build/servers/cloud
 	docker images --format "{{.ID}}" benediktibk/cloud > $@
 	
