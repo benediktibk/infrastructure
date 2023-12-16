@@ -36,19 +36,21 @@ RUN rm -f /etc/php/8.2/fpm/php-fpm.conf.dpkg-dist
 COPY default.conf /etc/nginx/conf.d/
 COPY nginx-start.sh /
 COPY config.php.template /srv/cloud-web/config/
+RUN rm /srv/cloud-web/config/config.sample.php
 COPY php.conf /etc/php/8.2/fpm/conf.d/nextcloud.conf
 COPY php-fpm.conf /etc/php/8.2/fpm/php-fpm.conf
 COPY nextcloud-php-fpm.conf /etc/php/8.2/fpm/pool.d/
 RUN mkdir -p /srv/cloud-data
 RUN mkdir -p /srv/cloud-apps
+RUN mkdir -p /srv/cloud-temp
 RUN chown -R www-data:www-data /srv/cloud-web
 RUN chown -R www-data:www-data /srv/cloud-data
 RUN chown -R www-data:www-data /srv/cloud-apps
+RUN chown -R www-data:www-data /srv/cloud-temp
 RUN find /srv/cloud-web -type d -exec chmod 750 {} \;
 RUN find /srv/cloud-web -type f -exec chmod 640 {} \;
 RUN chmod -R 755 /srv/cloud-data
 RUN chmod -R 755 /srv/cloud-apps
-RUN mkdir -p /tmp/nextcloud
 RUN touch /var/log/nextcloud.log
 RUN chown www-data:www-data /var/log/nextcloud.log
 CMD ["/nginx-start.sh"]
