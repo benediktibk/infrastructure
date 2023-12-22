@@ -201,6 +201,8 @@ server {
         proxy_cache_use_stale               error timeout invalid_header updating http_500 http_502 http_503 http_504;
         expires                             1d;
         add_header                          Cache-Control "public";
+        client_max_body_size                20G;
+        client_body_buffer_size             400M;
     }
 }
 
