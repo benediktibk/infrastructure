@@ -20,7 +20,7 @@ echo "copy backup to storage"
 cp /tmp/backup/$FILENAME /mnt/storage1/System/backup/docker-volumes/
 
 echo "delete too old backups"
-find /mnt/storage1/System/backup/docker-volumes/* -mtime +7 -exec rm {} \;
+find /mnt/storage1/System/backup/docker-volumes/* -mtime +31 -exec rm {} \;
 
 echo "touch guard"
 touch /mnt/storage1/System/backup/docker-volumes/guard

@@ -1,1 +1,1 @@
-00 03 * * * /backup-volumes.sh > /proc/1/fd/1 2>/proc/1/fd/2
+00 01 * * 1 /backup-volumes.sh > /proc/1/fd/1 2>/proc/1/fd/2
