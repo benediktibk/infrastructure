@@ -3,9 +3,9 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check cloud
+ENVIRONMENTS := sql corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check cloud
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup cron-storage-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud
+IMAGENAMES := database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
 VOLUMES := sql corona downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud
@@ -76,7 +76,6 @@ build/guard: Makefile
 	mkdir -p build/servers/downloads-share
 	mkdir -p build/servers/cron-passwords
 	mkdir -p build/servers/cron-volume-backup
-	mkdir -p build/servers/cron-storage-backup
 	mkdir -p build/servers/google-drive-triest
 	mkdir -p build/servers/cron-triest-backup
 	mkdir -p build/servers/backup-check
@@ -226,15 +225,6 @@ build/cron-volume-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-volum
 	docker build -t benediktibk/cron-volume-backup build/servers/cron-volume-backup
 	docker images --format "{{.ID}}" benediktibk/cron-volume-backup > $@
 
-build/cron-storage-backup-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cron-storage-backup servers/cron-storage-backup/backup-storage.sh servers/cron-storage-backup/cronjobs servers/cron-storage-backup/start.sh servers/cron-storage-backup/fstab
-	cp dockerfiles/Dockerfile-cron-storage-backup build/servers/cron-storage-backup/Dockerfile
-	cp servers/cron-storage-backup/backup-storage.sh build/servers/cron-storage-backup/
-	cp servers/cron-storage-backup/start.sh build/servers/cron-storage-backup/
-	cp servers/cron-storage-backup/fstab build/servers/cron-storage-backup/
-	cp servers/cron-storage-backup/cronjobs build/servers/cron-storage-backup/
-	docker build -t benediktibk/cron-storage-backup build/servers/cron-storage-backup
-	docker images --format "{{.ID}}" benediktibk/cron-storage-backup > $@
-
 build/google-drive-triest-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-google-drive-triest servers/google-drive-triest/start.sh servers/google-drive-triest/sync.sh servers/google-drive-triest/cronjobs
 	cp dockerfiles/Dockerfile-google-drive-triest build/servers/google-drive-triest/Dockerfile
 	cp servers/google-drive-triest/start.sh build/servers/google-drive-triest/
@@ -322,11 +312,6 @@ build/environments/cron-passwords.env: environments/cron-passwords.env.in $(COMM
 build/environments/cron-volume-backup.env: environments/cron-volume-backup.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-volume))
-	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
-
-build/environments/cron-storage-backup.env: environments/cron-storage-backup.env.in $(COMMONDEPS)
-	cp $< $@
-	$(eval DOMAINPASSWORD := $(shell cat build/secrets/passwords/system-cron-storage))
 	sed -i "s/##DOMAINPASSWORD##/${DOMAINPASSWORD}/g" $@
 
 build/environments/google-drive-triest.env: environments/google-drive-triest.env.in $(COMMONDEPS)
