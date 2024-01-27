@@ -3,14 +3,16 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check cloud
+ENVIRONMENTS := sql corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check cloud palworld
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud
+IMAGENAMES := database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud palworld
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud
+VOLUMES := sql corona downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud palworld
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 HOMEPAGEFILES = $(shell find servers/homepage)
+PALWORLDPATH = ~/.local/share/Steam/steamapps/common/PalServer
+PALWORLDFILES = $(shell find $(PALWORLDPATH) -type f)
 
 CREATEVOLUMES := for volume in $(VOLUMES); do echo "creating volume $$volume"; docker volume create "$$volume"; done;
 DELETEVOLUMES := if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi; docker volume rm $(VOLUMES)
@@ -82,6 +84,7 @@ build/guard: Makefile
 	mkdir -p build/servers/apt-repo
 	mkdir -p build/servers/apt-repo-share
 	mkdir -p build/servers/cloud
+	mkdir -p build/servers/palworld
 	mkdir -p build/environments
 	touch $@
 
@@ -269,6 +272,13 @@ build/cloud-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cloud
 	cp dockerfiles/Dockerfile-cloud build/servers/cloud/Dockerfile
 	docker build -t benediktibk/cloud build/servers/cloud
 	docker images --format "{{.ID}}" benediktibk/cloud > $@
+
+build/palworld-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-palworld servers/palworld/start.sh $(PALWORLDFILES)
+	cp dockerfiles/Dockerfile-palworld build/servers/palworld/Dockerfile
+	cp -R $(PALWORLDPATH) build/servers/palworld/
+	cp servers/palworld/start.sh build/servers/palworld/
+	docker build -t benediktibk/palworld build/servers/palworld
+	docker images --format "{{.ID}}" benediktibk/palworld > $@
 	
 build/%-pushed-id.txt: build/%-id.txt
 	rm -f $@
@@ -335,6 +345,13 @@ build/environments/cloud.env: environments/cloud.env.in $(COMMONDEPS)
 	$(eval NEXTCLOUDSECRET := $(shell cat build/secrets/passwords/secret_nextcloud))
 	sed -i "s/##DBPASSWORD##/${NEXTCLOUDDBPASSWORD}/g" $@
 	sed -i "s/##SECRET##/${NEXTCLOUDSECRET}/g" $@
+
+build/environments/palworld.env: environments/palworld.env.in $(COMMONDEPS)
+	cp $< $@
+	$(eval SERVERPASSWORD := $(shell cat build/secrets/passwords/palworld-server))
+	$(eval ADMINPASSWORD := $(shell cat build/secrets/passwords/palworld-admin))
+	sed -i "s/##SERVERPASSWORD##/${SERVERPASSWORD}/g" $@
+	sed -i "s/##ADMINPASSWORD##/${ADMINPASSWORD}/g" $@
 
 build/environments/%.env: environments/%.env
 	cp $< $@

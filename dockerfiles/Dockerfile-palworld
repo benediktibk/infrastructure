@@ -1,0 +1,10 @@
+FROM debian:stable
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update
+RUN apt-get -y install xdg-user-dirs
+RUN apt-get -y install procps
+RUN mkdir -p /palworld
+COPY PalServer/* /palworld/
+COPY start.sh /
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["/start.sh"]
