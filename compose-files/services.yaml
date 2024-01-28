@@ -260,6 +260,9 @@ services:
         networks:
             dmz:
                 ipv4_address: 192.168.38.11
+        ports:
+            - "8211:8211"
+            - "27015:27015"
         restart: unless-stopped
 
 volumes:
