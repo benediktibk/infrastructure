@@ -3,8 +3,17 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 RUN apt-get -y install xdg-user-dirs
 RUN apt-get -y install procps
-RUN mkdir -p /palworld
-COPY PalServer/* /palworld/
+RUN apt-get -y install software-properties-common
+RUN useradd palworld
+COPY PalServer /palworld/
 COPY start.sh /
+COPY steam /home/palworld/.steam
+RUN chown -R palworld /palworld/
+RUN mkdir -p /home/palworld/.local
+RUN mkdir -p /home/palworld/.local/share
+RUN mkdir -p /home/palworld/.local/share/Steam
+COPY local_share_steam_linux32 /home/palworld/.local/share/Steam/linux32
+RUN chown -R palworld /home/palworld
+USER palworld 
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["/start.sh"]

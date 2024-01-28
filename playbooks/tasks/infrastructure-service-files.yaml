@@ -68,6 +68,11 @@
   copy:
     src: ../build/environments/cloud.env
     dest: /etc/infrastructure/environments/cloud.env
+- name: copy palworld environment
+  become: true
+  copy:
+    src: ../build/environments/palworld.env
+    dest: /etc/infrastructure/environments/palworld.env
 - name: copy infrastructure-network service definition
   become: true
   copy:

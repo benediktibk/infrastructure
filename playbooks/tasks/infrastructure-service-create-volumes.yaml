@@ -28,3 +28,5 @@
   shell: "docker volume create elasticsearch"
 - name: create volume
   shell: "docker volume create mariadb"
+- name: create volume
+  shell: "docker volume create palworld"

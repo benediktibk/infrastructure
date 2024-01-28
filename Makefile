@@ -274,8 +274,12 @@ build/cloud-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-cloud
 	docker images --format "{{.ID}}" benediktibk/cloud > $@
 
 build/palworld-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-palworld servers/palworld/start.sh $(PALWORLDFILES)
+	rm -fR build/servers/palworld/*
 	cp dockerfiles/Dockerfile-palworld build/servers/palworld/Dockerfile
-	cp -R $(PALWORLDPATH) build/servers/palworld/
+	cp -LR $(PALWORLDPATH) build/servers/palworld/
+	mkdir -p build/servers/palworld/steam
+	cp -LR ~/.steam/sdk64 build/servers/palworld/steam/
+	cp -LR ~/.local/share/Steam/linux32 build/servers/palworld/local_share_steam_linux32
 	cp servers/palworld/start.sh build/servers/palworld/
 	docker build -t benediktibk/palworld build/servers/palworld
 	docker images --format "{{.ID}}" benediktibk/palworld > $@

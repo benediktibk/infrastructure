@@ -67,6 +67,8 @@ nft add rule filter INPUT ip daddr $HOSTIP tcp dport 443 counter accept
 nft add rule filter INPUT ip daddr $HOSTIP tcp dport 2456-2458 counter accept
 nft add rule filter INPUT ip daddr $HOSTIP udp dport 2456-2458 counter accept
 nft add rule filter INPUT ip daddr $HOSTIP udp dport 22023 counter accept
+nft add rule filter INPUT ip daddr $HOSTIP udp dport 8211 counter accept
+nft add rule filter INPUT ip daddr $HOSTIP udp dport 27015 counter accept
 echo "    allow specific services from internal"
 nft add rule filter INPUT ip saddr 192.168.39.0/24 ip daddr $HOSTIP tcp dport 10050 counter accept
 echo "    allow ICMP requests"

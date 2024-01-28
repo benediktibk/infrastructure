@@ -250,6 +250,16 @@ services:
             dmz:
                 ipv4_address: 192.168.38.9
         restart: unless-stopped
+    palworld:
+        image: "benediktibk/palworld"
+        volumes:
+            - palworld:/palworld/SaveGames
+        dns:
+            - "192.168.39.3"
+        networks:
+            dmz:
+                ipv4_address: 192.168.38.11
+        restart: unless-stopped
 
 volumes:
     sql:
@@ -281,6 +291,8 @@ volumes:
     apt-repo:
         external: true
     cloud:
+        external: true
+    palworld:
         external: true
 networks:
     internal:
