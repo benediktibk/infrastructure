@@ -261,8 +261,8 @@ services:
             dmz:
                 ipv4_address: 192.168.38.11
         ports:
-            - "8211:8211"
-            - "27015:27015"
+            - "8211:8211/udp"
+            - "27015:27015/udp"
         restart: unless-stopped
 
 volumes:
