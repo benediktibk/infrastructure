@@ -4,11 +4,11 @@ RUN apt-get update
 RUN apt-get -y install xdg-user-dirs
 RUN apt-get -y install procps
 RUN apt-get -y install software-properties-common
+RUN rm -rf /var/lib/apt/lists/*
 RUN useradd palworld
-COPY PalServer /palworld/
+COPY --chown=palworld PalServer /palworld/
 COPY start.sh /
 COPY steam /home/palworld/.steam
-RUN chown -R palworld /palworld/
 RUN mkdir -p /home/palworld/.local
 RUN mkdir -p /home/palworld/.local/share
 RUN mkdir -p /home/palworld/.local/share/Steam
