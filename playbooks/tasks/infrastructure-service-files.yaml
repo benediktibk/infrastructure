@@ -73,6 +73,11 @@
   copy:
     src: ../build/environments/palworld.env
     dest: /etc/infrastructure/environments/palworld.env
+- name: copy valheim environment
+  become: true
+  copy:
+    src: ../build/environments/valheim.env
+    dest: /etc/infrastructure/environments/valheim.env
 - name: copy infrastructure-network service definition
   become: true
   copy:
