@@ -3,12 +3,12 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check cloud palworld valheim
+ENVIRONMENTS := sql corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check cloud palworld valheim valheim-ashlands
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
 IMAGENAMES := database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud palworld valheim
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud palworld valheim
+VOLUMES := sql corona downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud palworld valheim valheim_ashlands
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 HOMEPAGEFILES = $(shell find servers/homepage)
 PALWORLDPATH = ~/.local/share/Steam/steamapps/common/PalServer
@@ -370,6 +370,10 @@ build/environments/palworld.env: environments/palworld.env.in $(COMMONDEPS)
 	sed -i "s/##ADMINPASSWORD##/${ADMINPASSWORD}/g" $@
 
 build/environments/valheim.env: environments/valheim.env.in $(COMMONDEPS)
+	cp $< $@
+	$(eval SERVER_PASSWORD := $(shell cat build/secrets/passwords/valheim))
+
+build/environments/valheim-ashlands.env: environments/valheim-ashlands.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval SERVER_PASSWORD := $(shell cat build/secrets/passwords/valheim))
 	sed -i "s/##SERVER_PASSWORD##/$(SERVER_PASSWORD)/g" $@

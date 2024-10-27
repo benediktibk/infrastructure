@@ -78,6 +78,11 @@
   copy:
     src: ../build/environments/valheim.env
     dest: /etc/infrastructure/environments/valheim.env
+- name: copy valheim-ashlands environment
+  become: true
+  copy:
+    src: ../build/environments/valheim-ashlands.env
+    dest: /etc/infrastructure/environments/valheim-ashlands.env
 - name: copy infrastructure-network service definition
   become: true
   copy:

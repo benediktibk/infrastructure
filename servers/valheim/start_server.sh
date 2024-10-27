@@ -4,7 +4,7 @@ echo "starting valheim server $SERVER_NAME with password $SERVER_PASSWORD"
 
 export LD_LIBRARY_PATH=./linux64:$LD_LIBRARY_PATH
 export SteamAppId=892970
-./valheim_server.x86_64 -name "$SERVER_NAME" -port 2456 -world "Dedicated" -password "$SERVER_PASSWORD" -crossplay -public 1 -savedir /srv/valheim &
+./valheim_server.x86_64 -name "$SERVER_NAME" -port $SERVER_PORT -world "Dedicated" -password "$SERVER_PASSWORD" -crossplay -public 1 -savedir /srv/valheim &
 PROCESSID=$!
 
 echo "install trap for signals"

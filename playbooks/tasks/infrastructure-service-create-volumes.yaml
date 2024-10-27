@@ -5,6 +5,8 @@
 - name: create volume
   shell: "docker volume create valheim"
 - name: create volume
+  shell: "docker volume create valheim-ashlands"
+- name: create volume
   shell: "docker volume create downloads"
 - name: create volume
   shell: "docker volume create webcertificates"
