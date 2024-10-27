@@ -372,6 +372,7 @@ build/environments/palworld.env: environments/palworld.env.in $(COMMONDEPS)
 build/environments/valheim.env: environments/valheim.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval SERVER_PASSWORD := $(shell cat build/secrets/passwords/valheim))
+	sed -i "s/##SERVER_PASSWORD##/$(SERVER_PASSWORD)/g" $@
 
 build/environments/valheim-ashlands.env: environments/valheim-ashlands.env.in $(COMMONDEPS)
 	cp $< $@
