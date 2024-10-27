@@ -4,5 +4,5 @@
     - include_tasks: tasks/system-update.yaml
     - include_tasks: tasks/infrastructure-service-files.yaml
     - include_tasks: tasks/infrastructure-service-directories-permissions.yaml
-    #- include_tasks: tasks/infrastructure-service-container-update-network.yaml
+    - include_tasks: tasks/infrastructure-service-container-update-network.yaml
     - include_tasks: tasks/infrastructure-service-container-update-services.yaml
