@@ -2,7 +2,6 @@
 
 # internal
 192.168.39.1	server-1-internal
-192.168.39.2	database-server
 192.168.39.3	dc1
 192.168.39.5	certbot
 192.168.39.6	postgres

@@ -3,12 +3,12 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check cloud
+ENVIRONMENTS := reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check cloud
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := database-server homepage reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud
+IMAGENAMES := homepage reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud
+VOLUMES := downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 HOMEPAGEFILES = $(shell find servers/homepage)
 
@@ -51,7 +51,6 @@ data-init: $(IMAGEIDS) $(ENVIRONMENTFILES)
 build/guard: Makefile
 	mkdir -p build
 	mkdir -p build/servers
-	mkdir -p build/servers/database
 	mkdir -p build/servers/homepage
 	mkdir -p build/servers/homepage/bin
 	mkdir -p build/servers/reverse-proxy
@@ -79,11 +78,6 @@ build/guard: Makefile
 .PHONY: all clean proper-clean data-init data-clean data-clean run-local deploy deploy-update deploy-services secrets-encrypt build/secrets.tar.gz tests
 	 
 ############ container
-	
-build/database-server-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-database
-	cp dockerfiles/Dockerfile-database build/servers/database/Dockerfile
-	docker build -t benediktibk/database-server build/servers/database
-	docker images --format "{{.ID}}" benediktibk/database-server > $@
 	
 build/homepage-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-homepage $(HOMEPAGEFILES)
 	cp dockerfiles/Dockerfile-homepage build/servers/homepage/Dockerfile
@@ -248,11 +242,6 @@ build/%-pushed-id.txt: build/%-id.txt
 
 ############ environment definitions
 	
-build/environments/sql.env: environments/sql.env.in $(COMMONDEPS)
-	cp $< $@
-	$(eval SA_PASSWORD := $(shell cat build/secrets/passwords/db_sa))
-	sed -i "s/##SA_PASSWORD##/${SA_PASSWORD}/g" $@
-
 build/environments/postgres.env: environments/postgres.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval POSTGRES_PASSWORD := $(shell cat build/secrets/passwords/postgres))

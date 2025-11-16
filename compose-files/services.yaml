@@ -1,17 +1,5 @@
 version: "3.6"
 services:
-    database-server:
-        env_file:
-            - /etc/infrastructure/environments/sql.env
-        image: "benediktibk/database-server"
-        volumes:
-            - sql:/var/opt/mssql/data/
-        dns:
-            - "192.168.39.3"
-        networks:
-            internal:
-                ipv4_address: 192.168.39.2
-        restart: unless-stopped
     homepage:
         image: "benediktibk/homepage"
         dns:
@@ -152,7 +140,6 @@ services:
             - letsencrypt:/mnt/volumes/letsencrypt
             - postgres:/mnt/volumes/postgres
             - proxycache:/mnt/volumes/proxycache
-            - sql:/mnt/volumes/sql
             - vpncertificates:/mnt/volumes/vpncertificates
             - webcertificates:/mnt/volumes/webcertificates
             - apt-repo:/mnt/volumes/apt-repo
@@ -235,8 +222,6 @@ services:
         restart: unless-stopped
 
 volumes:
-    sql:
-        external: true
     downloads:
         external: true
     webcertificates:
