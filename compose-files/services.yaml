@@ -174,7 +174,6 @@ services:
             - webcertificates:/mnt/volumes/webcertificates
             - apt-repo:/mnt/volumes/apt-repo
             - cloud:/mnt/volumes/cloud
-            - palworld:/mnt/volumes/palworld
         dns:
             - "192.168.39.3"
         privileged: true
@@ -251,53 +250,6 @@ services:
             dmz:
                 ipv4_address: 192.168.38.9
         restart: unless-stopped
-    palworld:
-        image: "benediktibk/palworld"
-        volumes:
-            - palworld:/palworld/Pal/Saved/
-        dns:
-            - "192.168.39.3"
-        networks:
-            dmz:
-                ipv4_address: 192.168.38.11
-        ports:
-            - "8211:8211/udp"
-            - "27015:27015/udp"
-        restart: unless-stopped
-    valheim:
-        env_file:
-            - /etc/infrastructure/environments/valheim.env
-        image: "benediktibk/valheim"
-        volumes:
-            - valheim:/srv/valheim/
-        dns:
-            - "192.168.39.3"
-        networks:
-            dmz:
-                ipv4_address: 192.168.38.3
-        ports:
-            - "2456:2456/tcp"
-            - "2456:2456/udp"
-            - "2457:2457/tcp"
-            - "2457:2457/udp"
-        restart: unless-stopped
-    valheim-ashlands:
-        env_file:
-            - /etc/infrastructure/environments/valheim-ashlands.env
-        image: "benediktibk/valheim"
-        volumes:
-            - valheim-ashlands:/srv/valheim/
-        dns:
-            - "192.168.39.3"
-        networks:
-            dmz:
-                ipv4_address: 192.168.38.7
-        ports:
-            - "2458:2458/tcp"
-            - "2458:2458/udp"
-            - "2459:2459/tcp"
-            - "2459:2459/udp"
-        restart: unless-stopped
 
 volumes:
     sql:
@@ -329,12 +281,6 @@ volumes:
     apt-repo:
         external: true
     cloud:
-        external: true
-    palworld:
-        external: true
-    valheim:
-        external: true
-    valheim-ashlands:
         external: true
 networks:
     internal:

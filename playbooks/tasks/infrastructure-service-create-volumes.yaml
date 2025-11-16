@@ -3,10 +3,6 @@
 - name: create volume
   shell: "docker volume create corona"
 - name: create volume
-  shell: "docker volume create valheim"
-- name: create volume
-  shell: "docker volume create valheim-ashlands"
-- name: create volume
   shell: "docker volume create downloads"
 - name: create volume
   shell: "docker volume create webcertificates"
@@ -30,5 +26,3 @@
   shell: "docker volume create elasticsearch"
 - name: create volume
   shell: "docker volume create mariadb"
-- name: create volume
-  shell: "docker volume create palworld"
