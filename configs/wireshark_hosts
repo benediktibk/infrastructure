@@ -17,7 +17,6 @@
 # dmz
 192.168.38.1	server-1-dmz
 192.168.38.2	homepage
-192.168.38.4	corona-viewer
 192.168.38.5	reverse-proxy
 192.168.38.6	downloads
 192.168.38.8	zabbix-frontend

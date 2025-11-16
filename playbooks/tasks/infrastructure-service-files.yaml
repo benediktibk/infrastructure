@@ -3,11 +3,6 @@
   copy:
     src: ../build/environments/sql.env
     dest: /etc/infrastructure/environments/sql.env
-- name: copy corona environment
-  become: true
-  copy:
-    src: ../build/environments/corona.env
-    dest: /etc/infrastructure/environments/corona.env
 - name: copy reverse-proxy environment
   become: true
   copy:
@@ -83,11 +78,6 @@
   copy:
     src: ../compose-files/services.yaml
     dest: /etc/infrastructure/services.yaml
-- name: copy docker compose file
-  become: true
-  copy:
-    src: ../compose-files/corona-init.yaml
-    dest: /etc/infrastructure/corona-init.yaml
 - name: copy docker compose file
   become: true
   copy:

@@ -20,24 +20,9 @@ services:
             dmz:
                 ipv4_address: 192.168.38.2
         restart: unless-stopped
-    corona-viewer:
-        environment:
-            - DBHOST=192.168.39.2
-        env_file:
-            - /etc/infrastructure/environments/corona.env
-        image: "benediktibk/corona-viewer"
-        dns:
-            - "192.168.39.3"
-        networks:
-            dmz:
-                ipv4_address: 192.168.38.4
-        restart: unless-stopped
-        depends_on:
-            - database-server
     reverse-proxy:
         environment:
             - WEBFQDN=benediktschmidt.at
-            - TARGETCORONA=192.168.38.4:80
             - TARGETME=192.168.38.2:80
             - TARGETDOWNLOADS=192.168.38.6:80
             - TARGETMONITORING=192.168.38.8:80
@@ -57,7 +42,6 @@ services:
                 ipv4_address: 192.168.38.5
                 aliases:
                     - me.reverse-proxy
-                    - corona.reverse-proxy
                     - downloads.reverse-proxy
         ports:
             - "80:80"
@@ -163,7 +147,6 @@ services:
         image: "benediktibk/cron-volume-backup"
         volumes:
             - acme:/mnt/volumes/acme
-            - corona:/mnt/volumes/corona
             - dc:/mnt/volumes/dc
             - downloads:/mnt/volumes/downloads
             - letsencrypt:/mnt/volumes/letsencrypt
@@ -253,8 +236,6 @@ services:
 
 volumes:
     sql:
-        external: true
-    corona:
         external: true
     downloads:
         external: true

@@ -3,18 +3,17 @@
 SECRETSDECRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in secrets.tar.gz.enc | tar xz
 SECRETSENCRYPT := openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in build/secrets.tar.gz -out secrets.tar.gz.enc
 COMMONDEPS := build/guard Makefile build/secrets/guard
-ENVIRONMENTS := sql corona reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check cloud
+ENVIRONMENTS := sql reverse-proxy vpn firewall postgres zabbix-server zabbix-frontend cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check cloud
 ENVIRONMENTFILES := $(addprefix build/environments/,$(addsuffix .env,$(ENVIRONMENTS)))
-IMAGENAMES := database-server homepage corona-viewer corona-updater corona-init reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud
+IMAGENAMES := database-server homepage reverse-proxy downloads vpn firewall dc network-util certbot postgres zabbix-server zabbix-frontend downloads-share cron-passwords cron-volume-backup google-drive-triest cron-triest-backup backup-check apt-repo apt-repo-share cloud
 IMAGEIDS := $(addprefix build/,$(addsuffix -id.txt,$(IMAGENAMES)))
 IMAGEPUSHEDIDS := $(addprefix build/,$(addsuffix -pushed-id.txt,$(IMAGENAMES)))
-VOLUMES := sql corona downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud
+VOLUMES := sql downloads webcertificates dc acme letsencrypt proxycache postgres googledrivetriest vpncertificates ldapcertificates apt-repo cloud
 VPNCLIENTCONFIGS = $(shell find servers/vpn/ -iname *.location.benediktschmidt.at)
 HOMEPAGEFILES = $(shell find servers/homepage)
 
 CREATEVOLUMES := for volume in $(VOLUMES); do echo "creating volume $$volume"; docker volume create "$$volume"; done;
 DELETEVOLUMES := if [ ! -z "$(shell docker ps -a -q)" ]; then docker rm -f $(shell docker ps -a -q); fi; docker volume rm $(VOLUMES)
-DOCKERCOMPOSECORONAINIT := docker-compose --project-name infrastructure-init -f compose-files/corona-init.yaml up --abort-on-container-exit
 DOCKERCOMPOSESERVER := docker-compose --project-name infrastructure -f compose-files/server.yaml up
 
 DOCKERCONTAINERSAVAILABLE := $(shell docker ps -qa)
@@ -48,7 +47,6 @@ data-clean: $(ENVIRONMENTFILES)
 	
 data-init: $(IMAGEIDS) $(ENVIRONMENTFILES)
 	$(CREATEVOLUMES)
-	$(DOCKERCOMPOSECORONAINIT)
 
 build/guard: Makefile
 	mkdir -p build
@@ -56,13 +54,6 @@ build/guard: Makefile
 	mkdir -p build/servers/database
 	mkdir -p build/servers/homepage
 	mkdir -p build/servers/homepage/bin
-	mkdir -p build/servers/corona
-	mkdir -p build/servers/corona/viewer
-	mkdir -p build/servers/corona/viewer/bin
-	mkdir -p build/servers/corona/updater
-	mkdir -p build/servers/corona/updater/bin
-	mkdir -p build/servers/corona/init
-	mkdir -p build/servers/corona/init/bin
 	mkdir -p build/servers/reverse-proxy
 	mkdir -p build/servers/downloads
 	mkdir -p build/servers/vpn
@@ -84,9 +75,6 @@ build/guard: Makefile
 	mkdir -p build/servers/cloud
 	mkdir -p build/environments
 	touch $@
-
-tests:
-	cd servers/corona/Corona && dotnet test
 	
 .PHONY: all clean proper-clean data-init data-clean data-clean run-local deploy deploy-update deploy-services secrets-encrypt build/secrets.tar.gz tests
 	 
@@ -102,24 +90,7 @@ build/homepage-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-homepage $(HOMEPAGEF
 	cp -R servers/homepage/me build/servers/homepage/bin
 	docker build -t benediktibk/homepage build/servers/homepage
 	docker images --format "{{.ID}}" benediktibk/homepage > $@
-	
-build/corona-viewer-id.txt: $(COMMONDEPS) build/servers/corona/viewer/bin/CoronaSpreadViewer.dll dockerfiles/Dockerfile-corona-viewer
-	cp dockerfiles/Dockerfile-corona-viewer build/servers/corona/viewer/Dockerfile
-	docker build -t benediktibk/corona-viewer build/servers/corona/viewer
-	docker images --format "{{.ID}}" benediktibk/corona-viewer > $@
-
-build/corona-updater-id.txt: $(COMMONDEPS) build/servers/corona/updater/bin/Updater.dll dockerfiles/Dockerfile-corona-updater scripts/corona-updater.sh
-	cp dockerfiles/Dockerfile-corona-updater build/servers/corona/updater/Dockerfile
-	cp scripts/corona-updater.sh build/servers/corona/updater/corona-updater.sh
-	docker build -t benediktibk/corona-updater build/servers/corona/updater
-	docker images --format "{{.ID}}" benediktibk/corona-updater > $@
-
-build/corona-init-id.txt: $(COMMONDEPS) build/servers/corona/init/bin/Updater.dll dockerfiles/Dockerfile-corona-init scripts/corona-init.sh
-	cp dockerfiles/Dockerfile-corona-init build/servers/corona/init/Dockerfile
-	cp scripts/corona-init.sh build/servers/corona/init/corona-init.sh
-	docker build -t benediktibk/corona-init build/servers/corona/init
-	docker images --format "{{.ID}}" benediktibk/corona-init > $@
-	
+		
 build/reverse-proxy-id.txt: $(COMMONDEPS) dockerfiles/Dockerfile-reverse-proxy servers/reverse-proxy/default.conf.template servers/reverse-proxy/nginx-start.sh servers/reverse-proxy/nginx.conf
 	cp dockerfiles/Dockerfile-reverse-proxy build/servers/reverse-proxy/Dockerfile
 	cp servers/reverse-proxy/default.conf.template build/servers/reverse-proxy/
@@ -282,11 +253,6 @@ build/environments/sql.env: environments/sql.env.in $(COMMONDEPS)
 	$(eval SA_PASSWORD := $(shell cat build/secrets/passwords/db_sa))
 	sed -i "s/##SA_PASSWORD##/${SA_PASSWORD}/g" $@
 
-build/environments/corona.env: environments/corona.env.in $(COMMONDEPS)
-	cp $< $@
-	$(eval DBCORONAPASSWORD := $(shell cat build/secrets/passwords/db_corona))
-	sed -i "s/##DBCORONAPASSWORD##/${DBCORONAPASSWORD}/g" $@
-
 build/environments/postgres.env: environments/postgres.env.in $(COMMONDEPS)
 	cp $< $@
 	$(eval POSTGRES_PASSWORD := $(shell cat build/secrets/passwords/postgres))
@@ -338,21 +304,6 @@ build/environments/cloud.env: environments/cloud.env.in $(COMMONDEPS)
 
 build/environments/%.env: environments/%.env
 	cp $< $@
-
-
-############ apps
-
-build/servers/corona/viewer/bin/CoronaSpreadViewer.dll: $(COMMONDEPS) $(shell find servers/corona/Corona -type f -not -path "*/bin/*" -not -path "*/obj/*" -name "*")
-	dotnet publish servers/corona/Corona/CoronaSpreadViewer --output build/servers/corona/viewer/bin --configuration Release --runtime linux-x64 --self-contained
-	touch $@
-	
-build/servers/corona/updater/bin/Updater.dll: $(COMMONDEPS) $(shell find servers/corona/Corona -type f -not -path "*/bin/*" -not -path "*/obj/*" -name "*")
-	dotnet publish servers/corona/Corona/Updater --output build/servers/corona/updater/bin --configuration Release --runtime linux-x64 --self-contained
-	touch $@
-
-build/servers/corona/init/bin/Updater.dll: $(COMMONDEPS) $(shell find servers/corona/Corona -type f -not -path "*/bin/*" -not -path "*/obj/*" -name "*")
-	dotnet publish servers/corona/Corona/Updater --output build/servers/corona/init/bin --configuration Release --runtime linux-x64 --self-contained
-	touch $@
 
 	
 ############ secrets

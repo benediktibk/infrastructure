@@ -79,9 +79,6 @@ echo "    allow already established connections"
 nft add rule filter FORWARD-DMZ-INTERNAL ct state established accept
 echo "    allow access from internal to the outside"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.39.0/24 counter accept
-echo "    allow access to database from corona-viewer"
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.4 ip daddr 192.168.39.2 tcp dport 1433 counter accept
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.2 tcp dport 1433 counter accept
 echo "    allow access to postgres from zabbix-frontend"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.8 ip daddr 192.168.39.6 tcp dport 5432 counter accept
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.254 ip daddr 192.168.39.6 tcp dport 5432 counter accept

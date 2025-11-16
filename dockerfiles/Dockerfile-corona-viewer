@@ -1,5 +1,0 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
-EXPOSE 80/tcp
-COPY ./bin/. App/
-WORKDIR /App
-ENTRYPOINT ["dotnet", "CoronaSpreadViewer.dll"]

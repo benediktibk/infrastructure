@@ -12,7 +12,7 @@ fi
 
 set -eu
 
-envsubst '${WEBFQDN} ${TARGETCORONA} ${TARGETME} ${TARGETDOWNLOADS} ${TARGETMONITORING} ${TARGETCLOUD} ${TARGETAPTREPO}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
+envsubst '${WEBFQDN} ${TARGETME} ${TARGETDOWNLOADS} ${TARGETMONITORING} ${TARGETCLOUD} ${TARGETAPTREPO}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
 
 nginx -g 'daemon on;'
 

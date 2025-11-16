@@ -1,6 +1,3 @@
 [submodule "servers/homepage"]
 	path = servers/homepage
 	url = git@github.com:benediktibk/homepage.git
-[submodule "servers/corona"]
-	path = servers/corona
-	url = git@github.com:benediktibk/corona.git
