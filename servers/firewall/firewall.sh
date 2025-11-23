@@ -153,6 +153,12 @@ echo "configure chain FORWARD-LOGGING"
 echo "    log dropped packets"
 nft add rule filter FORWARD-LOGGING counter log prefix "nft.ip.filter.forward.drop " drop
 
+echo "reconfigure chain PREROUTING from docker changes"
+nft delete chain ip raw PREROUTING
+nft 'add chain ip raw PREROUTING { type filter hook prerouting priority raw; policy accept; }'
+nft add rule raw PREROUTING ip daddr 192.168.38.0/24 accept
+nft add rule raw PREROUTING ip daddr 192.168.39.0/24 accept
+
 while :
 do
     sleep 1h &
