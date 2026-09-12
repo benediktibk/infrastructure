@@ -58,6 +58,11 @@
   copy:
     src: ../build/environments/cloud.env
     dest: /etc/infrastructure/environments/cloud.env
+- name: copy valheim environment
+  become: true
+  copy:
+    src: ../build/environments/valheim.env
+    dest: /etc/infrastructure/environments/valheim.env
 - name: copy infrastructure-network service definition
   become: true
   copy:

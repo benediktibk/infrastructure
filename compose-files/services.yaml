@@ -220,6 +220,23 @@ services:
             dmz:
                 ipv4_address: 192.168.38.9
         restart: unless-stopped
+    valheim:
+        env_file:
+            - /etc/infrastructure/environments/valheim.env
+        image: "benediktibk/valheim"
+        volumes:
+            - valheim:/srv/valheim/
+        dns:
+            - "192.168.39.3"
+        networks:
+            dmz:
+                ipv4_address: 192.168.38.3
+        ports:
+            - "2456:2456/tcp"
+            - "2456:2456/udp"
+            - "2457:2457/tcp"
+            - "2457:2457/udp"
+        restart: unless-stopped
 
 volumes:
     downloads:
@@ -247,6 +264,8 @@ volumes:
     apt-repo:
         external: true
     cloud:
+        external: true
+    valheim:
         external: true
 networks:
     internal:
