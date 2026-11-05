@@ -12,7 +12,7 @@ delete_forward_rule () {
 add_forward_rule_from_vpn () {
     echo "allowing port $2 on protocol $1 to $3 from VPN"
     nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.40.0/24 ip daddr $3 $1 dport $2 counter accept
-    nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.42.0/24 ip daddr $3 $1 dport $2 counter accept
+    nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.142.0/24 ip daddr $3 $1 dport $2 counter accept
     nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.43.0/24 ip daddr $3 $1 dport $2 counter accept
 }
 
@@ -106,7 +106,7 @@ echo "    forbid access from DMZ to something else than external"
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.39.0/24 counter log prefix "nft.ip.filter.forward.reject " reject
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.40.0/24 counter log prefix "nft.ip.filter.forward.reject " reject
 nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.41.0/24 counter log prefix "nft.ip.filter.forward.reject " reject
-nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.42.0/24 counter log prefix "nft.ip.filter.forward.reject " reject
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.38.0/24 ip daddr 192.168.142.0/24 counter log prefix "nft.ip.filter.forward.reject " reject
 echo "    allow WINS replication from VPN"
 add_forward_rule_from_vpn tcp 42 192.168.39.3
 echo "    allow DNS from VPN"
