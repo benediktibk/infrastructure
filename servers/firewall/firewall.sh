@@ -163,6 +163,10 @@ nft 'add chain ip raw PREROUTING { type filter hook prerouting priority raw; pol
 nft add rule raw PREROUTING ip daddr 192.168.38.0/24 accept
 nft add rule raw PREROUTING ip daddr 192.168.39.0/24 accept
 
+echo "configure masquerading"
+nft 'add chain nat postrouting { type nat hook postrouting priority 100 ; }'
+nft add rule nat postrouting oif enp9s0 masquerade
+
 while :
 do
     sleep 1h &
