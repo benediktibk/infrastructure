@@ -148,6 +148,8 @@ echo "    allow postgres from VPN"
 add_forward_rule_from_vpn tcp 5432 192.168.39.6
 echo "    allow iperf from VPN"
 add_forward_rule_from_vpn udp 5001 192.168.39.254
+echo "    allow internet access from VPN"
+nft add rule filter FORWARD-DMZ-INTERNAL ip saddr 192.168.40.0/24 ip daddr != 192.168.38.0-192.168.39.255 counter accept
 echo "    return to previous chain"
 nft add rule filter FORWARD-DMZ-INTERNAL counter return
 
